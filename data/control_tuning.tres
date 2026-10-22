@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PlayerTuning" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/player_tuning.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+run_speed = 320.0
+gravity = 1800.0
+jump_velocity = -680.0
+double_jump_velocity = -548.0
+dash_speed = 1000.0
+dash_duration = 0.18
+dash_recovery = 0.35
+coyote_time = 0.08
+jump_buffer = 0.12
+hurt_immunity = 0.8
+max_health = 3
