@@ -3,10 +3,13 @@ extends CharacterBody2D
 
 signal health_changed(current: int, maximum: int)
 signal crystal_collected
+signal physics_tick(delta: float)
+signal stopped
 signal run_failed(reason: String)
 signal rope_side_changed(side: int)
 
 @export var tuning: PlayerTuning
+@export var character: CharacterData
 
 const ROPE_TOP := 1
 const ROPE_BOTTOM := -1
@@ -25,10 +28,13 @@ var rope_offset := 34.0
 var dash_remaining := 0.0
 var dash_cooldown := 0.0
 var immunity_remaining := 0.0
+var skill_immunity_remaining := 0.0
 var rope_flip_lock_remaining := 0.0
 var rope_flip_feedback_remaining := 0.0
 var rope_flip_feedback_side := ROPE_TOP
-var jumps_remaining := 1
+var jumps_remaining := 0
+var max_jump_count := 2
+var configuration_errors := PackedStringArray()
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
 
@@ -37,6 +43,16 @@ const ROPE_FLIP_FEEDBACK_DURATION := 0.24
 func _ready() -> void:
 	if tuning == null:
 		tuning = load("res://data/control_tuning.tres")
+	if character == null:
+		character = load("res://data/characters/shadow_runner.tres")
+	configuration_errors = character.get_validation_errors(tuning.base_max_jump_count)
+	if not configuration_errors.is_empty():
+		push_error("\n".join(configuration_errors))
+		return
+	max_jump_count = character.get_max_jump_count(tuning.base_max_jump_count)
+	jumps_remaining = max_jump_count - 1
+	# Establish input protection before any hazard/sentry contact tick.
+	process_physics_priority = -100
 	collision_layer = 2
 	collision_mask = 0
 	add_to_group("player")
@@ -49,6 +65,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_update_timers(delta)
+	physics_tick.emit(delta)
 	if Input.is_action_just_pressed("jump"):
 		_buffer_remaining = tuning.jump_buffer
 
@@ -73,6 +90,7 @@ func _update_timers(delta: float) -> void:
 	dash_remaining = maxf(dash_remaining - delta, 0.0)
 	dash_cooldown = maxf(dash_cooldown - delta, 0.0)
 	immunity_remaining = maxf(immunity_remaining - delta, 0.0)
+	skill_immunity_remaining = maxf(skill_immunity_remaining - delta, 0.0)
 	rope_flip_lock_remaining = maxf(rope_flip_lock_remaining - delta, 0.0)
 	rope_flip_feedback_remaining = maxf(rope_flip_feedback_remaining - delta, 0.0)
 	_coyote_remaining = maxf(_coyote_remaining - delta, 0.0)
@@ -82,7 +100,6 @@ func _process_rope_input() -> void:
 	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
 		dash_remaining = tuning.dash_duration
 		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
-		immunity_remaining = maxf(immunity_remaining, tuning.dash_duration)
 		state = State.DASH
 		return
 	if rope_flip_lock_remaining > 0.0:
@@ -90,8 +107,6 @@ func _process_rope_input() -> void:
 	if Input.is_action_just_pressed("drop"):
 		if rope_side == ROPE_TOP:
 			_switch_rope(ROPE_BOTTOM)
-		else:
-			_detach_from_rope(160.0)
 		return
 	var jump_pressed := Input.is_action_just_pressed("jump") or _buffer_remaining > 0.0
 	if jump_pressed:
@@ -115,13 +130,14 @@ func _process_air_input() -> void:
 	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
 		dash_remaining = tuning.dash_duration
 		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
-		immunity_remaining = maxf(immunity_remaining, tuning.dash_duration)
 	if Input.is_action_just_pressed("jump"):
 		if _can_regrab_rope():
 			_attach_to_rope(ROPE_TOP)
 		elif jumps_remaining > 0:
-			velocity.y = tuning.double_jump_velocity
+			var jump_number := max_jump_count - jumps_remaining + 1
+			velocity.y = tuning.double_jump_velocity if jump_number == 2 else tuning.third_jump_velocity
 			jumps_remaining -= 1
+			_buffer_remaining = 0.0
 	if Input.is_action_pressed("drop"):
 		velocity.y = maxf(velocity.y, 1000.0)
 
@@ -153,7 +169,7 @@ func _detach_from_rope(initial_vertical_velocity: float) -> void:
 	on_rope = false
 	_coyote_remaining = tuning.coyote_time
 	_buffer_remaining = 0.0
-	jumps_remaining = 1
+	jumps_remaining = max_jump_count - 1
 	velocity = Vector2(tuning.run_speed, initial_vertical_velocity)
 	state = State.JUMP if initial_vertical_velocity < 0.0 else State.FALL
 
@@ -161,7 +177,7 @@ func _attach_to_rope(target_side: int) -> void:
 	rope_side = target_side
 	on_rope = true
 	_buffer_remaining = 0.0
-	jumps_remaining = 1
+	jumps_remaining = max_jump_count - 1
 	velocity = Vector2.ZERO
 	_snap_to_rope()
 	rope_side_changed.emit(rope_side)
@@ -173,14 +189,17 @@ func _snap_to_rope() -> void:
 func _can_regrab_rope() -> bool:
 	return not on_rope and velocity.y > 0.0 and absf(global_position.y - rope_y) <= 42.0
 
-func collect_energy(_amount: int = 10) -> void:
+func collect_crystal() -> void:
 	if not active:
 		return
 	crystals += 1
 	crystal_collected.emit()
 
+func is_invulnerable() -> bool:
+	return skill_immunity_remaining > 0.00001 or immunity_remaining > 0.00001 or dash_remaining > 0.00001
+
 func take_damage(amount: int = 1) -> void:
-	if not active or state == State.DASH or immunity_remaining > 0.0:
+	if not active or is_invulnerable():
 		return
 	damage_count += 1
 	health = maxi(health - amount, 0)
@@ -199,6 +218,8 @@ func stop() -> void:
 	active = false
 	state = State.STOPPED
 	velocity = Vector2.ZERO
+	skill_immunity_remaining = 0.0
+	stopped.emit()
 	queue_redraw()
 
 func get_state_name() -> String:
@@ -214,7 +235,7 @@ func _draw() -> void:
 	var tint := Color("dde7e7")
 	if state == State.DASH:
 		tint = Color("d8b56a")
-	elif immunity_remaining > 0.0:
+	elif immunity_remaining > 0.0 and skill_immunity_remaining <= 0.0:
 		tint.a = 0.45 if fmod(immunity_remaining, 0.16) < 0.08 else 1.0
 	var feedback_ratio := clampf(rope_flip_feedback_remaining / ROPE_FLIP_FEEDBACK_DURATION, 0.0, 1.0)
 	var squash := lerpf(1.0, 0.68, sin((1.0 - feedback_ratio) * PI))
@@ -225,6 +246,11 @@ func _draw() -> void:
 	if state == State.DASH:
 		draw_line(Vector2(-24, 0), Vector2(-90, 0), Color(0.85, 0.71, 0.42, 0.45), 7)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	if skill_immunity_remaining > 0.0:
+		var closing := clampf(skill_immunity_remaining / 0.35, 0.0, 1.0)
+		var glow := Color(0.85, 0.71, 0.42, 0.85 * closing)
+		draw_arc(Vector2.ZERO, 33.0 + 11.0 * closing, -PI * 0.5, TAU - PI * 0.5, 48, glow, 3.0)
+		draw_arc(Vector2.ZERO, 29.0 + 11.0 * closing, -0.9, 0.9, 20, Color(0.87, 0.91, 0.91, closing), 3.0)
 	if feedback_ratio > 0.0:
 		var feedback_direction := -1.0 if rope_flip_feedback_side == ROPE_BOTTOM else 1.0
 		var feedback_alpha := 0.25 + feedback_ratio * 0.75

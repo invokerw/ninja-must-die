@@ -1,4 +1,4 @@
-class_name EnergyPickup
+class_name CrystalPickup
 extends Area2D
 
 var _collected := false
@@ -17,7 +17,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if _collected or not body is PlayerController or not body.active:
 		return
 	_collected = true
-	body.collect_energy()
+	body.collect_crystal()
 	queue_free()
 
 func _draw() -> void:

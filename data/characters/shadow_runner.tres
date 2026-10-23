@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CharacterData" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/character_data.gd" id="1_character"]
+[ext_resource type="Script" path="res://scripts/characters/active_skill_data.gd" id="2_skill"]
+[ext_resource type="Script" path="res://scripts/characters/passive_data.gd" id="3_passive"]
+
+[sub_resource type="Resource" id="ActiveSkill_moon_slash"]
+script = ExtResource("2_skill")
+skill_id = &"moon_slash"
+display_name = "月蚀斩"
+cooldown_seconds = 12.0
+invulnerability_seconds = 2.0
+cast_delay_seconds = 0.12
+forward_range = 640.0
+half_height = 100.0
+damage = 3
+
+[sub_resource type="Resource" id="Passive_triple_jump"]
+script = ExtResource("3_passive")
+passive_id = &"triple_jump"
+display_name = "踏影（三段跳）"
+extra_air_jumps = 1
+
+[resource]
+script = ExtResource("1_character")
+character_id = &"shadow_runner"
+display_name = "影刃"
+description = "月蚀破敌，踏影凌空。主动提供短时保护，被动增加一次空中跳跃。"
+active_skill = SubResource("ActiveSkill_moon_slash")
+passive = SubResource("Passive_triple_jump")

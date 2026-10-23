@@ -5,7 +5,7 @@ const PLAYER_SCENE := preload("res://scenes/main.tscn")
 var _failures := 0
 
 func _initialize() -> void:
-	for action in ["jump", "drop", "dash"]:
+	for action in ["jump", "drop", "dash", "skill"]:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
 	_run.call_deferred()
@@ -18,7 +18,7 @@ func _run() -> void:
 	await _test_fast_crossing_lands()
 	await _test_ascent_stays_airborne()
 	await _test_manual_regrab()
-	await _test_flip_and_deliberate_drop()
+	await _test_flip_and_stay_attached()
 	if _failures == 0:
 		print("ROPE_LANDING_PASS (8 scenarios)")
 	quit(0 if _failures == 0 else 1)
@@ -29,6 +29,8 @@ func _make_player() -> PlayerController:
 	var player := scene.get_node("Player") as PlayerController
 	scene.remove_child(player)
 	scene.free()
+	player.character = load("res://data/characters/shadow_runner.tres").duplicate(true)
+	player.character.passive.extra_air_jumps = 0
 	root.add_child(player)
 	player.active = true
 	return player
@@ -130,18 +132,30 @@ func _test_manual_regrab() -> void:
 	_check(player.on_rope, "Regrab must consume the buffered jump")
 	player.free()
 
-func _test_flip_and_deliberate_drop() -> void:
+func _test_flip_and_stay_attached() -> void:
 	var player := _make_player()
 	await _tap("drop")
 	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM, "Down must flip underneath the rope")
-	await _frames(8)
+	var start_x := player.position.x
+	for index in range(3):
+		# Wait beyond the flip lock so the input reaches the lower-side branch.
+		await _frames(8)
+		await _tap("drop")
+		_check_under_rope(player, "Repeated Down press %d" % (index + 1))
+	Input.action_press("drop")
+	await _frames(90)
+	_check_under_rope(player, "Held Down beneath the rope")
+	Input.action_release("drop")
+	await _frames(1)
+	_check(player.position.x > start_x, "Down beneath the rope must not stop forward movement")
 	await _tap("jump")
-	_check_landed(player, "Flip back above the rope")
-	await _frames(8)
-	await _tap("drop")
-	await _frames(8)
-	await _tap("drop")
-	_check(not player.on_rope and player.velocity.y > 0.0, "Down beneath the rope must deliberately release it")
-	await _frames(60)
-	_check(not player.on_rope and not player.active, "Deliberate release must not teleport back to the rope")
+	_check_landed(player, "Flip back above the rope after repeated and held Down")
+	await _frames(12)
+	_check_landed(player, "Upward flip must stay attached")
 	player.free()
+
+func _check_under_rope(player: PlayerController, context: String) -> void:
+	_check(player.active and player.on_rope, context + ": must remain attached and active")
+	_check(player.rope_side == PlayerController.ROPE_BOTTOM, context + ": must remain beneath the rope")
+	_check(is_equal_approx(player.position.y, player.rope_y + player.rope_offset), context + ": must stay at lower-side body height")
+	_check(is_zero_approx(player.velocity.y), context + ": must not fall")

@@ -1,7 +1,10 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="2_player"]
+[ext_resource type="Script" path="res://scripts/level/rope_level_controller.gd" id="3_level"]
+[ext_resource type="Script" path="res://scripts/combat/runner_combat.gd" id="4_combat"]
+[ext_resource type="Resource" path="res://data/characters/shadow_runner.tres" id="5_character"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
 radius = 18.0
@@ -11,15 +14,23 @@ height = 60.0
 process_mode = 3
 script = ExtResource("1_main")
 
+[node name="Level" type="Node2D" parent="."]
+process_mode = 1
+script = ExtResource("3_level")
+
 [node name="Player" type="CharacterBody2D" parent="."]
 process_mode = 1
 position = Vector2(160, 486)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("2_player")
+character = ExtResource("5_character")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("CapsuleShape2D_player")
+
+[node name="Combat" type="Node2D" parent="Player"]
+script = ExtResource("4_combat")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2(320, 0)
@@ -27,7 +38,6 @@ position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 limit_left = 0
 limit_top = 0
-limit_right = 9000
 limit_bottom = 720
 
 [node name="UI" type="CanvasLayer" parent="."]
@@ -46,8 +56,8 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
-offset_right = 520.0
-offset_bottom = 104.0
+offset_right = 780.0
+offset_bottom = 110.0
 color = Color(0.0666667, 0.0941176, 0.14902, 0.86)
 mouse_filter = 2
 
@@ -55,21 +65,21 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 44.0
 offset_top = 36.0
-offset_right = 500.0
+offset_right = 760.0
 offset_bottom = 72.0
 theme_override_colors/font_color = Color(0.866667, 0.905882, 0.905882, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 20
 text = "生命 3 / 3    影晶 0    时间 0.0s    位置：钢索上"
 
 [node name="HintText" type="Label" parent="UI/HUD"]
 layout_mode = 0
 offset_left = 44.0
 offset_top = 78.0
-offset_right = 640.0
+offset_right = 760.0
 offset_bottom = 106.0
 theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
 theme_override_font_sizes/font_size = 16
-text = "↑ / Space：上翻或跳离钢索 · ↓：下翻/松绳 · Shift：影步 · R / Enter：重来"
+text = "↑ / Space：上翻或跳离钢索 · ↓：下翻/保持下侧 · Shift：影步 · R / Enter：重来"
 
 [node name="ProgressLabel" type="Label" parent="UI/HUD"]
 layout_mode = 0
@@ -109,23 +119,140 @@ theme_override_font_sizes/font_size = 16
 text = "前方：安全段"
 horizontal_alignment = 2
 
-[node name="BottomText" type="Label" parent="UI/HUD"]
+[node name="SegmentTitle" type="Label" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 132.0
+offset_right = 1000.0
+offset_bottom = 164.0
+theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
+theme_override_font_sizes/font_size = 22
+text = "雾岭断桥 · 钢索入门"
+
+[node name="SegmentHint" type="Label" parent="UI/HUD"]
 layout_mode = 0
 offset_left = 44.0
 offset_top = 656.0
-offset_right = 760.0
+offset_right = 1236.0
 offset_bottom = 690.0
-theme_override_colors/font_color = Color(0.431373, 0.498039, 0.552941, 1)
+theme_override_colors/font_color = Color(0.866667, 0.905882, 0.905882, 1)
+theme_override_font_sizes/font_size = 18
+text = "影晶会引导安全路线。"
+
+[node name="CharacterPanel" type="ColorRect" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 880.0
+offset_top = 152.0
+offset_right = 1236.0
+offset_bottom = 262.0
+color = Color(0.066667, 0.094118, 0.14902, 0.88)
+mouse_filter = 2
+
+[node name="CharacterText" type="Label" parent="UI/HUD/CharacterPanel"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 12.0
+offset_right = 338.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
+theme_override_font_sizes/font_size = 18
+text = "影刃 · 被动 踏影（三段跳）"
+mouse_filter = 2
+
+[node name="PassiveText" type="Label" parent="UI/HUD/CharacterPanel"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 44.0
+offset_right = 338.0
+offset_bottom = 68.0
 theme_override_font_sizes/font_size = 16
-text = "控制切片 · 单根钢索上下躲避 · 视觉素材将在 imagegen 资产流程中替换"
+text = "空中追加跳跃  2 / 2"
+mouse_filter = 2
+
+[node name="CombatText" type="Label" parent="UI/HUD/CharacterPanel"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 76.0
+offset_right = 338.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.568627, 0.631373, 0.678431, 1)
+theme_override_font_sizes/font_size = 16
+text = "击破 0  ·  连击 0  ·  最高 0"
+mouse_filter = 2
+
+[node name="SkillPanel" type="ColorRect" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 880.0
+offset_top = 278.0
+offset_right = 1236.0
+offset_bottom = 386.0
+color = Color(0.066667, 0.094118, 0.14902, 0.94)
+mouse_filter = 2
+
+[node name="SkillText" type="Label" parent="UI/HUD/SkillPanel"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 12.0
+offset_right = 338.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 22
+text = "K  月蚀斩  ·  就绪"
+mouse_filter = 2
+
+[node name="ProtectionText" type="Label" parent="UI/HUD/SkillPanel"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 48.0
+offset_right = 338.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 16
+text = "冷却 12s · 释放后无敌 2s"
+mouse_filter = 2
+
+[node name="CooldownBack" type="ColorRect" parent="UI/HUD/SkillPanel"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 88.0
+offset_right = 338.0
+offset_bottom = 94.0
+color = Color(0.133333, 0.180392, 0.227451, 0.95)
+mouse_filter = 2
+
+[node name="CooldownFill" type="ColorRect" parent="UI/HUD/SkillPanel/CooldownBack"]
+layout_mode = 0
+offset_right = 320.0
+offset_bottom = 6.0
+color = Color(0.847059, 0.709804, 0.415686, 1)
+mouse_filter = 2
+
+[node name="CombatFeedback" type="Label" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 898.0
+offset_top = 398.0
+offset_right = 1236.0
+offset_bottom = 426.0
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
+mouse_filter = 2
+
+[node name="ResultDimmer" type="ColorRect" parent="UI/HUD"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.05, 0.70)
+mouse_filter = 2
 
 [node name="ResultOverlay" type="ColorRect" parent="UI/HUD"]
 visible = false
 layout_mode = 0
 offset_left = 360.0
-offset_top = 220.0
+offset_top = 200.0
 offset_right = 920.0
-offset_bottom = 500.0
+offset_bottom = 520.0
 color = Color(0.0666667, 0.0941176, 0.14902, 0.96)
 mouse_filter = 2
 
@@ -145,7 +272,7 @@ layout_mode = 0
 offset_left = 32.0
 offset_top = 94.0
 offset_right = 528.0
-offset_bottom = 184.0
+offset_bottom = 220.0
 theme_override_colors/font_color = Color(0.866667, 0.905882, 0.905882, 1)
 theme_override_font_sizes/font_size = 20
 text = "用时 0.0 秒\n评级 C"
@@ -154,9 +281,9 @@ horizontal_alignment = 1
 [node name="RetryHint" type="Label" parent="UI/HUD/ResultOverlay"]
 layout_mode = 0
 offset_left = 32.0
-offset_top = 212.0
+offset_top = 260.0
 offset_right = 528.0
-offset_bottom = 250.0
+offset_bottom = 302.0
 theme_override_colors/font_color = Color(0.431373, 0.498039, 0.552941, 1)
 theme_override_font_sizes/font_size = 18
 text = "按 R 或 Enter 重新开始"

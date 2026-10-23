@@ -1,0 +1,459 @@
+[gd_resource type="Resource" script_class="RopeLevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/level/rope_level_data.gd" id="1_ci4it"]
+[ext_resource type="Script" path="res://scripts/level/rope_segment_data.gd" id="2_nnwyy"]
+[ext_resource type="Script" path="res://scripts/level/rope_hazard_data.gd" id="3_qpg04"]
+[ext_resource type="Script" path="res://scripts/level/rope_pickup_data.gd" id="4_xfk5v"]
+[ext_resource type="Script" path="res://scripts/level/rope_enemy_data.gd" id="5_enemy"]
+
+[sub_resource type="Resource" id="Resource_b0clb"]
+script = ExtResource("3_qpg04")
+offset_x = 800.0
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Resource_frjuf"]
+script = ExtResource("3_qpg04")
+offset_x = 1840.0
+cable_side = "bottom"
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Resource_rtt7k"]
+script = ExtResource("3_qpg04")
+offset_x = 2880.0
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Resource_07kf0"]
+script = ExtResource("4_xfk5v")
+offset_x = 240.0
+
+[sub_resource type="Resource" id="Resource_l4g2w"]
+script = ExtResource("4_xfk5v")
+offset_x = 400.0
+
+[sub_resource type="Resource" id="Resource_gfh4h"]
+script = ExtResource("4_xfk5v")
+offset_x = 960.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_ahihj"]
+script = ExtResource("4_xfk5v")
+offset_x = 1120.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_haoc2"]
+script = ExtResource("4_xfk5v")
+offset_x = 2000.0
+
+[sub_resource type="Resource" id="Resource_2w1yp"]
+script = ExtResource("4_xfk5v")
+offset_x = 2160.0
+
+[sub_resource type="Resource" id="Resource_yubnk"]
+script = ExtResource("4_xfk5v")
+offset_x = 3040.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_joji6"]
+script = ExtResource("2_nnwyy")
+segment_id = &"tutorial"
+title = "钢索入门"
+hint = "↓ 翻到钢索下方；↑ 翻回上方。影晶会引导安全路线。"
+hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_b0clb"), SubResource("Resource_frjuf"), SubResource("Resource_rtt7k")])
+pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_07kf0"), SubResource("Resource_l4g2w"), SubResource("Resource_gfh4h"), SubResource("Resource_ahihj"), SubResource("Resource_haoc2"), SubResource("Resource_2w1yp"), SubResource("Resource_yubnk")])
+
+[sub_resource type="Resource" id="Resource_ayx54"]
+script = ExtResource("3_qpg04")
+offset_x = 480.0
+
+[sub_resource type="Resource" id="Resource_r53xj"]
+script = ExtResource("3_qpg04")
+offset_x = 1120.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_nn78f"]
+script = ExtResource("3_qpg04")
+offset_x = 1760.0
+
+[sub_resource type="Resource" id="Resource_jofsn"]
+script = ExtResource("3_qpg04")
+offset_x = 2400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_f2dp8"]
+script = ExtResource("3_qpg04")
+offset_x = 3040.0
+
+[sub_resource type="Resource" id="Resource_54nam"]
+script = ExtResource("3_qpg04")
+offset_x = 3680.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_uqwcp"]
+script = ExtResource("3_qpg04")
+offset_x = 4320.0
+
+[sub_resource type="Resource" id="Resource_eg1ul"]
+script = ExtResource("4_xfk5v")
+offset_x = 680.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_lx7w0"]
+script = ExtResource("4_xfk5v")
+offset_x = 840.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_va3j2"]
+script = ExtResource("4_xfk5v")
+offset_x = 1320.0
+
+[sub_resource type="Resource" id="Resource_yt8fm"]
+script = ExtResource("4_xfk5v")
+offset_x = 1480.0
+
+[sub_resource type="Resource" id="Resource_j8tdn"]
+script = ExtResource("4_xfk5v")
+offset_x = 1960.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_umpcd"]
+script = ExtResource("4_xfk5v")
+offset_x = 2120.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_ms6w1"]
+script = ExtResource("4_xfk5v")
+offset_x = 2600.0
+
+[sub_resource type="Resource" id="Resource_qgmp8"]
+script = ExtResource("4_xfk5v")
+offset_x = 2760.0
+
+[sub_resource type="Resource" id="Resource_mh73w"]
+script = ExtResource("4_xfk5v")
+offset_x = 3240.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_btwdq"]
+script = ExtResource("4_xfk5v")
+offset_x = 3400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_smidd"]
+script = ExtResource("4_xfk5v")
+offset_x = 3880.0
+
+[sub_resource type="Resource" id="Resource_clbjq"]
+script = ExtResource("4_xfk5v")
+offset_x = 4040.0
+
+[sub_resource type="Resource" id="Resource_be7vi"]
+script = ExtResource("4_xfk5v")
+offset_x = 4520.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_qfgtf"]
+script = ExtResource("4_xfk5v")
+offset_x = 4680.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Enemy_alternating_1"]
+script = ExtResource("5_enemy")
+offset_x = 1360.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Enemy_alternating_2"]
+script = ExtResource("5_enemy")
+offset_x = 2000.0
+
+[sub_resource type="Resource" id="Enemy_alternating_3"]
+script = ExtResource("5_enemy")
+offset_x = 3920.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_4vhge"]
+script = ExtResource("2_nnwyy")
+segment_id = &"alternating"
+title = "上下交替"
+hint = "朱砂翼形是哨兵：翻绳避开，或按 K 月蚀斩；释放后无敌 2 秒。"
+length_px = 4800.0
+enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_alternating_1"), SubResource("Enemy_alternating_2"), SubResource("Enemy_alternating_3")])
+hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_ayx54"), SubResource("Resource_r53xj"), SubResource("Resource_nn78f"), SubResource("Resource_jofsn"), SubResource("Resource_f2dp8"), SubResource("Resource_54nam"), SubResource("Resource_uqwcp")])
+pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_eg1ul"), SubResource("Resource_lx7w0"), SubResource("Resource_va3j2"), SubResource("Resource_yt8fm"), SubResource("Resource_j8tdn"), SubResource("Resource_umpcd"), SubResource("Resource_ms6w1"), SubResource("Resource_qgmp8"), SubResource("Resource_mh73w"), SubResource("Resource_btwdq"), SubResource("Resource_smidd"), SubResource("Resource_clbjq"), SubResource("Resource_be7vi"), SubResource("Resource_qfgtf")])
+
+[sub_resource type="Resource" id="Resource_8444d"]
+script = ExtResource("3_qpg04")
+offset_x = 480.0
+size = Vector2(54, 80)
+
+[sub_resource type="Resource" id="Resource_fdkd2"]
+script = ExtResource("3_qpg04")
+offset_x = 640.0
+size = Vector2(54, 80)
+
+[sub_resource type="Resource" id="Resource_u0tpt"]
+script = ExtResource("3_qpg04")
+offset_x = 1280.0
+cable_side = "bottom"
+size = Vector2(54, 80)
+
+[sub_resource type="Resource" id="Resource_qppnc"]
+script = ExtResource("3_qpg04")
+offset_x = 1440.0
+cable_side = "bottom"
+size = Vector2(54, 80)
+
+[sub_resource type="Resource" id="Resource_5acsq"]
+script = ExtResource("3_qpg04")
+offset_x = 2080.0
+size = Vector2(54, 88)
+
+[sub_resource type="Resource" id="Resource_dbmpg"]
+script = ExtResource("3_qpg04")
+offset_x = 2720.0
+cable_side = "bottom"
+size = Vector2(54, 88)
+
+[sub_resource type="Resource" id="Resource_bn81l"]
+script = ExtResource("3_qpg04")
+offset_x = 3200.0
+size = Vector2(54, 88)
+
+[sub_resource type="Resource" id="Resource_3fes1"]
+script = ExtResource("3_qpg04")
+offset_x = 3360.0
+size = Vector2(54, 88)
+
+[sub_resource type="Resource" id="Resource_cr8fg"]
+script = ExtResource("3_qpg04")
+offset_x = 4000.0
+cable_side = "bottom"
+size = Vector2(54, 88)
+
+[sub_resource type="Resource" id="Resource_qh0sv"]
+script = ExtResource("3_qpg04")
+offset_x = 4160.0
+cable_side = "bottom"
+size = Vector2(54, 88)
+
+[sub_resource type="Resource" id="Resource_tugc4"]
+script = ExtResource("3_qpg04")
+offset_x = 4800.0
+size = Vector2(54, 96)
+
+[sub_resource type="Resource" id="Resource_yjiks"]
+script = ExtResource("3_qpg04")
+offset_x = 5440.0
+cable_side = "bottom"
+size = Vector2(54, 96)
+
+[sub_resource type="Resource" id="Resource_sovtm"]
+script = ExtResource("3_qpg04")
+offset_x = 5920.0
+size = Vector2(54, 96)
+
+[sub_resource type="Resource" id="Resource_s3qqi"]
+script = ExtResource("4_xfk5v")
+offset_x = 840.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_5m3vo"]
+script = ExtResource("4_xfk5v")
+offset_x = 960.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_d1jxl"]
+script = ExtResource("4_xfk5v")
+offset_x = 1640.0
+
+[sub_resource type="Resource" id="Resource_vsfn5"]
+script = ExtResource("4_xfk5v")
+offset_x = 1760.0
+
+[sub_resource type="Resource" id="Resource_mg2ru"]
+script = ExtResource("4_xfk5v")
+offset_x = 2280.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_4rcxb"]
+script = ExtResource("4_xfk5v")
+offset_x = 2400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_ba3vf"]
+script = ExtResource("4_xfk5v")
+offset_x = 2920.0
+
+[sub_resource type="Resource" id="Resource_qpl4r"]
+script = ExtResource("4_xfk5v")
+offset_x = 3040.0
+
+[sub_resource type="Resource" id="Resource_g7qgc"]
+script = ExtResource("4_xfk5v")
+offset_x = 3560.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_d5i3a"]
+script = ExtResource("4_xfk5v")
+offset_x = 3680.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_6a6v0"]
+script = ExtResource("4_xfk5v")
+offset_x = 4360.0
+
+[sub_resource type="Resource" id="Resource_xrkdu"]
+script = ExtResource("4_xfk5v")
+offset_x = 4480.0
+
+[sub_resource type="Resource" id="Resource_suxgp"]
+script = ExtResource("4_xfk5v")
+offset_x = 5000.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_t55dd"]
+script = ExtResource("4_xfk5v")
+offset_x = 5120.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_xxg1d"]
+script = ExtResource("4_xfk5v")
+offset_x = 5640.0
+
+[sub_resource type="Resource" id="Resource_5s1p6"]
+script = ExtResource("4_xfk5v")
+offset_x = 5760.0
+
+[sub_resource type="Resource" id="Resource_sgb6b"]
+script = ExtResource("4_xfk5v")
+offset_x = 6120.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_1kctm"]
+script = ExtResource("4_xfk5v")
+offset_x = 6240.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Enemy_combinations_1"]
+script = ExtResource("5_enemy")
+offset_x = 1680.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Enemy_combinations_2"]
+script = ExtResource("5_enemy")
+offset_x = 2320.0
+
+[sub_resource type="Resource" id="Enemy_combinations_3"]
+script = ExtResource("5_enemy")
+offset_x = 4400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_mpiji"]
+script = ExtResource("2_nnwyy")
+segment_id = &"combinations"
+title = "连续机关"
+hint = "月蚀斩冷却 12 秒；踏影可三段跳，空中 ↓ 快速落绳。影晶只计收集与连击。"
+length_px = 6400.0
+enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_combinations_1"), SubResource("Enemy_combinations_2"), SubResource("Enemy_combinations_3")])
+hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_8444d"), SubResource("Resource_fdkd2"), SubResource("Resource_u0tpt"), SubResource("Resource_qppnc"), SubResource("Resource_5acsq"), SubResource("Resource_dbmpg"), SubResource("Resource_bn81l"), SubResource("Resource_3fes1"), SubResource("Resource_cr8fg"), SubResource("Resource_qh0sv"), SubResource("Resource_tugc4"), SubResource("Resource_yjiks"), SubResource("Resource_sovtm")])
+pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_s3qqi"), SubResource("Resource_5m3vo"), SubResource("Resource_d1jxl"), SubResource("Resource_vsfn5"), SubResource("Resource_mg2ru"), SubResource("Resource_4rcxb"), SubResource("Resource_ba3vf"), SubResource("Resource_qpl4r"), SubResource("Resource_g7qgc"), SubResource("Resource_d5i3a"), SubResource("Resource_6a6v0"), SubResource("Resource_xrkdu"), SubResource("Resource_suxgp"), SubResource("Resource_t55dd"), SubResource("Resource_xxg1d"), SubResource("Resource_5s1p6"), SubResource("Resource_sgb6b"), SubResource("Resource_1kctm")])
+
+[sub_resource type="Resource" id="Resource_so0du"]
+script = ExtResource("3_qpg04")
+offset_x = 480.0
+size = Vector2(54, 92)
+
+[sub_resource type="Resource" id="Resource_2ao2a"]
+script = ExtResource("3_qpg04")
+offset_x = 960.0
+cable_side = "bottom"
+size = Vector2(54, 92)
+
+[sub_resource type="Resource" id="Resource_at8s6"]
+script = ExtResource("3_qpg04")
+offset_x = 1440.0
+size = Vector2(54, 92)
+
+[sub_resource type="Resource" id="Resource_6a8bj"]
+script = ExtResource("3_qpg04")
+offset_x = 1920.0
+cable_side = "bottom"
+size = Vector2(54, 92)
+
+[sub_resource type="Resource" id="Resource_f37mu"]
+script = ExtResource("3_qpg04")
+offset_x = 2400.0
+size = Vector2(54, 92)
+
+[sub_resource type="Resource" id="Resource_gw1xv"]
+script = ExtResource("3_qpg04")
+offset_x = 2880.0
+cable_side = "bottom"
+size = Vector2(54, 92)
+
+[sub_resource type="Resource" id="Resource_f41p3"]
+script = ExtResource("4_xfk5v")
+offset_x = 660.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_hprao"]
+script = ExtResource("4_xfk5v")
+offset_x = 1140.0
+
+[sub_resource type="Resource" id="Resource_5pr45"]
+script = ExtResource("4_xfk5v")
+offset_x = 1620.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_ddwq0"]
+script = ExtResource("4_xfk5v")
+offset_x = 2100.0
+
+[sub_resource type="Resource" id="Resource_5ysjw"]
+script = ExtResource("4_xfk5v")
+offset_x = 2580.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_8q23b"]
+script = ExtResource("4_xfk5v")
+offset_x = 3060.0
+
+[sub_resource type="Resource" id="Resource_ct0b6"]
+script = ExtResource("4_xfk5v")
+offset_x = 3520.0
+
+[sub_resource type="Resource" id="Resource_gvti4"]
+script = ExtResource("4_xfk5v")
+offset_x = 3680.0
+
+[sub_resource type="Resource" id="Resource_tc4gt"]
+script = ExtResource("4_xfk5v")
+offset_x = 3840.0
+
+[sub_resource type="Resource" id="Resource_2su4h"]
+script = ExtResource("4_xfk5v")
+offset_x = 4000.0
+
+[sub_resource type="Resource" id="Resource_htgcf"]
+script = ExtResource("4_xfk5v")
+offset_x = 4160.0
+
+[sub_resource type="Resource" id="Enemy_sprint_1"]
+script = ExtResource("5_enemy")
+offset_x = 3200.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Resource_8wah7"]
+script = ExtResource("2_nnwyy")
+segment_id = &"sprint"
+title = "冲刺收尾"
+hint = "保持翻绳可安全通过；K 就绪时可保留或释放，收集和击破维持连击。"
+length_px = 4800.0
+enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_sprint_1")])
+hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_so0du"), SubResource("Resource_2ao2a"), SubResource("Resource_at8s6"), SubResource("Resource_6a8bj"), SubResource("Resource_f37mu"), SubResource("Resource_gw1xv")])
+pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_f41p3"), SubResource("Resource_hprao"), SubResource("Resource_5pr45"), SubResource("Resource_ddwq0"), SubResource("Resource_5ysjw"), SubResource("Resource_8q23b"), SubResource("Resource_ct0b6"), SubResource("Resource_gvti4"), SubResource("Resource_tc4gt"), SubResource("Resource_2su4h"), SubResource("Resource_htgcf")])
+
+[resource]
+script = ExtResource("1_ci4it")
+level_id = &"fog_ridge_60s"
+title = "雾岭断桥"
+segments = Array[ExtResource("2_nnwyy")]([SubResource("Resource_joji6"), SubResource("Resource_4vhge"), SubResource("Resource_mpiji"), SubResource("Resource_8wah7")])

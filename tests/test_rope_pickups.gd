@@ -11,9 +11,15 @@ func _run() -> void:
 	var level := LEVEL_SCENE.instantiate()
 	root.add_child(level)
 	var player := level.get_node("Player") as PlayerController
-	var pickups: Array[EnergyPickup] = []
-	for child in level.get_children():
-		if child is EnergyPickup:
+	var world := level.get_node("Level") as RopeLevelController
+	# Isolate pickup reachability: an intentionally wrong-side pass may touch a sentry.
+	# Full-route tests separately verify safe paths with the authored enemies present.
+	for enemy in world.enemies:
+		enemy.free()
+	world.enemies.clear()
+	var pickups: Array[CrystalPickup] = []
+	for child in world.get_children():
+		if child is CrystalPickup:
 			pickups.append(child)
 	_check(not pickups.is_empty(), "The actual level must contain crystals")
 	var tested_top := 0
@@ -24,13 +30,13 @@ func _run() -> void:
 		var before := player.crystals
 		# Pass on the opposite side first to check that collection requires the right route.
 		await _set_side(player, -side)
-		player.global_position.x = target_position.x - 100.0
-		await _frames(36)
+		player.global_position.x = target_position.x - 50.0
+		await _frames(20)
 		_check(player.crystals == before and is_instance_valid(pickup), "Opposite side must not collect crystal at x=%.0f" % target_position.x)
 		# Flip using the actual input and run through the crystal without jumping or releasing.
 		await _set_side(player, side)
-		player.global_position.x = target_position.x - 100.0
-		await _frames(36)
+		player.global_position.x = target_position.x - 50.0
+		await _frames(20)
 		_check(player.active and player.on_rope and player.rope_side == side, "Collecting must keep the player attached at x=%.0f" % target_position.x)
 		_check(player.crystals == before + 1 and not is_instance_valid(pickup), "Attached player must collect crystal at x=%.0f" % target_position.x)
 		if side == PlayerController.ROPE_TOP:

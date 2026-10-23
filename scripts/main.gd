@@ -1,38 +1,48 @@
 extends Node2D
 
-const ROPE_Y := 520.0
-const FINISH_X := 8500.0
-
 @onready var player: PlayerController = $Player
+@onready var combat: RunnerCombat = $Player/Combat
+@onready var level: RopeLevelController = $Level
 @onready var status_text: Label = $UI/HUD/StatusText
 @onready var hint_text: Label = $UI/HUD/HintText
 @onready var result_overlay: ColorRect = $UI/HUD/ResultOverlay
+@onready var result_dimmer: ColorRect = $UI/HUD/ResultDimmer
 @onready var result_title: Label = $UI/HUD/ResultOverlay/ResultTitle
 @onready var result_body: Label = $UI/HUD/ResultOverlay/ResultBody
 @onready var threat_text: Label = $UI/HUD/ThreatText
 @onready var progress_fill: ColorRect = $UI/HUD/ProgressBack/ProgressFill
 @onready var progress_label: Label = $UI/HUD/ProgressLabel
+@onready var segment_title: Label = $UI/HUD/SegmentTitle
+@onready var segment_hint: Label = $UI/HUD/SegmentHint
+@onready var character_text: Label = $UI/HUD/CharacterPanel/CharacterText
+@onready var passive_text: Label = $UI/HUD/CharacterPanel/PassiveText
+@onready var combat_text: Label = $UI/HUD/CharacterPanel/CombatText
+@onready var combat_feedback: Label = $UI/HUD/CombatFeedback
+@onready var skill_text: Label = $UI/HUD/SkillPanel/SkillText
+@onready var protection_text: Label = $UI/HUD/SkillPanel/ProtectionText
+@onready var skill_fill: ColorRect = $UI/HUD/SkillPanel/CooldownBack/CooldownFill
 
 var _elapsed_time := 0.0
 var _finished := false
-var _pickup_positions: Array[Vector2] = []
-var _hazards: Array[Hazard] = []
-var _finish_scene := preload("res://scripts/finish.gd")
-var _hazard_scene := preload("res://scripts/hazard.gd")
-var _pickup_scene := preload("res://scripts/pickup.gd")
+var run_result: RunResult
 
 func _ready() -> void:
 	_ensure_input_map()
-	player.rope_y = ROPE_Y
-	player.global_position = Vector2(160.0, ROPE_Y - player.rope_offset)
-	_build_level()
+	if not player.configuration_errors.is_empty():
+		_show_result("角色配置无效", "请检查角色主动和被动资源，详细原因见调试输出。")
+		return
+	level.segment_changed.connect(_on_segment_changed)
+	level.finish_reached.connect(_on_finish_reached)
 	player.health_changed.connect(_on_health_changed)
 	player.crystal_collected.connect(_on_crystal_collected)
 	player.rope_side_changed.connect(_on_rope_side_changed)
 	player.run_failed.connect(_on_run_failed)
+	combat.changed.connect(_update_status)
+	if not level.build(player):
+		_show_result("关卡无法加载", "请检查关卡资源，详细原因见调试输出。")
+		return
 	player.active = true
 	_update_status()
-	queue_redraw()
 
 func _process(delta: float) -> void:
 	if not get_tree().paused and not _finished:
@@ -45,6 +55,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("pause") and not _finished:
 		get_tree().paused = not get_tree().paused
+		result_dimmer.visible = get_tree().paused
 		if get_tree().paused:
 			result_title.text = "已暂停"
 			result_body.text = "按 Esc 继续\n按 R / Enter 重新开始"
@@ -56,7 +67,8 @@ func _ensure_input_map() -> void:
 	_add_key_action("jump", [KEY_SPACE, KEY_UP, KEY_W])
 	_add_key_action("drop", [KEY_DOWN, KEY_S])
 	_add_key_action("dash", [KEY_SHIFT])
-	_add_key_action("attack", [KEY_J])
+	if InputMap.has_action("attack"):
+		InputMap.erase_action("attack")
 	_add_key_action("skill", [KEY_K])
 	_add_key_action("pause", [KEY_ESCAPE])
 	_add_key_action("restart", [KEY_R, KEY_ENTER, KEY_KP_ENTER])
@@ -76,50 +88,9 @@ func _add_key_action(action_name: StringName, keycodes: Array) -> void:
 		event.physical_keycode = keycode
 		InputMap.action_add_event(action_name, event)
 
-func _build_level() -> void:
-	# A single horizontal cable is the control slice. Each hazard explicitly targets its side.
-	for entry in [
-		[900.0, "top", 72.0], [1240.0, "bottom", 72.0],
-		[1640.0, "top", 84.0], [2020.0, "bottom", 84.0],
-		[2440.0, "top", 72.0], [2820.0, "bottom", 72.0],
-		[3400.0, "top", 92.0], [3820.0, "bottom", 92.0],
-		[4300.0, "top", 76.0], [4680.0, "bottom", 76.0],
-		[5300.0, "top", 96.0], [5700.0, "bottom", 96.0],
-		[6300.0, "top", 72.0], [6700.0, "bottom", 72.0],
-		[7300.0, "top", 90.0], [7700.0, "bottom", 90.0]
-	]:
-		_add_hazard(float(entry[0]), String(entry[1]), float(entry[2]))
-	for entry in [
-		[1060.0, "bottom"], [1450.0, "top"], [1840.0, "bottom"],
-		[2250.0, "top"], [3030.0, "bottom"], [3600.0, "top"],
-		[4100.0, "bottom"], [5100.0, "top"], [6100.0, "bottom"],
-		[7100.0, "top"]
-	]:
-		_add_pickup(float(entry[0]), String(entry[1]))
-
-	var finish := _finish_scene.new()
-	finish.process_mode = Node.PROCESS_MODE_PAUSABLE
-	finish.position = Vector2(FINISH_X, ROPE_Y)
-	finish.reached.connect(_on_finish_reached)
-	add_child(finish)
-
-func _add_hazard(x_position: float, cable_side: String, height: float) -> void:
-	var hazard := _hazard_scene.new()
-	hazard.position = Vector2(x_position, ROPE_Y)
-	hazard.process_mode = Node.PROCESS_MODE_PAUSABLE
-	hazard.cable_side = cable_side
-	hazard.hazard_size = Vector2(54.0, height)
-	add_child(hazard)
-	_hazards.append(hazard)
-
-func _add_pickup(x_position: float, cable_side: String) -> void:
-	var side := PlayerController.ROPE_TOP if cable_side == "top" else PlayerController.ROPE_BOTTOM
-	var pickup := _pickup_scene.new()
-	pickup.process_mode = Node.PROCESS_MODE_PAUSABLE
-	# Ordinary crystals follow the attached player's body on either side of the rope.
-	pickup.position = Vector2(x_position, player.rope_y - float(side) * player.rope_offset)
-	add_child(pickup)
-	_pickup_positions.append(pickup.position)
+func _on_segment_changed(index: int, segment: RopeSegmentData) -> void:
+	segment_title.text = "%s  ·  %d / %d  %s" % [level.data.title, index + 1, level.data.segments.size(), segment.title]
+	segment_hint.text = segment.hint
 
 func _on_health_changed(_current: int, _maximum: int) -> void:
 	_update_status()
@@ -131,28 +102,32 @@ func _on_rope_side_changed(_side: int) -> void:
 	_update_status()
 
 func _on_run_failed(reason: String) -> void:
-	_show_result("挑战失败", "%s\n用时 %.1f 秒" % [reason, _elapsed_time])
+	var section := level.data.segments[level.active_segment].title
+	_show_result("挑战失败", "%s · %s\n用时 %.1f 秒" % [section, reason, _elapsed_time])
 
 func _on_finish_reached() -> void:
 	if _finished:
 		return
-	_finished = true
 	player.stop()
-	var rank := _get_rank()
-	_show_result("钢索切片完成", "用时 %.1f 秒\n评级 %s\n影晶 %d / %d" % [_elapsed_time, rank, player.crystals, _pickup_positions.size()])
+	run_result = _calculate_result()
+	_update_status()
+	progress_fill.size.x = progress_fill.get_parent().size.x
+	progress_label.text = "终点进度  100%"
+	_show_result("%s · 完成" % level.data.title, "评级 %s    总分 %d\n用时 %.1f 秒    受击 %d 次\n影晶 %d / %d    击破 %d\n最高连击 %d" % [run_result.rank, run_result.score, run_result.time_seconds, run_result.damage_count, run_result.collectible_count, run_result.collectible_total, run_result.kills, run_result.max_combo])
+
+func _calculate_result() -> RunResult:
+	return RunResult.calculate(_elapsed_time, level.data.get_nominal_seconds(), player.damage_count, player.crystals, level.pickup_positions.size(), combat.kills, combat.max_combo)
 
 func _get_rank() -> String:
-	if _elapsed_time <= 30.0 and player.damage_count == 0:
-		return "S"
-	if _elapsed_time <= 40.0 and player.damage_count <= 1:
-		return "A"
-	if _elapsed_time <= 55.0 and player.damage_count <= 2:
-		return "B"
-	return "C"
+	return _calculate_result().rank
 
 func _show_result(title: String, body: String) -> void:
+	_finished = true
+	if player.active:
+		player.stop()
 	result_title.text = title
 	result_body.text = body
+	result_dimmer.visible = true
 	result_overlay.visible = true
 	get_tree().paused = true
 
@@ -163,48 +138,58 @@ func _restart_run() -> void:
 func _update_status() -> void:
 	if not is_instance_valid(player) or player.tuning == null:
 		return
-	var progress := clampf(inverse_lerp(160.0, FINISH_X, player.global_position.x), 0.0, 1.0)
-	progress_fill.size.x = 320.0 * progress
+	var progress := clampf(inverse_lerp(level.data.start_x, level.data.get_finish_x(), player.global_position.x), 0.0, 1.0)
+	progress_fill.size.x = progress_fill.get_parent().size.x * progress
 	progress_label.text = "终点进度  %d%%" % roundi(progress * 100.0)
-	status_text.text = "生命 %d / %d    影晶 %d    时间 %.1fs    位置：%s" % [
-		player.health, player.tuning.max_health, player.crystals, _elapsed_time, player.get_rope_side_name()
+	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [
+		player.health, player.tuning.max_health, player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
 	]
-	hint_text.text = "↑ / Space：上翻或跳离钢索 · ↓：下翻/松绳 · Shift：影步 · R / Enter：重来"
+	hint_text.text = "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：影步 · Esc：暂停 · R：重来"
+	var skill := player.character.active_skill
+	var remaining := combat.skill_cooldown_remaining
+	var cooldown_text := "就绪"
+	if remaining > 0.00001:
+		cooldown_text = "%.1fs" % remaining if remaining <= 2.0 else "%ds" % ceili(remaining)
+	skill_text.text = "K  %s  ·  %s" % [skill.display_name, cooldown_text]
+	skill_text.modulate = Color("d8b56a") if remaining <= 0.00001 else Color("91a1ad")
+	skill_fill.size.x = skill_fill.get_parent().size.x * clampf(1.0 - remaining / skill.cooldown_seconds, 0.0, 1.0)
+	protection_text.text = "月光庇护  %.1fs" % player.skill_immunity_remaining if player.skill_immunity_remaining > 0.00001 else "冷却 %.0fs · 释放后无敌 %.0fs" % [skill.cooldown_seconds, skill.invulnerability_seconds]
+	protection_text.modulate = Color("d8b56a") if player.skill_immunity_remaining > 0.00001 else Color("91a1ad")
+	character_text.text = "%s · 被动 %s" % [player.character.display_name, player.character.passive.display_name]
+	passive_text.text = "空中追加跳跃  %d / %d" % [player.jumps_remaining, player.max_jump_count - 1]
+	combat_text.text = "击破 %d  ·  连击 %d  ·  最高 %d" % [combat.kills, combat.combo, combat.max_combo]
+	combat_feedback.text = combat.feedback
 	_update_threat_hint()
 
 func _update_threat_hint() -> void:
 	var nearest: Hazard
 	var nearest_distance := INF
-	for hazard in _hazards:
+	for hazard in level.hazards:
 		if not is_instance_valid(hazard):
 			continue
 		var distance := hazard.global_position.x - player.global_position.x
-		if distance >= -48.0 and distance < nearest_distance:
+		if distance >= -48.0 and distance <= hazard.warning_distance and distance < nearest_distance:
 			nearest = hazard
 			nearest_distance = distance
+	var nearest_enemy: RopeSentry
+	for enemy in level.enemies:
+		if not is_instance_valid(enemy) or not enemy.alive:
+			continue
+		var distance := enemy.global_position.x - player.global_position.x
+		if distance >= -36.0 and distance <= enemy.warning_distance and distance < nearest_distance:
+			nearest_enemy = enemy
+			nearest_distance = distance
+	if nearest_enemy != null:
+		var side := "上侧" if nearest_enemy.cable_side == "top" else "下侧"
+		threat_text.text = "%s哨兵 · 翻绳躲避 / K 月蚀斩" % side
+		threat_text.modulate = Color("f0c36d")
+		return
 	if nearest == null:
 		threat_text.text = "前方：安全段"
 		threat_text.modulate = Color("91a1ad")
 		return
-	var seconds := maxf(nearest_distance, 0.0) / maxf(player.tuning.run_speed, 1.0)
+	var speed := player.tuning.dash_speed if player.dash_remaining > 0.0 else player.tuning.run_speed
+	var seconds := maxf(nearest_distance, 0.0) / maxf(speed, 1.0)
 	var side_text := "上侧" if nearest.cable_side == "top" else "下侧"
 	threat_text.text = "前方预警  %s机关 · %.1fs" % [side_text, seconds]
 	threat_text.modulate = Color("f08b68") if seconds <= 0.8 else Color("f0c36d")
-
-func _draw() -> void:
-	# Temporary code-drawn art keeps the control slice independent from final imagegen assets.
-	draw_rect(Rect2(-500.0, -400.0, 10000.0, 1100.0), Color("111827"))
-	draw_circle(Vector2(1800.0, 150.0), 78.0, Color("dde7e7"))
-	draw_circle(Vector2(1770.0, 130.0), 78.0, Color("111827"))
-	for index in range(10):
-		var x := float(index * 1000 - 200)
-		var hill_height := float(150 + (index % 3) * 55)
-		draw_colored_polygon(PackedVector2Array([
-			Vector2(x, 680.0), Vector2(x + 260.0, 680.0 - hill_height),
-			Vector2(x + 560.0, 680.0)
-		]), Color("233142"))
-	# The cable is the central play surface: obstacles are drawn from it upward or downward.
-	draw_line(Vector2(-100.0, ROPE_Y), Vector2(9000.0, ROPE_Y), Color("d8b56a"), 6.0)
-	draw_line(Vector2(-100.0, ROPE_Y + 7.0), Vector2(9000.0, ROPE_Y + 7.0), Color(0.22, 0.29, 0.36, 0.65), 2.0)
-	for x in range(0, 9000, 600):
-		draw_line(Vector2(x, ROPE_Y - 24.0), Vector2(x, ROPE_Y + 24.0), Color("34495e"), 3.0)
