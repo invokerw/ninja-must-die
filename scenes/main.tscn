@@ -12,9 +12,9 @@ process_mode = 3
 script = ExtResource("1_main")
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(160, 585)
+position = Vector2(160, 486)
 collision_layer = 2
-collision_mask = 1
+collision_mask = 0
 script = ExtResource("2_player")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
@@ -58,7 +58,7 @@ offset_right = 500.0
 offset_bottom = 72.0
 theme_override_colors/font_color = Color(0.866667, 0.905882, 0.905882, 1)
 theme_override_font_sizes/font_size = 22
-text = "生命 3 / 3    影能 0 / 100    时间 0.0s"
+text = "生命 3 / 3    影晶 0    时间 0.0s    位置：钢索上"
 
 [node name="HintText" type="Label" parent="UI/HUD"]
 layout_mode = 0
@@ -68,7 +68,7 @@ offset_right = 640.0
 offset_bottom = 106.0
 theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
 theme_override_font_sizes/font_size = 16
-text = "↑ / Space 跳跃 · Shift 影步 · R 重来"
+text = "↑ / Space：上翻或跳离钢索 · ↓：下翻/松绳 · Shift：影步 · R：重来"
 
 [node name="BottomText" type="Label" parent="UI/HUD"]
 layout_mode = 0
@@ -78,7 +78,7 @@ offset_right = 760.0
 offset_bottom = 690.0
 theme_override_colors/font_color = Color(0.431373, 0.498039, 0.552941, 1)
 theme_override_font_sizes/font_size = 16
-text = "控制切片 · 雾岭断桥 · 视觉素材将在 imagegen 资产流程中替换"
+text = "控制切片 · 单根钢索上下躲避 · 视觉素材将在 imagegen 资产流程中替换"
 
 [node name="ResultOverlay" type="ColorRect" parent="UI/HUD"]
 visible = false

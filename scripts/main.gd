@@ -1,28 +1,30 @@
 extends Node2D
 
+const ROPE_Y := 520.0
+const FINISH_X := 8500.0
+
 @onready var player: PlayerController = $Player
 @onready var status_text: Label = $UI/HUD/StatusText
+@onready var hint_text: Label = $UI/HUD/HintText
 @onready var result_overlay: ColorRect = $UI/HUD/ResultOverlay
 @onready var result_title: Label = $UI/HUD/ResultOverlay/ResultTitle
 @onready var result_body: Label = $UI/HUD/ResultOverlay/ResultBody
-@onready var top_bar: ColorRect = $UI/HUD/TopBar
 
 var _elapsed_time := 0.0
 var _finished := false
-var _platform_rects: Array[Rect2] = []
-var _hazard_positions: Array[Vector2] = []
 var _pickup_positions: Array[Vector2] = []
-var _finish_position := Vector2(8500.0, 590.0)
+var _finish_scene := preload("res://scripts/finish.gd")
 var _hazard_scene := preload("res://scripts/hazard.gd")
 var _pickup_scene := preload("res://scripts/pickup.gd")
-var _finish_scene := preload("res://scripts/finish.gd")
 
 func _ready() -> void:
 	_ensure_input_map()
+	player.rope_y = ROPE_Y
+	player.global_position = Vector2(160.0, ROPE_Y - player.rope_offset)
 	_build_level()
-	player.tuning = load("res://data/control_tuning.tres")
 	player.health_changed.connect(_on_health_changed)
 	player.crystal_collected.connect(_on_crystal_collected)
+	player.rope_side_changed.connect(_on_rope_side_changed)
 	player.run_failed.connect(_on_run_failed)
 	player.active = true
 	_update_status()
@@ -41,8 +43,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_tree().paused = not get_tree().paused
 		if get_tree().paused:
 			result_title.text = "已暂停"
-			result_body.text = "按 Esc 继续
-按 R 重新开始"
+			result_body.text = "按 Esc 继续\n按 R 重新开始"
 			result_overlay.visible = true
 		else:
 			result_overlay.visible = false
@@ -60,66 +61,56 @@ func _add_key_action(action_name: StringName, keycodes: Array) -> void:
 	if not InputMap.has_action(action_name):
 		InputMap.add_action(action_name)
 	for keycode in keycodes:
+		var already_bound := false
+		for existing in InputMap.action_get_events(action_name):
+			if existing is InputEventKey and existing.physical_keycode == keycode:
+				already_bound = true
+				break
+		if already_bound:
+			continue
 		var event := InputEventKey.new()
 		event.physical_keycode = keycode
 		InputMap.action_add_event(action_name, event)
 
 func _build_level() -> void:
-	_add_rect_body(Rect2(-100.0, 620.0, 9000.0, 80.0), true)
-	_add_platform(Rect2(760.0, 510.0, 340.0, 24.0))
-	_add_platform(Rect2(1300.0, 460.0, 260.0, 24.0))
-	_add_platform(Rect2(1900.0, 530.0, 260.0, 24.0))
-	_add_platform(Rect2(2500.0, 430.0, 300.0, 24.0))
-	_add_platform(Rect2(3300.0, 500.0, 380.0, 24.0))
-	_add_platform(Rect2(4200.0, 450.0, 320.0, 24.0))
-	_add_platform(Rect2(5200.0, 520.0, 420.0, 24.0))
-	_add_platform(Rect2(6400.0, 450.0, 360.0, 24.0))
+	# A single horizontal cable is the control slice. Each hazard explicitly targets its side.
 	for entry in [
-		[900.0, 620.0, 48.0, 56.0], [1160.0, 620.0, 48.0, 56.0],
-		[1500.0, 460.0, 44.0, 50.0], [2200.0, 620.0, 48.0, 56.0],
-		[2750.0, 430.0, 44.0, 50.0], [3700.0, 620.0, 48.0, 56.0],
-		[4620.0, 620.0, 48.0, 56.0], [5900.0, 620.0, 48.0, 56.0],
-		[7100.0, 620.0, 48.0, 56.0]
+		[900.0, "top", 72.0], [1240.0, "bottom", 72.0],
+		[1640.0, "top", 84.0], [2020.0, "bottom", 84.0],
+		[2440.0, "top", 72.0], [2820.0, "bottom", 72.0],
+		[3400.0, "top", 92.0], [3820.0, "bottom", 92.0],
+		[4300.0, "top", 76.0], [4680.0, "bottom", 76.0],
+		[5300.0, "top", 96.0], [5700.0, "bottom", 96.0],
+		[6300.0, "top", 72.0], [6700.0, "bottom", 72.0],
+		[7300.0, "top", 90.0], [7700.0, "bottom", 90.0]
 	]:
-		_add_hazard(Vector2(entry[0], entry[1]), Vector2(entry[2], entry[3]))
-	for pickup_position in [
-		Vector2(820.0, 450.0), Vector2(1420.0, 390.0), Vector2(2050.0, 470.0),
-		Vector2(2650.0, 360.0), Vector2(3500.0, 440.0), Vector2(4350.0, 390.0),
-		Vector2(5350.0, 460.0), Vector2(6550.0, 390.0)
+		_add_hazard(float(entry[0]), String(entry[1]), float(entry[2]))
+	for entry in [
+		[1060.0, "bottom"], [1450.0, "top"], [1840.0, "bottom"],
+		[2250.0, "top"], [3030.0, "bottom"], [3600.0, "top"],
+		[4100.0, "bottom"], [5100.0, "top"], [6100.0, "bottom"],
+		[7100.0, "top"]
 	]:
-		_add_pickup(pickup_position)
+		_add_pickup(float(entry[0]), String(entry[1]))
+
 	var finish := _finish_scene.new()
-	finish.position = _finish_position
+	finish.position = Vector2(FINISH_X, ROPE_Y)
 	finish.reached.connect(_on_finish_reached)
 	add_child(finish)
 
-func _add_rect_body(rect: Rect2, is_ground := false) -> void:
-	var body := StaticBody2D.new()
-	body.position = rect.position + rect.size * 0.5
-	body.collision_layer = 1 if is_ground else 513
-	body.collision_mask = 0
-	var shape_node := CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = rect.size
-	shape_node.shape = shape
-	body.add_child(shape_node)
-	add_child(body)
-	_platform_rects.append(rect)
-
-func _add_platform(rect: Rect2) -> void:
-	_add_rect_body(rect)
-
-func _add_hazard(base_position: Vector2, size: Vector2) -> void:
+func _add_hazard(x_position: float, cable_side: String, height: float) -> void:
 	var hazard := _hazard_scene.new()
-	hazard.position = base_position
-	hazard.hazard_size = size
+	hazard.position = Vector2(x_position, ROPE_Y)
+	hazard.cable_side = cable_side
+	hazard.hazard_size = Vector2(54.0, height)
 	add_child(hazard)
 
-func _add_pickup(pickup_position: Vector2) -> void:
+func _add_pickup(x_position: float, cable_side: String) -> void:
+	var side := PlayerController.ROPE_TOP if cable_side == "top" else PlayerController.ROPE_BOTTOM
 	var pickup := _pickup_scene.new()
-	pickup.position = pickup_position
+	pickup.position = Vector2(x_position, ROPE_Y - float(side) * 94.0)
 	add_child(pickup)
-	_pickup_positions.append(pickup_position)
+	_pickup_positions.append(pickup.position)
 
 func _on_health_changed(_current: int, _maximum: int) -> void:
 	_update_status()
@@ -127,9 +118,11 @@ func _on_health_changed(_current: int, _maximum: int) -> void:
 func _on_crystal_collected() -> void:
 	_update_status()
 
+func _on_rope_side_changed(_side: int) -> void:
+	_update_status()
+
 func _on_run_failed(reason: String) -> void:
-	_show_result("挑战失败", "%s
-用时 %.1f 秒" % [reason, _elapsed_time])
+	_show_result("挑战失败", "%s\n用时 %.1f 秒" % [reason, _elapsed_time])
 
 func _on_finish_reached() -> void:
 	if _finished:
@@ -137,9 +130,7 @@ func _on_finish_reached() -> void:
 	_finished = true
 	player.stop()
 	var rank := _get_rank()
-	_show_result("控制切片完成", "用时 %.1f 秒
-评级 %s
-影晶 %d / %d" % [_elapsed_time, rank, player.crystals, _pickup_positions.size()])
+	_show_result("钢索切片完成", "用时 %.1f 秒\n评级 %s\n影晶 %d / %d" % [_elapsed_time, rank, player.crystals, _pickup_positions.size()])
 
 func _get_rank() -> String:
 	if _elapsed_time <= 30.0 and player.damage_count == 0:
@@ -163,7 +154,10 @@ func _restart_run() -> void:
 func _update_status() -> void:
 	if not is_instance_valid(player) or player.tuning == null:
 		return
-	status_text.text = "生命 %d / %d    影晶 %d    时间 %.1fs" % [player.health, player.tuning.max_health, player.crystals, _elapsed_time]
+	status_text.text = "生命 %d / %d    影晶 %d    时间 %.1fs    位置：%s" % [
+		player.health, player.tuning.max_health, player.crystals, _elapsed_time, player.get_rope_side_name()
+	]
+	hint_text.text = "↑ / Space：上翻或跳离钢索 · ↓：下翻/松绳 · Shift：影步 · R：重来"
 
 func _draw() -> void:
 	# Temporary code-drawn art keeps the control slice independent from final imagegen assets.
@@ -174,9 +168,11 @@ func _draw() -> void:
 		var x := float(index * 1000 - 200)
 		var hill_height := float(150 + (index % 3) * 55)
 		draw_colored_polygon(PackedVector2Array([
-			Vector2(x, 620.0), Vector2(x + 260.0, 620.0 - hill_height),
-			Vector2(x + 560.0, 620.0)
+			Vector2(x, 680.0), Vector2(x + 260.0, 680.0 - hill_height),
+			Vector2(x + 560.0, 680.0)
 		]), Color("233142"))
-	for rect in _platform_rects:
-		draw_rect(rect, Color("34495e"))
-		draw_line(rect.position, Vector2(rect.end.x, rect.position.y), Color("d8b56a"), 3.0)
+	# The cable is the central play surface: obstacles are drawn from it upward or downward.
+	draw_line(Vector2(-100.0, ROPE_Y), Vector2(9000.0, ROPE_Y), Color("d8b56a"), 6.0)
+	draw_line(Vector2(-100.0, ROPE_Y + 7.0), Vector2(9000.0, ROPE_Y + 7.0), Color(0.22, 0.29, 0.36, 0.65), 2.0)
+	for x in range(0, 9000, 600):
+		draw_line(Vector2(x, ROPE_Y - 24.0), Vector2(x, ROPE_Y + 24.0), Color("34495e"), 3.0)

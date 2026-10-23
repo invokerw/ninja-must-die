@@ -4,91 +4,161 @@ extends CharacterBody2D
 signal health_changed(current: int, maximum: int)
 signal crystal_collected
 signal run_failed(reason: String)
+signal rope_side_changed(side: int)
 
 @export var tuning: PlayerTuning
 
-enum State { RUN, JUMP, FALL, DASH, STOPPED }
+const ROPE_TOP := 1
+const ROPE_BOTTOM := -1
+
+enum State { ROPE_TOP, ROPE_BOTTOM, JUMP, FALL, DASH, STOPPED }
+
 var state: State = State.STOPPED
 var health: int
 var damage_count := 0
 var crystals := 0
 var active := false
-var jumps_remaining := 1
+var on_rope := true
+var rope_side := ROPE_TOP
+var rope_y := 520.0
+var rope_offset := 34.0
 var dash_remaining := 0.0
 var dash_cooldown := 0.0
 var immunity_remaining := 0.0
+var rope_flip_lock_remaining := 0.0
+var jumps_remaining := 1
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
-var _drop_remaining := 0.0
-var _dash_vertical_velocity := 0.0
 
 func _ready() -> void:
 	if tuning == null:
 		tuning = load("res://data/control_tuning.tres")
-	set_collision_mask_value(1, true)
-	set_collision_mask_value(9, true)
+	collision_layer = 2
+	collision_mask = 0
 	health = tuning.max_health
+	_snap_to_rope()
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
 	if not active:
 		return
-	_coyote_remaining = maxf(_coyote_remaining - delta, 0.0)
-	_buffer_remaining = maxf(_buffer_remaining - delta, 0.0)
-	dash_cooldown = maxf(dash_cooldown - delta, 0.0)
-	immunity_remaining = maxf(immunity_remaining - delta, 0.0)
-	_drop_remaining = maxf(_drop_remaining - delta, 0.0)
-	set_collision_mask_value(9, _drop_remaining <= 0.0)
-	if is_on_floor():
-		_coyote_remaining = tuning.coyote_time
-		jumps_remaining = 1
+
+	_update_timers(delta)
 	if Input.is_action_just_pressed("jump"):
 		_buffer_remaining = tuning.jump_buffer
-	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
-		_dash_vertical_velocity = velocity.y
-		dash_remaining = tuning.dash_duration
-		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
-	if Input.is_action_just_pressed("drop") and is_on_floor():
-		for index in get_slide_collision_count():
-			var collider := get_slide_collision(index).get_collider()
-			if collider is PhysicsBody2D and collider.get_collision_layer_value(9):
-				_drop_remaining = 0.18
-				set_collision_mask_value(9, false)
-				_coyote_remaining = 0.0
-				velocity.y = 160.0
-	if dash_remaining > 0.0:
-		# Blend the final partial tick so dash distance is independent of rounding.
-		var dash_step := minf(dash_remaining, delta)
-		velocity = Vector2(lerpf(tuning.run_speed, tuning.dash_speed, dash_step / delta), 0.0)
-		dash_remaining = maxf(dash_remaining - delta, 0.0)
-		state = State.DASH
-		move_and_slide()
-		if dash_remaining <= 0.0:
-			velocity.y = _dash_vertical_velocity
+
+	if on_rope:
+		_process_rope_input()
+		if on_rope:
+			_process_rope_motion(delta)
+		else:
+			_process_air_motion(delta)
 	else:
-		_consume_jump()
-		velocity.x = tuning.run_speed
-		velocity.y += tuning.gravity * delta
-		if Input.is_action_pressed("drop") and not is_on_floor():
-			velocity.y = maxf(velocity.y, 1000.0)
-		move_and_slide()
-		state = State.RUN if is_on_floor() else (State.JUMP if velocity.y < 0.0 else State.FALL)
+		_process_air_input()
+		if on_rope:
+			_process_rope_motion(delta)
+		else:
+			_process_air_motion(delta)
+
 	if global_position.y > 900.0:
-		fail("坠落到谷底")
+		fail("从钢索坠落")
 	queue_redraw()
 
-func _consume_jump() -> void:
-	if _buffer_remaining <= 0.0 or _drop_remaining > 0.0:
+func _update_timers(delta: float) -> void:
+	dash_remaining = maxf(dash_remaining - delta, 0.0)
+	dash_cooldown = maxf(dash_cooldown - delta, 0.0)
+	immunity_remaining = maxf(immunity_remaining - delta, 0.0)
+	rope_flip_lock_remaining = maxf(rope_flip_lock_remaining - delta, 0.0)
+	_coyote_remaining = maxf(_coyote_remaining - delta, 0.0)
+	_buffer_remaining = maxf(_buffer_remaining - delta, 0.0)
+
+func _process_rope_input() -> void:
+	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
+		dash_remaining = tuning.dash_duration
+		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
+		immunity_remaining = maxf(immunity_remaining, tuning.dash_duration)
+		state = State.DASH
 		return
-	if is_on_floor() or _coyote_remaining > 0.0:
-		velocity.y = tuning.jump_velocity
-		_coyote_remaining = 0.0
-	elif jumps_remaining > 0:
-		velocity.y = tuning.double_jump_velocity
-		jumps_remaining -= 1
+	if rope_flip_lock_remaining > 0.0:
+		return
+	if Input.is_action_just_pressed("drop"):
+		if rope_side == ROPE_TOP:
+			_switch_rope(ROPE_BOTTOM)
+		else:
+			_detach_from_rope(160.0)
+		return
+	var jump_pressed := Input.is_action_just_pressed("jump") or _buffer_remaining > 0.0
+	if jump_pressed:
+		_buffer_remaining = 0.0
+		if rope_side == ROPE_BOTTOM:
+			_switch_rope(ROPE_TOP)
+		else:
+			_detach_from_rope(tuning.jump_velocity)
+
+func _process_rope_motion(delta: float) -> void:
+	var speed := tuning.dash_speed if dash_remaining > 0.0 else tuning.run_speed
+	velocity = Vector2(speed, 0.0)
+	global_position.y = rope_y - float(rope_side) * rope_offset
+	move_and_slide()
+	if dash_remaining > 0.0:
+		state = State.DASH
 	else:
-		return
+		state = State.ROPE_TOP if rope_side == ROPE_TOP else State.ROPE_BOTTOM
+
+func _process_air_input() -> void:
+	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
+		dash_remaining = tuning.dash_duration
+		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
+		immunity_remaining = maxf(immunity_remaining, tuning.dash_duration)
+	if Input.is_action_just_pressed("jump"):
+		if _can_regrab_rope():
+			_attach_to_rope(ROPE_TOP)
+		elif jumps_remaining > 0:
+			velocity.y = tuning.double_jump_velocity
+			jumps_remaining -= 1
+	if Input.is_action_pressed("drop"):
+		velocity.y = maxf(velocity.y, 1000.0)
+
+func _process_air_motion(delta: float) -> void:
+	var speed := tuning.dash_speed if dash_remaining > 0.0 else tuning.run_speed
+	velocity.x = speed
+	velocity.y += tuning.gravity * delta
+	move_and_slide()
+	state = State.DASH if dash_remaining > 0.0 else (State.JUMP if velocity.y < 0.0 else State.FALL)
+	if velocity.y > 0.0 and absf(global_position.y - rope_y) <= 12.0 and _buffer_remaining > 0.0:
+		_buffer_remaining = 0.0
+		_attach_to_rope(ROPE_TOP)
+
+func _switch_rope(target_side: int) -> void:
+	rope_side = target_side
+	on_rope = true
+	rope_flip_lock_remaining = 0.10
+	velocity = Vector2.ZERO
+	_snap_to_rope()
+	rope_side_changed.emit(rope_side)
+
+func _detach_from_rope(initial_vertical_velocity: float) -> void:
+	on_rope = false
+	_coyote_remaining = tuning.coyote_time
 	_buffer_remaining = 0.0
+	jumps_remaining = 1
+	velocity = Vector2(tuning.run_speed, initial_vertical_velocity)
+	state = State.JUMP if initial_vertical_velocity < 0.0 else State.FALL
+
+func _attach_to_rope(target_side: int) -> void:
+	rope_side = target_side
+	on_rope = true
+	_buffer_remaining = 0.0
+	velocity = Vector2.ZERO
+	_snap_to_rope()
+	rope_side_changed.emit(rope_side)
+
+func _snap_to_rope() -> void:
+	global_position.y = rope_y - float(rope_side) * rope_offset
+	state = State.ROPE_TOP if rope_side == ROPE_TOP else State.ROPE_BOTTOM
+
+func _can_regrab_rope() -> bool:
+	return not on_rope and velocity.y > 0.0 and absf(global_position.y - rope_y) <= 42.0
 
 func collect_energy(_amount: int = 10) -> void:
 	if not active:
@@ -118,15 +188,24 @@ func stop() -> void:
 	velocity = Vector2.ZERO
 	queue_redraw()
 
+func get_state_name() -> String:
+	return State.keys()[state]
+
+func get_rope_side_name() -> String:
+	if not on_rope:
+		return "空中"
+	return "钢索上" if rope_side == ROPE_TOP else "钢索下"
+
 func _draw() -> void:
-	# Geometry is a physics/debug marker, not production artwork.
+	# Temporary geometry is only a control marker; final art follows the imagegen style guide.
 	var tint := Color("dde7e7")
 	if state == State.DASH:
 		tint = Color("d8b56a")
 	elif immunity_remaining > 0.0:
 		tint.a = 0.45 if fmod(immunity_remaining, 0.16) < 0.08 else 1.0
 	draw_style_box(_body_style(tint), Rect2(-18, -30, 36, 60))
-	draw_line(Vector2(-9, -16), Vector2(12, -16), Color("111827"), 3)
+	var direction := -1.0 if rope_side == ROPE_BOTTOM else 1.0
+	draw_line(Vector2(-9, 17.0 * direction), Vector2(13, 17.0 * direction), Color("111827"), 3)
 	if state == State.DASH:
 		draw_line(Vector2(-24, 0), Vector2(-90, 0), Color(0.85, 0.71, 0.42, 0.45), 7)
 
