@@ -26,15 +26,20 @@ var dash_remaining := 0.0
 var dash_cooldown := 0.0
 var immunity_remaining := 0.0
 var rope_flip_lock_remaining := 0.0
+var rope_flip_feedback_remaining := 0.0
+var rope_flip_feedback_side := ROPE_TOP
 var jumps_remaining := 1
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
+
+const ROPE_FLIP_FEEDBACK_DURATION := 0.24
 
 func _ready() -> void:
 	if tuning == null:
 		tuning = load("res://data/control_tuning.tres")
 	collision_layer = 2
 	collision_mask = 0
+	add_to_group("player")
 	health = tuning.max_health
 	_snap_to_rope()
 	queue_redraw()
@@ -69,6 +74,7 @@ func _update_timers(delta: float) -> void:
 	dash_cooldown = maxf(dash_cooldown - delta, 0.0)
 	immunity_remaining = maxf(immunity_remaining - delta, 0.0)
 	rope_flip_lock_remaining = maxf(rope_flip_lock_remaining - delta, 0.0)
+	rope_flip_feedback_remaining = maxf(rope_flip_feedback_remaining - delta, 0.0)
 	_coyote_remaining = maxf(_coyote_remaining - delta, 0.0)
 	_buffer_remaining = maxf(_buffer_remaining - delta, 0.0)
 
@@ -123,16 +129,22 @@ func _process_air_motion(delta: float) -> void:
 	var speed := tuning.dash_speed if dash_remaining > 0.0 else tuning.run_speed
 	velocity.x = speed
 	velocity.y += tuning.gravity * delta
+	var previous_y := global_position.y
 	move_and_slide()
 	state = State.DASH if dash_remaining > 0.0 else (State.JUMP if velocity.y < 0.0 else State.FALL)
-	if velocity.y > 0.0 and absf(global_position.y - rope_y) <= 12.0 and _buffer_remaining > 0.0:
-		_buffer_remaining = 0.0
+	var landing_y := rope_y - rope_offset
+	# Sweep the feet across the rope so a fast fall cannot skip the landing surface.
+	if velocity.y > 0.0 and previous_y <= landing_y and global_position.y >= landing_y:
+		_attach_to_rope(ROPE_TOP)
+	elif _can_regrab_rope() and _buffer_remaining > 0.0:
 		_attach_to_rope(ROPE_TOP)
 
 func _switch_rope(target_side: int) -> void:
 	rope_side = target_side
 	on_rope = true
 	rope_flip_lock_remaining = 0.10
+	rope_flip_feedback_remaining = ROPE_FLIP_FEEDBACK_DURATION
+	rope_flip_feedback_side = target_side
 	velocity = Vector2.ZERO
 	_snap_to_rope()
 	rope_side_changed.emit(rope_side)
@@ -149,6 +161,7 @@ func _attach_to_rope(target_side: int) -> void:
 	rope_side = target_side
 	on_rope = true
 	_buffer_remaining = 0.0
+	jumps_remaining = 1
 	velocity = Vector2.ZERO
 	_snap_to_rope()
 	rope_side_changed.emit(rope_side)
@@ -203,11 +216,21 @@ func _draw() -> void:
 		tint = Color("d8b56a")
 	elif immunity_remaining > 0.0:
 		tint.a = 0.45 if fmod(immunity_remaining, 0.16) < 0.08 else 1.0
+	var feedback_ratio := clampf(rope_flip_feedback_remaining / ROPE_FLIP_FEEDBACK_DURATION, 0.0, 1.0)
+	var squash := lerpf(1.0, 0.68, sin((1.0 - feedback_ratio) * PI))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, squash))
 	draw_style_box(_body_style(tint), Rect2(-18, -30, 36, 60))
 	var direction := -1.0 if rope_side == ROPE_BOTTOM else 1.0
 	draw_line(Vector2(-9, 17.0 * direction), Vector2(13, 17.0 * direction), Color("111827"), 3)
 	if state == State.DASH:
 		draw_line(Vector2(-24, 0), Vector2(-90, 0), Color(0.85, 0.71, 0.42, 0.45), 7)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	if feedback_ratio > 0.0:
+		var feedback_direction := -1.0 if rope_flip_feedback_side == ROPE_BOTTOM else 1.0
+		var feedback_alpha := 0.25 + feedback_ratio * 0.75
+		var feedback_color := Color(0.85, 0.71, 0.42, feedback_alpha)
+		draw_arc(Vector2(0, feedback_direction * 4.0), 38.0 + (1.0 - feedback_ratio) * 10.0, 0.1, PI - 0.1, 18, feedback_color, 4.0)
+		draw_line(Vector2(-26, feedback_direction * 25.0), Vector2(26, feedback_direction * 25.0), feedback_color, 3.0)
 
 func _body_style(tint: Color) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

@@ -9,10 +9,14 @@ const FINISH_X := 8500.0
 @onready var result_overlay: ColorRect = $UI/HUD/ResultOverlay
 @onready var result_title: Label = $UI/HUD/ResultOverlay/ResultTitle
 @onready var result_body: Label = $UI/HUD/ResultOverlay/ResultBody
+@onready var threat_text: Label = $UI/HUD/ThreatText
+@onready var progress_fill: ColorRect = $UI/HUD/ProgressBack/ProgressFill
+@onready var progress_label: Label = $UI/HUD/ProgressLabel
 
 var _elapsed_time := 0.0
 var _finished := false
 var _pickup_positions: Array[Vector2] = []
+var _hazards: Array[Hazard] = []
 var _finish_scene := preload("res://scripts/finish.gd")
 var _hazard_scene := preload("res://scripts/hazard.gd")
 var _pickup_scene := preload("res://scripts/pickup.gd")
@@ -43,7 +47,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_tree().paused = not get_tree().paused
 		if get_tree().paused:
 			result_title.text = "已暂停"
-			result_body.text = "按 Esc 继续\n按 R 重新开始"
+			result_body.text = "按 Esc 继续\n按 R / Enter 重新开始"
 			result_overlay.visible = true
 		else:
 			result_overlay.visible = false
@@ -55,7 +59,7 @@ func _ensure_input_map() -> void:
 	_add_key_action("attack", [KEY_J])
 	_add_key_action("skill", [KEY_K])
 	_add_key_action("pause", [KEY_ESCAPE])
-	_add_key_action("restart", [KEY_R])
+	_add_key_action("restart", [KEY_R, KEY_ENTER, KEY_KP_ENTER])
 
 func _add_key_action(action_name: StringName, keycodes: Array) -> void:
 	if not InputMap.has_action(action_name):
@@ -94,6 +98,7 @@ func _build_level() -> void:
 		_add_pickup(float(entry[0]), String(entry[1]))
 
 	var finish := _finish_scene.new()
+	finish.process_mode = Node.PROCESS_MODE_PAUSABLE
 	finish.position = Vector2(FINISH_X, ROPE_Y)
 	finish.reached.connect(_on_finish_reached)
 	add_child(finish)
@@ -101,14 +106,18 @@ func _build_level() -> void:
 func _add_hazard(x_position: float, cable_side: String, height: float) -> void:
 	var hazard := _hazard_scene.new()
 	hazard.position = Vector2(x_position, ROPE_Y)
+	hazard.process_mode = Node.PROCESS_MODE_PAUSABLE
 	hazard.cable_side = cable_side
 	hazard.hazard_size = Vector2(54.0, height)
 	add_child(hazard)
+	_hazards.append(hazard)
 
 func _add_pickup(x_position: float, cable_side: String) -> void:
 	var side := PlayerController.ROPE_TOP if cable_side == "top" else PlayerController.ROPE_BOTTOM
 	var pickup := _pickup_scene.new()
-	pickup.position = Vector2(x_position, ROPE_Y - float(side) * 94.0)
+	pickup.process_mode = Node.PROCESS_MODE_PAUSABLE
+	# Ordinary crystals follow the attached player's body on either side of the rope.
+	pickup.position = Vector2(x_position, player.rope_y - float(side) * player.rope_offset)
 	add_child(pickup)
 	_pickup_positions.append(pickup.position)
 
@@ -154,10 +163,33 @@ func _restart_run() -> void:
 func _update_status() -> void:
 	if not is_instance_valid(player) or player.tuning == null:
 		return
+	var progress := clampf(inverse_lerp(160.0, FINISH_X, player.global_position.x), 0.0, 1.0)
+	progress_fill.size.x = 320.0 * progress
+	progress_label.text = "终点进度  %d%%" % roundi(progress * 100.0)
 	status_text.text = "生命 %d / %d    影晶 %d    时间 %.1fs    位置：%s" % [
 		player.health, player.tuning.max_health, player.crystals, _elapsed_time, player.get_rope_side_name()
 	]
-	hint_text.text = "↑ / Space：上翻或跳离钢索 · ↓：下翻/松绳 · Shift：影步 · R：重来"
+	hint_text.text = "↑ / Space：上翻或跳离钢索 · ↓：下翻/松绳 · Shift：影步 · R / Enter：重来"
+	_update_threat_hint()
+
+func _update_threat_hint() -> void:
+	var nearest: Hazard
+	var nearest_distance := INF
+	for hazard in _hazards:
+		if not is_instance_valid(hazard):
+			continue
+		var distance := hazard.global_position.x - player.global_position.x
+		if distance >= -48.0 and distance < nearest_distance:
+			nearest = hazard
+			nearest_distance = distance
+	if nearest == null:
+		threat_text.text = "前方：安全段"
+		threat_text.modulate = Color("91a1ad")
+		return
+	var seconds := maxf(nearest_distance, 0.0) / maxf(player.tuning.run_speed, 1.0)
+	var side_text := "上侧" if nearest.cable_side == "top" else "下侧"
+	threat_text.text = "前方预警  %s机关 · %.1fs" % [side_text, seconds]
+	threat_text.modulate = Color("f08b68") if seconds <= 0.8 else Color("f0c36d")
 
 func _draw() -> void:
 	# Temporary code-drawn art keeps the control slice independent from final imagegen assets.
