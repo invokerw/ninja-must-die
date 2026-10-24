@@ -337,7 +337,7 @@ func _test_pause_stop_and_death() -> void:
 	player.free()
 
 func _test_authored_encounters() -> void:
-	for index in range(7):
+	for index in range(5):
 		var main := MAIN_SCENE.instantiate()
 		root.add_child(main)
 		var target: RopeSentry = main.level.enemies[index]

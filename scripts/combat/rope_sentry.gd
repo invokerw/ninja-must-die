@@ -12,6 +12,9 @@ var _warning_active := false
 var _phase := 0.0
 var _player: PlayerController
 
+func bind_player(player: PlayerController) -> void:
+	_player = player
+
 func _ready() -> void:
 	health = max_health
 	collision_layer = 4

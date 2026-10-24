@@ -35,7 +35,7 @@ func _test_data() -> void:
 	bad.segments[1].hazards[0].cable_side = "bottom"
 	_check(not bad.get_validation_errors().is_empty(), "Flip clearance must also be checked across section boundaries")
 	bad = LEVEL_DATA.duplicate(true) as RopeLevelData
-	bad.segments[1].enemies[0].offset_x = 1760.0
+	bad.segments[1].enemies[1].offset_x = 1280.0
 	_check(not bad.get_validation_errors().is_empty(), "Mixed enemy/hazard layouts must leave a valid flip window")
 	bad = LEVEL_DATA.duplicate(true) as RopeLevelData
 	bad.segments[1].enemies[0].offset_x = -1.0
@@ -51,7 +51,7 @@ func _test_full_route(with_actions: bool, with_combat: bool = false) -> void:
 	var player := main.get_node("Player") as PlayerController
 	var world := main.get_node("Level") as RopeLevelController
 	var combat := player.get_node("Combat") as RunnerCombat
-	_check(world.enemies.size() == 7, "The authored route must spawn exactly seven sentries")
+	_check(world.enemies.size() == 5 and world.shooters.size() == 2, "The route must contain five rope sentries and two separate screen sources")
 	var events: Array[Dictionary] = []
 	var start := LEVEL_DATA.start_x
 	for segment in LEVEL_DATA.segments:
@@ -78,6 +78,7 @@ func _test_full_route(with_actions: bool, with_combat: bool = false) -> void:
 	_sections = [0]
 	world.segment_changed.connect(_on_section_changed)
 	var index := 0
+	var ranged_shots := 0
 	for tick in range(4000):
 		if main._finished:
 			break
@@ -98,6 +99,10 @@ func _test_full_route(with_actions: bool, with_combat: bool = false) -> void:
 				_check(player.on_rope, "Scheduled flip must happen while attached")
 				await _tap(&"drop" if event.side == PlayerController.ROPE_BOTTOM else &"jump")
 		await _frames(1)
+		if not with_combat:
+			ranged_shots = 0
+			for shooter in world.shooters:
+				ranged_shots += shooter.shots_fired
 	_check(main._finished and main.result_title.text.contains("完成"), "Route replay must finish successfully")
 	_check(player.damage_count == 0, "Route must be traversable without taking damage")
 	_check(player.crystals == world.pickup_positions.size(), "A legal route must collect all crystals without releasing the rope")
@@ -109,6 +114,8 @@ func _test_full_route(with_actions: bool, with_combat: bool = false) -> void:
 	if with_combat:
 		_check(combat.skill_casts >= 2 and combat.kills >= 2, "Full route must support repeated cooldown-based skill casts and kills")
 		_check(main.run_result != null and main.run_result.kills == combat.kills and main.run_result.max_combo == combat.max_combo, "Results must preserve the run's real combat statistics")
+	else:
+		_check(ranged_shots == 6, "Both three-bullet volleys must really fire during the no-skill full route")
 	var route_name := ("triple jump/dash/skills" if with_actions else "cooldown/skills") if with_combat else ("base double jump/dash" if with_actions else "base flips")
 	print("ROUTE_REPLAY %s: %.2fs, %d/%d crystals, %d hits, %d kills" % [route_name, main._elapsed_time, player.crystals, world.pickup_positions.size(), player.damage_count, combat.kills])
 	paused = false
@@ -135,7 +142,7 @@ func _test_pause_and_reload() -> void:
 	main = current_scene
 	_check(main.player.crystals == 0 and main.level.active_segment == 0, "Reload must clear crystals and reset the section")
 	_check(main.level.hazards.size() == 29 and main.level.pickup_positions.size() == 50, "Reload must rebuild the exact authored layout")
-	_check(main.level.enemies.size() == 7 and main.combat.is_skill_ready() and main.combat.skill_casts == 0 and main.combat.kills == 0 and main.combat.combo == 0, "Reload must reset all combat state and rebuild enemies")
+	_check(main.level.enemies.size() == 5 and main.level.shooters.size() == 2 and main.combat.is_skill_ready() and main.combat.skill_casts == 0 and main.combat.kills == 0 and main.combat.combo == 0, "Reload must reset all combat state and rebuild enemies and screen sources")
 	_check(main.get_child_count() + main.level.get_child_count() == old_nodes, "Reload must not duplicate level nodes")
 	main.free()
 

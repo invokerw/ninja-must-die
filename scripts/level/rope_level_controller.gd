@@ -8,8 +8,11 @@ signal finish_reached
 
 var hazards: Array[Hazard] = []
 var enemies: Array[RopeSentry] = []
+var shooters: Array[ScreenShooter] = []
 var pickup_positions: Array[Vector2] = []
 var active_segment := -1
+var projectile_root: Node2D
+var source_root: CanvasLayer
 var _player: PlayerController
 
 func build(player: PlayerController) -> bool:
@@ -21,6 +24,13 @@ func build(player: PlayerController) -> bool:
 		push_error("\n".join(errors))
 		return false
 	_player = player
+	projectile_root = Node2D.new()
+	projectile_root.name = "Projectiles"
+	add_child(projectile_root)
+	source_root = CanvasLayer.new()
+	source_root.name = "RangedSources"
+	source_root.layer = 1
+	add_child(source_root)
 	player.rope_y = data.rope_y
 	player.global_position = Vector2(data.start_x, data.rope_y - player.rope_offset)
 	var camera := player.get_node("Camera2D") as Camera2D
@@ -44,12 +54,29 @@ func build(player: PlayerController) -> bool:
 			add_child(pickup)
 			pickup_positions.append(pickup.position)
 		for entry in segment.enemies:
+			if entry.enemy_type == "shooter":
+				var shooter := ScreenShooter.new()
+				shooter.trigger_x = segment_start + entry.offset_x
+				shooter.cable_side = entry.cable_side
+				shooter.windup_seconds = entry.windup_seconds
+				shooter.projectile_speed = entry.projectile_speed
+				shooter.screen_edge_offset = entry.screen_edge_offset
+				shooter.screen_height_ratio = entry.screen_height_ratio
+				shooter.fire_direction = entry.fire_direction
+				shooter.volley_count = entry.volley_count
+				shooter.volley_spacing = entry.volley_spacing
+				shooter.projectile_parent = projectile_root
+				shooter.bind_player(player)
+				source_root.add_child(shooter)
+				shooters.append(shooter)
+				continue
 			var side := PlayerController.ROPE_TOP if entry.cable_side == "top" else PlayerController.ROPE_BOTTOM
 			var enemy := RopeSentry.new()
 			enemy.position = Vector2(segment_start + entry.offset_x, data.rope_y - float(side) * player.rope_offset)
 			enemy.cable_side = entry.cable_side
 			enemy.max_health = entry.health
 			enemy.warning_distance = data.recommended_speed * data.warning_seconds
+			enemy.bind_player(player)
 			add_child(enemy)
 			enemies.append(enemy)
 		segment_start += segment.length_px

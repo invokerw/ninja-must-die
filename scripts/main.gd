@@ -162,34 +162,54 @@ func _update_status() -> void:
 	_update_threat_hint()
 
 func _update_threat_hint() -> void:
-	var nearest: Hazard
-	var nearest_distance := INF
+	var nearest_seconds := INF
+	var message := "前方：安全段"
+	var nearest_side := ""
+	var speed := player.tuning.dash_speed if player.dash_remaining > 0.0 else player.tuning.run_speed
 	for hazard in level.hazards:
 		if not is_instance_valid(hazard):
 			continue
 		var distance := hazard.global_position.x - player.global_position.x
-		if distance >= -48.0 and distance <= hazard.warning_distance and distance < nearest_distance:
-			nearest = hazard
-			nearest_distance = distance
-	var nearest_enemy: RopeSentry
+		if distance >= -48.0 and distance <= hazard.warning_distance:
+			var seconds := maxf(distance, 0.0) / maxf(speed, 1.0)
+			if seconds < nearest_seconds:
+				nearest_seconds = seconds
+				nearest_side = hazard.cable_side
+				var side := "上侧" if hazard.cable_side == "top" else "下侧"
+				message = "前方预警  %s机关 · %.1fs" % [side, seconds]
 	for enemy in level.enemies:
 		if not is_instance_valid(enemy) or not enemy.alive:
 			continue
 		var distance := enemy.global_position.x - player.global_position.x
-		if distance >= -36.0 and distance <= enemy.warning_distance and distance < nearest_distance:
-			nearest_enemy = enemy
-			nearest_distance = distance
-	if nearest_enemy != null:
-		var side := "上侧" if nearest_enemy.cable_side == "top" else "下侧"
-		threat_text.text = "%s哨兵 · 翻绳躲避 / K 月蚀斩" % side
-		threat_text.modulate = Color("f0c36d")
-		return
-	if nearest == null:
-		threat_text.text = "前方：安全段"
-		threat_text.modulate = Color("91a1ad")
-		return
-	var speed := player.tuning.dash_speed if player.dash_remaining > 0.0 else player.tuning.run_speed
-	var seconds := maxf(nearest_distance, 0.0) / maxf(speed, 1.0)
-	var side_text := "上侧" if nearest.cable_side == "top" else "下侧"
-	threat_text.text = "前方预警  %s机关 · %.1fs" % [side_text, seconds]
-	threat_text.modulate = Color("f08b68") if seconds <= 0.8 else Color("f0c36d")
+		if distance < -36.0 or distance > enemy.warning_distance:
+			continue
+		var seconds := maxf(distance, 0.0) / maxf(speed, 1.0)
+		var side := "上侧" if enemy.cable_side == "top" else "下侧"
+		var enemy_message := "%s哨兵 · 翻绳躲避 / K 月蚀斩" % side
+		if seconds < nearest_seconds:
+			nearest_seconds = seconds
+			nearest_side = enemy.cable_side
+			message = enemy_message
+	for shooter in level.shooters:
+		if shooter.attack_state != ScreenShooter.AttackState.WINDUP:
+			continue
+		var seconds := shooter.windup_remaining + shooter.get_flight_seconds()
+		if seconds < nearest_seconds or (shooter.cable_side == nearest_side and seconds <= nearest_seconds + 0.7):
+			nearest_seconds = minf(nearest_seconds, seconds)
+			nearest_side = shooter.cable_side
+			message = "右侧齐射 · %d 枚 · 蓄力 %.1fs" % [shooter.volley_count, shooter.windup_remaining]
+	if is_instance_valid(level.projectile_root):
+		for projectile: EnemyProjectile in level.projectile_root.get_children():
+			var distance := projectile.global_position.x - player.global_position.x
+			if projectile.spent or distance < -26.0:
+				continue
+			var seconds := maxf(distance, 0.0) / maxf(speed - projectile.velocity.x, 1.0)
+			var cable_side := projectile.cable_side
+			if cable_side.is_empty():
+				cable_side = "top" if projectile.global_position.y < player.rope_y else "bottom"
+			if seconds < nearest_seconds or (cable_side == nearest_side and seconds <= nearest_seconds + 0.25):
+				nearest_seconds = minf(nearest_seconds, seconds)
+				nearest_side = cable_side
+				message = "平行飞弹 · %.1fs · 留意间隙" % seconds
+	threat_text.text = message
+	threat_text.modulate = Color("91a1ad") if nearest_seconds == INF else (Color("f08b68") if nearest_seconds <= 0.8 else Color("f0c36d"))

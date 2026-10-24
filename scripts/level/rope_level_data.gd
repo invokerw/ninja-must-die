@@ -73,9 +73,17 @@ func get_validation_errors(player_half_width: float = 18.0) -> PackedStringArray
 			if enemy == null:
 				errors.append("敌人资源不能为空")
 				continue
+			var enemy_errors := enemy.get_validation_errors(recommended_speed)
+			for error in enemy_errors:
+				errors.append("%s：%s" % [segment.title, error])
 			if not _valid_placement(enemy.offset_x, enemy.cable_side, segment.length_px) or enemy.health <= 0:
 				errors.append("%s：敌人位置、侧别或生命值无效" % segment.title)
-			threats.append({"x": segment_start + enemy.offset_x, "side": enemy.cable_side, "width": 36.0})
+			if enemy.enemy_type == "sentry":
+				threats.append({"x": segment_start + enemy.offset_x, "side": enemy.cable_side, "width": 36.0})
+			if enemy.enemy_type == "shooter" and enemy_errors.is_empty() and recommended_speed > 0.0:
+				for threat in enemy.get_projectile_threats(recommended_speed, rope_y):
+					var contact_x: float = segment_start + enemy.offset_x + threat.offset
+					threats.append({"x": contact_x, "side": threat.side, "width": 52.0})
 		segment_start += segment.length_px
 	threats.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.x < b.x)
 	for index in range(1, threats.size()):

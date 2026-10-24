@@ -35,6 +35,7 @@ var rope_flip_feedback_side := ROPE_TOP
 var jumps_remaining := 0
 var max_jump_count := 2
 var configuration_errors := PackedStringArray()
+var previous_physics_position := Vector2.ZERO
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
 
@@ -58,12 +59,14 @@ func _ready() -> void:
 	add_to_group("player")
 	health = tuning.max_health
 	_snap_to_rope()
+	previous_physics_position = global_position
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
 	if not active:
 		return
 
+	previous_physics_position = global_position
 	_update_timers(delta)
 	physics_tick.emit(delta)
 	if Input.is_action_just_pressed("jump"):

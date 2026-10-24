@@ -158,8 +158,11 @@ cable_side = "bottom"
 
 [sub_resource type="Resource" id="Enemy_alternating_1"]
 script = ExtResource("5_enemy")
-offset_x = 1360.0
+offset_x = 720.0
 cable_side = "bottom"
+enemy_type = "shooter"
+screen_height_ratio = 0.8
+fire_direction = Vector2(-1, -0.04)
 
 [sub_resource type="Resource" id="Enemy_alternating_2"]
 script = ExtResource("5_enemy")
@@ -174,7 +177,7 @@ cable_side = "bottom"
 script = ExtResource("2_nnwyy")
 segment_id = &"alternating"
 title = "上下交替"
-hint = "朱砂翼形是哨兵：翻绳避开，或按 K 月蚀斩；释放后无敌 2 秒。"
+hint = "右侧会并排齐射：金线预告固定弹道，留意弹道间隙；影步和 K 可保护通过。"
 length_px = 4800.0
 enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_alternating_1"), SubResource("Enemy_alternating_2"), SubResource("Enemy_alternating_3")])
 hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_ayx54"), SubResource("Resource_r53xj"), SubResource("Resource_nn78f"), SubResource("Resource_jofsn"), SubResource("Resource_f2dp8"), SubResource("Resource_54nam"), SubResource("Resource_uqwcp")])
@@ -340,7 +343,8 @@ cable_side = "bottom"
 
 [sub_resource type="Resource" id="Enemy_combinations_2"]
 script = ExtResource("5_enemy")
-offset_x = 2320.0
+offset_x = 1680.0
+enemy_type = "shooter"
 
 [sub_resource type="Resource" id="Enemy_combinations_3"]
 script = ExtResource("5_enemy")

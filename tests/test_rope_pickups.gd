@@ -17,6 +17,9 @@ func _run() -> void:
 	for enemy in world.enemies:
 		enemy.free()
 	world.enemies.clear()
+	for shooter in world.shooters:
+		shooter.free()
+	world.shooters.clear()
 	var pickups: Array[CrystalPickup] = []
 	for child in world.get_children():
 		if child is CrystalPickup:
