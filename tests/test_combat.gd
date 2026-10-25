@@ -12,6 +12,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var profile_scope := TestProfileScope.new("combat")
 	_test_character_data()
 	await _test_skill_range_and_damage()
 	await _test_lower_and_airborne_skill()
@@ -26,6 +27,7 @@ func _run() -> void:
 	_test_results()
 	if _failures == 0:
 		print("COMBAT_PASS (character data, cooldown, same-tick immunity, range/damage, 2/3 jumps, pause/stop, encounters, results)")
+	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
 func _test_character_data() -> void:

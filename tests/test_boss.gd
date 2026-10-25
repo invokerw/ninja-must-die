@@ -9,6 +9,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var profile_scope := TestProfileScope.new("boss")
 	_test_data()
 	await _test_entry_and_pause()
 	await _test_practice_entry()
@@ -21,6 +22,7 @@ func _run() -> void:
 	await _test_long_chase()
 	if _failures == 0:
 		print("BOSS_PASS (entry, 3 readable attacks, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)")
+	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
 func _test_data() -> void:

@@ -11,6 +11,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var profile_scope := TestProfileScope.new("level_route")
 	_test_data()
 	await _test_full_route(false)
 	await _test_full_route(true)
@@ -22,6 +23,7 @@ func _run() -> void:
 	await _test_finish_below_rope()
 	if _failures == 0:
 		print("LEVEL_ROUTE_PASS (data validation, 4 practice runs, 2 boss clears, pause/reload, lower finish)")
+	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
 func _test_data() -> void:

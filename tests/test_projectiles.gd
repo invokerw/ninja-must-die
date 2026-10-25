@@ -11,6 +11,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var profile_scope := TestProfileScope.new("projectiles")
 	_test_data()
 	await _test_screen_anchor()
 	await _test_fixed_direction_and_formation()
@@ -25,6 +26,7 @@ func _run() -> void:
 	await _test_level_lifecycle()
 	if _failures == 0:
 		print("PROJECTILES_PASS (screen anchor, fixed direction, parallel volleys/gaps, full flight, single contact, protection, swept hits, pause/reload/finish)")
+	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
 func _test_data() -> void:

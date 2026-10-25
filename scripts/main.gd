@@ -41,6 +41,9 @@ var weapon_fill: ColorRect
 var character_details: PanelContainer
 var _details_was_paused := false
 var _transitioning := false
+var _completion_recorded := false
+var save_status: Label
+var save_retry: Button
 
 func _enter_tree() -> void:
 	add_to_group("run_sessions")
@@ -96,9 +99,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		feedback_menu.visible = not feedback_menu.visible
 		return
 	if event.is_action_pressed("mute"):
-		FeedbackSettings.sound_enabled = not FeedbackSettings.sound_enabled
-		_sync_feedback_controls()
-		feedback.apply_settings()
+		_on_feedback_setting(not FeedbackSettings.sound_enabled, "sound")
 		return
 	if event.is_action_pressed("restart"):
 		_restart_run()
@@ -134,51 +135,22 @@ func _setup_feedback_controls() -> void:
 	button.size = Vector2(100.0, 32.0)
 	button.focus_mode = Control.FOCUS_NONE
 	$UI/HUD.add_child(button)
-	feedback_menu = PanelContainer.new()
+	var panel := FeedbackSettingsPanel.new()
+	panel.profile = PlayerProfile.current()
+	panel.feedback = feedback
+	feedback_menu = panel
 	feedback_menu.position = Vector2(900.0, 404.0)
-	feedback_menu.custom_minimum_size = Vector2(336.0, 220.0)
 	feedback_menu.hide()
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color("111827")
-	style.border_color = Color("d8b56a")
-	style.set_border_width_all(2)
-	style.content_margin_left = 16.0
-	style.content_margin_right = 16.0
-	style.content_margin_top = 12.0
-	style.content_margin_bottom = 12.0
-	feedback_menu.add_theme_stylebox_override("panel", style)
 	$UI/HUD.add_child(feedback_menu)
+	_feedback_checks = panel.checks
 	button.pressed.connect(func() -> void: feedback_menu.visible = not feedback_menu.visible)
-	var box := VBoxContainer.new()
-	feedback_menu.add_child(box)
-	var title := Label.new()
-	title.text = "体验反馈"
-	title.add_theme_color_override("font_color", Color("d8b56a"))
-	title.add_theme_font_size_override("font_size", 20)
-	box.add_child(title)
-	for entry in [["sound", "音效（M 静音）"], ["particles", "粒子"], ["shake", "画面震动"], ["flash", "冲击闪光"]]:
-		var check := CheckButton.new()
-		check.text = entry[1]
-		check.focus_mode = Control.FOCUS_NONE
-		check.add_theme_font_size_override("font_size", 18)
-		box.add_child(check)
-		_feedback_checks[entry[0]] = check
-		check.toggled.connect(_on_feedback_setting.bind(entry[0]))
 	_sync_feedback_controls()
 
 func _on_feedback_setting(enabled: bool, setting: String) -> void:
-	match setting:
-		"sound": FeedbackSettings.sound_enabled = enabled
-		"particles": FeedbackSettings.particles_enabled = enabled
-		"shake": FeedbackSettings.shake_enabled = enabled
-		"flash": FeedbackSettings.flash_enabled = enabled
-	feedback.apply_settings()
+	(feedback_menu as FeedbackSettingsPanel).set_setting(enabled, setting)
 
 func _sync_feedback_controls() -> void:
-	_feedback_checks["sound"].set_pressed_no_signal(FeedbackSettings.sound_enabled)
-	_feedback_checks["particles"].set_pressed_no_signal(FeedbackSettings.particles_enabled)
-	_feedback_checks["shake"].set_pressed_no_signal(FeedbackSettings.shake_enabled)
-	_feedback_checks["flash"].set_pressed_no_signal(FeedbackSettings.flash_enabled)
+	(feedback_menu as FeedbackSettingsPanel).sync_settings()
 
 func _add_key_action(action_name: StringName, keycodes: Array) -> void:
 	if not InputMap.has_action(action_name):
@@ -238,7 +210,16 @@ func _on_finish_reached() -> void:
 	if boss_practice:
 		body = "首领：%s · 已击破\n用时 %.1f 秒    受击 %d 次\n练习完成，可重试熟悉其他躲法" % [level.boss.data.display_name, run_result.time_seconds, run_result.damage_count]
 		body += "\n%s · 武器 %d / 忍术 %d / 飞镖 %d" % [run_loadout.weapon.display_name, combat.damage_by_source[&"weapon"], combat.damage_by_source[&"skill"], combat.damage_by_source[&"pickup"]]
+	if not _completion_recorded:
+		_completion_recorded = true
+		PlayerProfile.current().record_completion(level.data.level_id, get_run_mode(), run_result)
 	_show_result("%s · 完成" % ("首领练习" if boss_practice else level.data.title), body)
+	_update_save_status()
+
+func get_run_mode() -> StringName:
+	if start_at_boss:
+		return &"boss_practice"
+	return &"full" if level.boss_data != null else &"parkour_practice"
 
 func _calculate_result() -> RunResult:
 	return RunResult.calculate(_elapsed_time, level.get_nominal_seconds(), player.damage_count, player.crystals, level.pickup_positions.size(), combat.kills, combat.max_combo)
@@ -349,9 +330,21 @@ func _setup_equipment_controls() -> void:
 	result_title.size = Vector2(576, 50)
 	result_body.position = Vector2(32, 84)
 	result_body.size = Vector2(576, 220)
+	save_status = _hud_label(result_overlay, Rect2(32, 304, 400, 23), 15)
+	save_retry = _hud_button(result_overlay, "重试保存", Rect2(440, 294, 168, 30), PlayerProfile.current().save_profile)
+	save_retry.hide()
+	PlayerProfile.current().save_status_changed.connect(_update_save_status)
 	$UI/HUD/ResultOverlay/RetryHint.hide()
 	_hud_button(result_overlay, "重试 R / Enter", Rect2(32, 330, 272, 44), _restart_run)
 	_hud_button(result_overlay, "角色与武器", Rect2(328, 330, 280, 44), _return_to_setup)
+	_update_save_status()
+
+func _update_save_status() -> void:
+	if not is_instance_valid(save_status):
+		return
+	var profile := PlayerProfile.current()
+	save_status.text = "暂未保存，可重试" if profile.save_pending else ("成绩已保存" if _completion_recorded else "")
+	save_retry.visible = profile.save_pending
 
 func _toggle_character_details() -> void:
 	if not is_instance_valid(character_details):

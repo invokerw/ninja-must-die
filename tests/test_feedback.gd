@@ -8,6 +8,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var profile_scope := TestProfileScope.new("feedback")
 	_reset_settings()
 	_test_assets()
 	await _test_real_actions()
@@ -19,6 +20,7 @@ func _run() -> void:
 	_reset_settings()
 	if _failures == 0:
 		print("FEEDBACK_PASS (PCM assets, action cues, readable warnings, particles/voice bounds, render-only impact, independent toggles, pause/result/reload)")
+	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
 func _reset_settings() -> void:

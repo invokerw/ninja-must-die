@@ -11,6 +11,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var profile_scope := TestProfileScope.new("rope_landing")
 	await _test_jump_lands()
 	await _test_double_jump_lands()
 	await _test_held_jump_lands_once()
@@ -21,6 +22,7 @@ func _run() -> void:
 	await _test_flip_and_stay_attached()
 	if _failures == 0:
 		print("ROPE_LANDING_PASS (8 scenarios)")
+	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
 func _make_player() -> PlayerController:

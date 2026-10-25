@@ -4,13 +4,12 @@ const BOSS_SCENE := preload("res://scenes/boss_practice.tscn")
 const CHARACTER := preload("res://data/characters/shadow_runner.tres")
 const PROFILE_PATH := "res://.godot/test-weapon-profile.json"
 var _failures := 0
-var _previous_profile: PlayerProfile
 
 func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
-	_previous_profile = PlayerProfile.current()
+	var profile_scope := TestProfileScope.new("weapons")
 	PlayerProfile._shared = PlayerProfile.new(PROFILE_PATH)
 	_test_data_and_profile()
 	await _test_setup_and_retry()
@@ -24,8 +23,10 @@ func _run() -> void:
 	await _replay(&"crescent_wheel", true, false, false)
 	await _replay(&"crescent_wheel", false, true, false)
 	await _replay(&"crescent_wheel", true, false, true)
-	PlayerProfile._shared = _previous_profile
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(PROFILE_PATH))
+	profile_scope.close()
+	for suffix in ["", ".bak", ".tmp", ".bak.tmp", ".corrupt"]:
+		if FileAccess.file_exists(PROFILE_PATH + suffix):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(PROFILE_PATH + suffix))
 	if _failures == 0:
 		print("WEAPONS_PASS (character equipment, save/reload, setup/retry, 2 weapons, real flight/impact, pickups, pause/cancel, 3 kill sources, loadout replays)")
 	quit(0 if _failures == 0 else 1)

@@ -8,6 +8,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	var profile_scope := TestProfileScope.new("rope_pickups")
 	var level := LEVEL_SCENE.instantiate()
 	root.add_child(level)
 	var player := level.get_node("Player") as PlayerController
@@ -51,6 +52,7 @@ func _run() -> void:
 	level.free()
 	if _failures == 0:
 		print("ROPE_PICKUPS_PASS (%d top, %d bottom; correct and opposite sides)" % [tested_top, tested_bottom])
+	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
 func _set_side(player: PlayerController, side: int) -> void:

@@ -2,6 +2,8 @@ class_name PlayerProfile
 extends RefCounted
 
 signal equipment_changed(character_id: StringName, weapon_id: StringName)
+signal save_status_changed
+signal settings_changed
 
 const STARTER_WEAPONS: Array[StringName] = [&"crescent_wheel", &"star_lance"]
 const CHARACTERS := {&"shadow_runner": preload("res://data/characters/shadow_runner.tres")}
@@ -17,28 +19,39 @@ var character_loadouts: Dictionary = {}
 var save_path := "user://save.json"
 var last_error := ""
 var save_pending := false
+var load_notice := ""
+var history := RunHistory.new()
+var feedback_settings := FeedbackSettings.defaults()
 var _document: Dictionary = {}
 
 static func current() -> PlayerProfile:
 	if _shared == null:
 		_shared = PlayerProfile.new()
 		_shared.load_profile()
+		FeedbackSettings.apply(_shared.feedback_settings)
 	return _shared
 
 func _init(path: String = "user://save.json") -> void:
 	save_path = path
 
 func load_profile() -> void:
-	_document = {}
+	var loaded := ProfileStore.read(save_path)
+	_document = loaded.document
+	load_notice = loaded.notice
 	save_pending = false
 	last_error = ""
 	selected_character_id = &"shadow_runner"
 	owned_weapon_ids = STARTER_WEAPONS.duplicate()
 	character_loadouts.clear()
-	if FileAccess.file_exists(save_path):
-		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(save_path))
-		if parsed is Dictionary:
-			_document = parsed.duplicate(true)
+	history.load_records(_document.get("run_records", {}))
+	feedback_settings = FeedbackSettings.defaults()
+	var settings: Variant = _document.get("settings", {})
+	if settings is Dictionary:
+		for key in feedback_settings:
+			if settings.get(key, null) is bool:
+				feedback_settings[key] = settings[key]
+	if ProfileStore.is_newer(_document):
+		load_notice = "存档来自较新版本，本次更改仅在本次运行中生效。"
 	var owned: Variant = _document.get("owned_weapon_ids", null)
 	if owned is Array:
 		owned_weapon_ids.clear()
@@ -55,7 +68,11 @@ func load_profile() -> void:
 	if selected is String and CHARACTERS.has(StringName(selected)):
 		selected_character_id = StringName(selected)
 	for data: CharacterData in CHARACTERS.values():
-		character_loadouts[String(data.character_id)] = {"weapon_id": String(get_equipped_weapon(data).weapon_id)}
+		var record: Variant = character_loadouts.get(String(data.character_id), {})
+		if not record is Dictionary:
+			record = {}
+		record["weapon_id"] = String(get_equipped_weapon(data).weapon_id)
+		character_loadouts[String(data.character_id)] = record
 
 func get_equipped_weapon(character: CharacterData) -> WeaponData:
 	var entry: Variant = character_loadouts.get(String(character.character_id), {})
@@ -98,10 +115,14 @@ func try_equip(character: CharacterData, weapon_id: StringName) -> bool:
 	if character == null or not CHARACTERS.has(character.character_id) or weapon == null or not owned_weapon_ids.has(weapon_id) or not weapon.allows(character.character_id) or not weapon.get_validation_errors().is_empty():
 		last_error = "当前角色无法装备这把武器。"
 		return false
-	var record := CharacterLoadout.new(character.character_id, weapon_id)
-	character_loadouts[String(record.character_id)] = {"weapon_id": String(record.weapon_id)}
+	var loadout := CharacterLoadout.new(character.character_id, weapon_id)
+	var record: Variant = character_loadouts.get(String(loadout.character_id), {})
+	if not record is Dictionary:
+		record = {}
+	record["weapon_id"] = String(loadout.weapon_id)
+	character_loadouts[String(loadout.character_id)] = record
 	save_pending = true
-	equipment_changed.emit(record.character_id, record.weapon_id)
+	equipment_changed.emit(loadout.character_id, loadout.weapon_id)
 	return true
 
 func resolve(character: CharacterData = null) -> RunLoadout:
@@ -111,27 +132,43 @@ func resolve(character: CharacterData = null) -> RunLoadout:
 
 func save_profile() -> bool:
 	last_error = ""
-	var version: Variant = _document.get("version", 1)
-	if (version is int or version is float) and float(version) > 1.0:
-		last_error = "本次已更换，存档版本较新，暂未保存。"
+	if ProfileStore.is_newer(_document):
+		last_error = "存档版本较新，本次更改暂未保存。"
+		save_status_changed.emit()
 		return false
 	var document := _document.duplicate(true)
 	document["version"] = 1
 	document["selected_character_id"] = String(selected_character_id)
 	document["owned_weapon_ids"] = owned_weapon_ids.map(func(id: StringName) -> String: return String(id))
 	document["character_loadouts"] = character_loadouts.duplicate(true)
-	var temporary := save_path + ".tmp"
-	var file := FileAccess.open(temporary, FileAccess.WRITE)
-	if file == null:
-		last_error = "本次已更换，暂未保存。"
-		return false
-	file.store_string(JSON.stringify(document, "\t"))
-	file.flush()
-	var write_error := file.get_error()
-	file.close()
-	if write_error != OK or DirAccess.rename_absolute(ProjectSettings.globalize_path(temporary), ProjectSettings.globalize_path(save_path)) != OK:
-		last_error = "本次已更换，暂未保存。"
+	document["run_records"] = history.to_dictionary()
+	var settings: Variant = document.get("settings", {})
+	if not settings is Dictionary:
+		settings = {}
+	for key in feedback_settings:
+		settings[key] = feedback_settings[key]
+	document["settings"] = settings
+	if not ProfileStore.write(save_path, document):
+		last_error = "本次更改已生效，暂未保存。"
+		save_status_changed.emit()
 		return false
 	_document = document
 	save_pending = false
+	load_notice = ""
+	save_status_changed.emit()
 	return true
+
+func set_feedback_setting(key: String, enabled: bool) -> bool:
+	if not feedback_settings.has(key):
+		return false
+	feedback_settings[key] = enabled
+	FeedbackSettings.apply(feedback_settings)
+	save_pending = true
+	settings_changed.emit()
+	return save_profile()
+
+func record_completion(level_id: StringName, mode: StringName, result: RunResult) -> bool:
+	if not history.record_completion(level_id, mode, result):
+		return false
+	save_pending = true
+	return save_profile()
