@@ -27,6 +27,8 @@ macOS 可使用以下路径（下文原有测试命令沿用此写法）：
 /Applications/Godot_mono.app/Contents/MacOS/Godot --path .
 ```
 
+Android / Windows 自动打包已配置为推送 tag、发布 Release 或手动运行触发。tag 产物在 Actions artifact 下载，Release 产物自动附加到该 Release；Android 未配置签名密钥时输出调试 APK，配置三项 Secrets 后输出正式签名 APK。使用步骤见 [打包与发布](docs/BUILD_RELEASE.md)。
+
 ## 操作
 
 - `Space` / `W` / `↑`：钢索下翻回上方；钢索上跳离钢索；空中追加跳跃（影刃最多三段）或重新抓绳
