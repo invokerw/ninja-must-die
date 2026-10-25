@@ -2,6 +2,8 @@
 
 当前主场景的 `Level` 节点读取 `fog_ridge_60s.tres`。该资源使用 Godot 自定义 `Resource`，可在检查器中直接展开修改；`main.gd` 不再保存机关或影晶坐标。
 
+默认主场景同时配置 `Boss Data=res://data/enemies/bridge_kite.tres`，在这条 60 秒路线之后进入约 30 秒首领追逐战。`scenes/practice.tscn` 将 `Boss Data` 设为空，保留原终点；`scenes/boss_practice.tscn` 直接进入首领。首领参数、攻击窗口与评级说明见 [小型首领](../../docs/BOSS_ENCOUNTER.md)。
+
 ## 当前路线
 
 按 320 px/s 基础跑速计算，不使用影步约 60 秒。起点 X=160，终点 X=19360，总长度 19200 px。
@@ -43,7 +45,7 @@
 /Applications/Godot_mono.app/Contents/MacOS/Godot --headless --path . --log-file /tmp/ninja-level-route.log --fixed-fps 60 --script res://tests/test_level_route.gd
 ```
 
-测试包括数据检查和四条无伤全收集路线：基础纯翻绳、基础二段跳 / 影步、冷却月蚀斩、三段跳 / 快速落绳 / 影步 / 技能；另检查分段提示顺序、暂停、重开和下侧终点。预期输出 `LEVEL_ROUTE_PASS`。5 处普通哨兵的技能命中另由 `tests/test_combat.gd` 回放。
+测试包括数据检查和四条跑酷练习无伤全收集路线：基础纯翻绳、基础二段跳 / 影步、冷却月蚀斩、三段跳 / 快速落绳 / 影步 / 技能；另回放两条包含真实首领击破的完整流程，检查分段提示顺序、暂停、重开和下侧终点。预期输出 `LEVEL_ROUTE_PASS`。5 处普通哨兵的技能命中另由 `tests/test_combat.gd` 回放，首领专项由 `tests/test_boss.gd` 验证。
 
 投射物的固定方向、并排齐射、间隙躲避、完整飞行、单次接触、预警、无敌、高速碰撞与生命周期由 `tests/test_projectiles.gd` 验证，预期输出 `PROJECTILES_PASS`。完整规则见 [投射物与远程威胁](../../docs/RANGED_THREATS.md)。
 

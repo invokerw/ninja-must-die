@@ -1,6 +1,6 @@
 extends SceneTree
 
-const LEVEL_SCENE := preload("res://scenes/main.tscn")
+const LEVEL_SCENE := preload("res://scenes/practice.tscn")
 
 var _failures := 0
 

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BossEncounterData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/level/boss_encounter_data.gd" id="1_boss"]
+[ext_resource type="Script" path="res://scripts/level/rope_enemy_data.gd" id="2_volley"]
+
+[sub_resource type="Resource" id="Volleys_parallel"]
+script = ExtResource("2_volley")
+enemy_type = "shooter"
+cable_side = "bottom"
+windup_seconds = 1.2
+screen_height_ratio = 0.75
+fire_direction = Vector2(-1, 0)
+
+[resource]
+script = ExtResource("1_boss")
+volley = SubResource("Volleys_parallel")

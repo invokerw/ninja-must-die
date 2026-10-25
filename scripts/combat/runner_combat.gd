@@ -75,14 +75,17 @@ func _strike() -> void:
 	query.collide_with_areas = true
 	query.collide_with_bodies = false
 	for result in get_world_2d().direct_space_state.intersect_shape(query, 64):
-		var target := result.collider as RopeSentry
-		if target == null or _hit_ids.has(target.get_instance_id()):
+		var target := result.collider as Area2D
+		if not (target is RopeSentry or target is RopeBoss) or _hit_ids.has(target.get_instance_id()):
 			continue
 		_hit_ids[target.get_instance_id()] = true
+		var health_before: int = target.health
 		if target.take_hit(skill.damage):
 			kills += 1
 			_add_combo()
-			_set_feedback("月蚀斩 · 击破哨兵")
+			_set_feedback("月蚀斩 · 首领击破" if target is RopeBoss else "月蚀斩 · 击破哨兵")
+		elif target is RopeBoss:
+			_set_feedback("月蚀斩 · 命中弱点" if target.health < health_before else "护甲未破 · 收招时再用 K")
 
 func _cancel_skill() -> void:
 	_skill_pending = false

@@ -2,6 +2,7 @@ class_name FinishGate
 extends Area2D
 
 signal reached
+var is_boss_entrance := false
 var _triggered := false
 
 func _ready() -> void:
@@ -21,5 +22,6 @@ func _on_body_entered(body: Node2D) -> void:
 	reached.emit()
 
 func _draw() -> void:
-	draw_rect(Rect2(-28, -220, 56, 440), Color(0.85, 0.71, 0.42, 0.12))
-	draw_rect(Rect2(-28, -220, 56, 440), Color("d8b56a"), false, 3)
+	var tint := Color("b24b4b") if is_boss_entrance else Color("d8b56a")
+	draw_rect(Rect2(-28, -220, 56, 440), Color(tint, 0.12))
+	draw_rect(Rect2(-28, -220, 56, 440), tint, false, 3)

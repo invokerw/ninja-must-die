@@ -3,8 +3,10 @@ extends Node2D
 
 signal segment_changed(index: int, segment: RopeSegmentData)
 signal finish_reached
+signal boss_started(boss: RopeBoss)
 
 @export var data: RopeLevelData = preload("res://data/levels/fog_ridge_60s.tres")
+@export var boss_data: BossEncounterData
 
 var hazards: Array[Hazard] = []
 var enemies: Array[RopeSentry] = []
@@ -13,13 +15,17 @@ var pickup_positions: Array[Vector2] = []
 var active_segment := -1
 var projectile_root: Node2D
 var source_root: CanvasLayer
+var boss: RopeBoss
 var _player: PlayerController
+var _background_end := 0.0
 
 func build(player: PlayerController) -> bool:
 	if data == null:
 		push_error("缺少关卡资源")
 		return false
 	var errors := data.get_validation_errors()
+	if boss_data != null:
+		errors.append_array(boss_data.get_validation_errors(player.tuning.run_speed))
 	if not errors.is_empty():
 		push_error("\n".join(errors))
 		return false
@@ -82,8 +88,10 @@ func build(player: PlayerController) -> bool:
 		segment_start += segment.length_px
 	var finish := FinishGate.new()
 	finish.position = Vector2(data.get_finish_x(), data.rope_y)
-	finish.reached.connect(func() -> void: finish_reached.emit())
+	finish.is_boss_entrance = boss_data != null
+	finish.reached.connect(_on_route_end)
 	add_child(finish)
+	_background_end = data.get_finish_x() + 1000.0
 	_update_segment()
 	queue_redraw()
 	return true
@@ -91,6 +99,40 @@ func build(player: PlayerController) -> bool:
 func _process(_delta: float) -> void:
 	if is_instance_valid(_player) and _player.active:
 		_update_segment()
+		if is_instance_valid(boss) and _player.global_position.x + 1800.0 > _background_end:
+			_background_end = _player.global_position.x + 4000.0
+			queue_redraw()
+
+func get_nominal_seconds() -> float:
+	return data.get_nominal_seconds() + (boss_data.nominal_seconds if boss_data != null else 0.0)
+
+func _on_route_end() -> void:
+	if boss_data == null:
+		finish_reached.emit()
+		return
+	_begin_boss.call_deferred()
+
+func _begin_boss() -> void:
+	if is_instance_valid(boss) or not _player.active:
+		return
+	clear_projectiles()
+	for shooter in shooters:
+		shooter.cancel()
+	# The chase continues past the authored route, without pinning the runner to a wall.
+	(_player.get_node("Camera2D") as Camera2D).limit_right = 2000000000
+	boss = RopeBoss.new()
+	boss.data = boss_data
+	boss.player = _player
+	boss.projectile_parent = projectile_root
+	boss.source_parent = source_root
+	boss.death_started.connect(clear_projectiles)
+	boss.defeated.connect(func() -> void: finish_reached.emit())
+	add_child(boss)
+	boss_started.emit(boss)
+
+func clear_projectiles() -> void:
+	for projectile: EnemyProjectile in projectile_root.get_children():
+		projectile.cancel()
 
 func _update_segment() -> void:
 	var index := data.get_segment_index(_player.global_position.x)
@@ -102,7 +144,7 @@ func _draw() -> void:
 	if data == null:
 		return
 	# Control placeholders; final image assets follow the shared imagegen art direction.
-	var end_x := data.get_finish_x() + 1000.0
+	var end_x := maxf(_background_end, data.get_finish_x() + 1000.0)
 	draw_rect(Rect2(-500.0, -400.0, end_x + 500.0, 1500.0), Color("111827"))
 	draw_circle(Vector2(1800.0, 150.0), 78.0, Color("dde7e7"))
 	draw_circle(Vector2(1770.0, 130.0), 78.0, Color("111827"))

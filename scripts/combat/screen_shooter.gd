@@ -103,6 +103,9 @@ func _cancel_attack() -> void:
 	_recovery_remaining = 0.0
 	hide()
 
+func cancel() -> void:
+	_cancel_attack()
+
 func _draw() -> void:
 	# A floating source, independent of the rope; positive edge offset puts it offscreen.
 	draw_colored_polygon(PackedVector2Array([Vector2(-24, 0), Vector2(0, -18), Vector2(26, 0), Vector2(0, 18)]), Color("b24b4b"))

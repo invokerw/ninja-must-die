@@ -1,6 +1,6 @@
 extends SceneTree
 
-const MAIN_SCENE := preload("res://scenes/main.tscn")
+const MAIN_SCENE := preload("res://scenes/practice.tscn")
 const CHARACTER := preload("res://data/characters/shadow_runner.tres")
 
 var _failures := 0

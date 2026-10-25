@@ -57,6 +57,9 @@ func _expire() -> void:
 	hide()
 	queue_free()
 
+func cancel() -> void:
+	_expire()
+
 func _draw() -> void:
 	# Prototype art: a bright core and a short cinnabar trail distinguish live shots.
 	draw_set_transform(Vector2.ZERO, velocity.angle() - PI)

@@ -1,6 +1,7 @@
 extends SceneTree
 
-const MAIN_SCENE := preload("res://scenes/main.tscn")
+const MAIN_SCENE := preload("res://scenes/practice.tscn")
+const COMPLETE_SCENE := preload("res://scenes/main.tscn")
 const LEVEL_DATA := preload("res://data/levels/fog_ridge_60s.tres")
 
 var _failures := 0
@@ -15,10 +16,12 @@ func _run() -> void:
 	await _test_full_route(true)
 	await _test_full_route(false, true)
 	await _test_full_route(true, true)
+	await _test_full_route(false, false, true)
+	await _test_full_route(true, true, true)
 	await _test_pause_and_reload()
 	await _test_finish_below_rope()
 	if _failures == 0:
-		print("LEVEL_ROUTE_PASS (data validation, 4 full runs, pause/reload, lower finish)")
+		print("LEVEL_ROUTE_PASS (data validation, 4 practice runs, 2 boss clears, pause/reload, lower finish)")
 	quit(0 if _failures == 0 else 1)
 
 func _test_data() -> void:
@@ -41,8 +44,8 @@ func _test_data() -> void:
 	bad.segments[1].enemies[0].offset_x = -1.0
 	_check(not bad.get_validation_errors().is_empty(), "Enemy placement outside a segment must be rejected")
 
-func _test_full_route(with_actions: bool, with_combat: bool = false) -> void:
-	var main := MAIN_SCENE.instantiate()
+func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: bool = false) -> void:
+	var main := (COMPLETE_SCENE if with_boss else MAIN_SCENE).instantiate()
 	if not with_combat:
 		var baseline := load("res://data/characters/shadow_runner.tres").duplicate(true) as CharacterData
 		baseline.passive.extra_air_jumps = 0
@@ -79,10 +82,17 @@ func _test_full_route(with_actions: bool, with_combat: bool = false) -> void:
 	world.segment_changed.connect(_on_section_changed)
 	var index := 0
 	var ranged_shots := 0
-	for tick in range(4000):
+	for tick in range(7000):
 		if main._finished:
 			break
-		if with_combat and combat.is_skill_ready():
+		if is_instance_valid(world.boss):
+			var boss := world.boss
+			var safe_side := PlayerController.ROPE_BOTTOM if boss.attack == RopeBoss.Attack.UPPER_SWEEP else PlayerController.ROPE_TOP
+			if boss.state == RopeBoss.State.WINDUP and player.on_rope and player.rope_side != safe_side:
+				await _tap(&"drop" if safe_side == PlayerController.ROPE_BOTTOM else &"jump")
+			if boss.is_vulnerable() and boss.remaining > 0.3 and combat.is_skill_ready():
+				await _tap(&"skill")
+		elif with_combat and combat.is_skill_ready():
 			for enemy in world.enemies:
 				if not is_instance_valid(enemy) or not enemy.alive:
 					continue
@@ -110,13 +120,20 @@ func _test_full_route(with_actions: bool, with_combat: bool = false) -> void:
 	_check(main.progress_label.text.contains("100%"), "Finish HUD must reach 100%")
 	_check(main._get_rank() == "S", "A clean 60 second run must qualify for S")
 	if not with_actions and not with_combat:
-		_check(absf(main._elapsed_time - 60.0) < 0.5, "Normal-speed route must last approximately 60 seconds")
+		var expected_time := 90.0 if with_boss else 60.0
+		_check(absf(main._elapsed_time - expected_time) < 1.5, "Normal-speed route must last approximately its authored duration")
+	if with_boss:
+		_check(world.boss.health == 0 and main.result_body.text.contains("首领"), "The default route must require and report an actual boss defeat")
+		_check(world.boss.attacks_started >= 7 and world.boss.shots_fired >= 6, "A full clear must experience all three boss patterns repeatedly")
+		_check(main.run_result.kills == combat.kills and combat.kills >= 1, "Boss defeat must enter the real kill count before results")
 	if with_combat:
 		_check(combat.skill_casts >= 2 and combat.kills >= 2, "Full route must support repeated cooldown-based skill casts and kills")
 		_check(main.run_result != null and main.run_result.kills == combat.kills and main.run_result.max_combo == combat.max_combo, "Results must preserve the run's real combat statistics")
 	else:
 		_check(ranged_shots == 6, "Both three-bullet volleys must really fire during the no-skill full route")
 	var route_name := ("triple jump/dash/skills" if with_actions else "cooldown/skills") if with_combat else ("base double jump/dash" if with_actions else "base flips")
+	if with_boss:
+		route_name += " + boss"
 	print("ROUTE_REPLAY %s: %.2fs, %d/%d crystals, %d hits, %d kills" % [route_name, main._elapsed_time, player.crystals, world.pickup_positions.size(), player.damage_count, combat.kills])
 	paused = false
 	main.free()

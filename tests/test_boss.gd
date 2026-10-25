@@ -1,0 +1,254 @@
+extends SceneTree
+
+const MAIN_SCENE := preload("res://scenes/main.tscn")
+const BOSS_DATA := preload("res://data/enemies/bridge_kite.tres")
+
+var _failures := 0
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	_test_data()
+	await _test_entry_and_pause()
+	await _test_practice_entry()
+	await _test_sweeps()
+	await _test_protection()
+	await _test_volley()
+	await _test_weak_point()
+	await _test_defeat_and_restart()
+	await _test_death_cancels()
+	await _test_long_chase()
+	if _failures == 0:
+		print("BOSS_PASS (entry, 3 readable attacks, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)")
+	quit(0 if _failures == 0 else 1)
+
+func _test_data() -> void:
+	_check(BOSS_DATA.get_validation_errors(320.0).is_empty(), "The shipped boss pattern must be valid")
+	var bad := BOSS_DATA.duplicate(true) as BossEncounterData
+	bad.windup_seconds = 0.2
+	_check(not bad.get_validation_errors(320.0).is_empty(), "An unreadable boss warning must be rejected")
+	bad = BOSS_DATA.duplicate(true)
+	bad.beam_height = 100.0
+	_check(not bad.get_validation_errors(320.0).is_empty(), "A sweep that seals both lanes must be rejected")
+	bad = BOSS_DATA.duplicate(true)
+	bad.volley.fire_direction = Vector2.ZERO
+	_check(not bad.get_validation_errors(320.0).is_empty(), "Boss volleys must validate their fixed firing direction")
+	bad = BOSS_DATA.duplicate(true)
+	bad.recovery_seconds = 0.1
+	_check(not bad.get_validation_errors(320.0).is_empty(), "The boss must leave time to attack its weak point")
+	bad = BOSS_DATA.duplicate(true)
+	bad.max_health = 0
+	_check(not bad.get_validation_errors(320.0).is_empty(), "An already dead boss configuration must be rejected")
+
+func _enter(health: int = 9, below: bool = false) -> Node2D:
+	var main := MAIN_SCENE.instantiate()
+	var level := main.get_node("Level") as RopeLevelController
+	level.boss_data = BOSS_DATA.duplicate(true)
+	level.boss_data.max_health = health
+	root.add_child(main)
+	if below:
+		await _tap("drop")
+	main.player.position.x = level.data.get_finish_x() - 65.0
+	(main.player.get_node("Camera2D") as Camera2D).reset_smoothing()
+	await _frames(12)
+	_check(is_instance_valid(level.boss), "Crossing the route end must create a boss")
+	return main
+
+func _test_entry_and_pause() -> void:
+	for below in [false, true]:
+		var main := await _enter(9, below)
+		var boss := main.level.boss as RopeBoss
+		_check(not main._finished and main.player.active and main.boss_panel.visible, "Both rope sides must enter the boss fight without showing completion")
+		_check(is_equal_approx(main.level.get_nominal_seconds(), 90.0) and boss.health == 9, "Default route must include the boss's thirty second rating allowance")
+		_check(main.progress_label.text.contains("75%") and main.segment_title.text.contains(boss.data.display_name), "HUD must distinguish route completion from boss completion")
+		_check(boss.state == RopeBoss.State.ENTRANCE and boss.attacks_started == 0, "The boss must leave an entrance observation window")
+		main.level._on_route_end()
+		await _frames(1)
+		_check(main.level.boss == boss and get_nodes_in_group("bosses").size() == 1, "Repeated gate notifications must not create duplicate bosses")
+		var remaining := boss.remaining
+		var position: Vector2 = main.player.position
+		var time: float = main._elapsed_time
+		paused = true
+		await _frames(20)
+		_check(boss.remaining == remaining and main.player.position == position and main._elapsed_time == time, "Pause must freeze the entrance, chase and run timer")
+		paused = false
+		main.free()
+
+func _test_sweeps() -> void:
+	for attack in [RopeBoss.Attack.UPPER_SWEEP, RopeBoss.Attack.LOWER_SWEEP]:
+		for evade in [false, true]:
+			var same_side := PlayerController.ROPE_TOP if attack == RopeBoss.Attack.UPPER_SWEEP else PlayerController.ROPE_BOTTOM
+			var selected_side := -same_side if evade else same_side
+			var main := await _enter(9, selected_side == PlayerController.ROPE_BOTTOM)
+			var boss := main.level.boss as RopeBoss
+			boss.attack = attack
+			boss._begin_attack()
+			await _frames(70)
+			_check(main.player.damage_count == 0 and boss.state == RopeBoss.State.WINDUP, "Sweep warnings must remain harmless for the full readable windup")
+			await _frames(7)
+			_check(boss.state == RopeBoss.State.ACTIVE, "The warning must lead to an active sweep")
+			_check(main.player.damage_count == (0 if evade else 1), "Only the advertised rope side must receive sweep damage")
+			main.player.immunity_remaining = 0.0
+			await _frames(18)
+			_check(main.player.damage_count == (0 if evade else 1), "Each sweep must resolve contact at most once")
+			main.free()
+	var main := await _enter()
+	var boss := main.level.boss as RopeBoss
+	boss._begin_attack()
+	await _frames(57)
+	await _tap("jump")
+	await _frames(30)
+	_check(main.player.damage_count == 0, "A timely jump must also clear the upper sweep")
+	main.free()
+
+func _test_practice_entry() -> void:
+	var main: Node2D = load("res://scenes/boss_practice.tscn").instantiate()
+	root.add_child(main)
+	await _frames(12)
+	_check(main.start_at_boss and is_instance_valid(main.level.boss) and main.segment_title.text.contains("首领练习"), "Boss practice must enter the real encounter directly with distinct practice UI")
+	main.free()
+
+func _test_protection() -> void:
+	for action in ["skill", "dash"]:
+		var main := await _enter()
+		var boss := main.level.boss as RopeBoss
+		boss._begin_attack()
+		await _frames(70)
+		await _tap(action)
+		await _frames(24)
+		_check(main.player.damage_count == 0, "Same-frame protection from %s must apply to the boss sweep, including after short protection expires" % action)
+		main.free()
+
+func _test_volley() -> void:
+	for evade in [false, true]:
+		var main := await _enter(9, not evade)
+		var boss := main.level.boss as RopeBoss
+		boss.attack = RopeBoss.Attack.PARALLEL_VOLLEY
+		boss._begin_attack()
+		var velocities: Array[Vector2] = []
+		var positions: Array[Vector2] = []
+		boss._volley_source.projectile_fired.connect(func(shot: EnemyProjectile) -> void:
+			velocities.append(shot.velocity)
+			positions.append(shot.get_global_transform_with_canvas().origin)
+		)
+		await _frames(70)
+		_check(boss.shots_fired == 0, "Boss volleys must honor the entire warning")
+		await _frames(7)
+		_check(boss.shots_fired == 3 and main.level.projectile_root.get_child_count() == 3, "Boss volleys must fire three parallel bullets")
+		for index in range(velocities.size()):
+			_check(velocities[index].is_equal_approx(Vector2(-720, 0)) and positions[index].x > root.get_visible_rect().end.x, "Boss bullets must use the configured fixed direction and originate offscreen")
+		await _frames(65)
+		_check(main.player.damage_count == (0 if evade else 1), "The parallel volley must leave a gap on the upper rope side")
+		_check(main.level.projectile_root.get_child_count() > 0, "Boss bullets must continue through the whole screen after passing the player")
+		await _frames(60)
+		_check(main.level.projectile_root.get_child_count() == 0, "Completed boss volleys must be recycled")
+		main.free()
+
+func _test_weak_point() -> void:
+	var main := await _enter(9, true)
+	var boss := main.level.boss as RopeBoss
+	await _tap("skill")
+	await _frames(10)
+	_check(boss.health == 9 and main.combat.feedback.contains("护甲"), "An early skill must show armor feedback without damaging the boss")
+	_check(main.player.skill_immunity_remaining > 0.0 and main.combat.skill_cooldown_remaining > 11.0, "A guarded cast must still grant normal protection and consume cooldown")
+	await _wait_for_recovery(boss)
+	main.combat.skill_cooldown_remaining = 0.0
+	await _tap("skill")
+	await _frames(12)
+	_check(boss.health == 6 and main.combat.kills == 0 and main.combat.feedback.contains("弱点"), "A real skill during recovery must deal exactly three damage without a premature kill")
+	_check(main.boss_name.text.contains("6 / 9") and main.boss_hint.text.contains("弱点"), "Boss HUD must show the real health and attack window")
+	await _frames(12)
+	_check(boss.health == 6, "One cast must not damage a boss more than once")
+	main.free()
+
+func _test_defeat_and_restart() -> void:
+	var main := await _enter(3, true)
+	current_scene = main
+	var boss := main.level.boss as RopeBoss
+	await _wait_for_recovery(boss)
+	var shot := EnemyProjectile.new()
+	shot.target = main.player
+	shot.position = main.player.position + Vector2(800.0, -100.0)
+	main.level.projectile_root.add_child(shot)
+	await _tap("skill")
+	await _frames(10)
+	_check(boss.state == RopeBoss.State.DEFEATED and main.combat.kills == 1 and not main._finished, "A lethal skill must credit the kill before the short defeat animation")
+	_check(not is_instance_valid(shot), "Boss defeat must clear pending danger before the result delay")
+	var remaining := boss.remaining
+	paused = true
+	await _frames(20)
+	_check(boss.remaining == remaining and not main._finished, "Pause must also freeze the defeat animation")
+	paused = false
+	await _frames(45)
+	_check(main._finished and paused and main.run_result.kills == 1 and main.result_body.text.contains("首领"), "Defeat must produce exactly one complete result with the boss kill included")
+	main._restart_run()
+	await _frames(3)
+	main = current_scene
+	_check(not is_instance_valid(boss) and main.level.boss == null and main.level.projectile_root.get_child_count() == 0, "Retry must discard the old boss and its projectiles")
+	_check(main.combat.is_skill_ready() and main.player.health == 3 and not main.boss_panel.visible, "Retry must reset skill, health, boss UI and route progress")
+	main.free()
+
+func _test_death_cancels() -> void:
+	var main := await _enter()
+	var boss := main.level.boss as RopeBoss
+	boss.attack = RopeBoss.Attack.PARALLEL_VOLLEY
+	boss._begin_attack()
+	main.player.take_damage(main.player.health)
+	await _frames(2)
+	_check(main._finished and boss.state == RopeBoss.State.CANCELLED and not boss.visible, "Player death must cancel the boss and its pending volley immediately")
+	_check(main.level.projectile_root.get_child_count() == 0 and boss.shots_fired == 0, "A cancelled windup must never leave or emit live bullets")
+	paused = false
+	main.free()
+	main = await _enter(9)
+	boss = main.level.boss
+	main.player.health = 1
+	boss.data.active_seconds = 1.0 / 60.0
+	boss._begin_attack()
+	await _frames(75)
+	_check(main._finished and boss.state == RopeBoss.State.CANCELLED and not boss.visible, "Fatal contact on the final sweep tick must not reopen recovery or leave the boss running")
+	paused = false
+	main.free()
+
+func _test_long_chase() -> void:
+	var main := await _enter()
+	var boss := main.level.boss as RopeBoss
+	var initial_nodes: int = main.level.get_child_count()
+	for tick in range(36000):
+		if main._finished:
+			break
+		await _dodge(boss)
+		await _frames(1)
+	_check(not main._finished and main.player.damage_count == 0 and boss.attacks_started >= 140, "Ten minutes of repeated patterns must remain avoidable with basic rope flips")
+	_check(main.level.get_child_count() == initial_nodes and main.level.source_root.get_child_count() <= 3 and main.level.projectile_root.get_child_count() <= 3, "Repeated patterns must not accumulate bosses, emitters or bullets")
+	_check(main.player.position.x > 200000.0 and boss.position.x > main.player.position.x, "A long chase must keep moving beyond the original camera boundary")
+	main.free()
+
+func _wait_for_recovery(boss: RopeBoss) -> void:
+	for tick in range(500):
+		if boss.is_vulnerable():
+			return
+		await _dodge(boss)
+		await _frames(1)
+	_check(false, "The boss must open a recovery window")
+
+func _dodge(boss: RopeBoss) -> void:
+	var safe_side := PlayerController.ROPE_BOTTOM if boss.attack == RopeBoss.Attack.UPPER_SWEEP else PlayerController.ROPE_TOP
+	if boss.state == RopeBoss.State.WINDUP and boss.player.on_rope and boss.player.rope_side != safe_side:
+		await _tap("drop" if safe_side == PlayerController.ROPE_BOTTOM else "jump")
+
+func _tap(action: StringName) -> void:
+	Input.action_press(action)
+	await _frames(1)
+	Input.action_release(action)
+	await _frames(1)
+
+func _frames(count: int) -> void:
+	for index in range(count):
+		await physics_frame
+		await process_frame
+
+func _check(condition: bool, message: String) -> void:
+	if not condition:
+		_failures += 1
+		push_error(message)
