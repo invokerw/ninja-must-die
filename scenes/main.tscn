@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="2_player"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/combat/runner_combat.gd" id="4_combat"]
 [ext_resource type="Resource" path="res://data/characters/shadow_runner.tres" id="5_character"]
 [ext_resource type="Resource" path="res://data/enemies/bridge_kite.tres" id="6_boss"]
+[ext_resource type="Script" path="res://scripts/feedback/run_feedback.gd" id="7_feedback"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
 radius = 18.0
@@ -42,8 +43,13 @@ limit_left = 0
 limit_top = 0
 limit_bottom = 720
 
+[node name="Feedback" type="Node2D" parent="Player"]
+process_mode = 3
+script = ExtResource("7_feedback")
+
 [node name="UI" type="CanvasLayer" parent="."]
 process_mode = 3
+layer = 3
 
 [node name="HUD" type="Control" parent="UI"]
 layout_mode = 3

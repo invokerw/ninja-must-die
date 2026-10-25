@@ -14,6 +14,7 @@ enum AttackState { IDLE, WINDUP, RECOVERY, SPENT }
 @export var fire_direction := Vector2(-1.0, 0.12)
 @export_range(1, 7) var volley_count := 3
 @export var volley_spacing := 144.0
+var warning_sound_enabled := true
 
 var projectile_parent: Node2D
 var attack_state := AttackState.IDLE
@@ -47,6 +48,8 @@ func _physics_process(delta: float) -> void:
 				attack_state = AttackState.WINDUP
 				windup_remaining = windup_seconds
 				show()
+				if warning_sound_enabled:
+					_player.emit_feedback(&"warning_top" if cable_side == "top" else &"warning_bottom", get_world_origin())
 		AttackState.WINDUP:
 			windup_remaining = maxf(windup_remaining - delta, 0.0)
 			if windup_remaining <= 0.00001:
@@ -94,6 +97,7 @@ func _fire() -> void:
 		shots_fired += 1
 		projectile_fired.emit(projectile)
 	volleys_fired += 1
+	_player.emit_feedback(&"volley", origin)
 	attack_state = AttackState.RECOVERY
 	_recovery_remaining = 0.3
 

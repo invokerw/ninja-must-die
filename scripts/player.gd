@@ -7,6 +7,7 @@ signal physics_tick(delta: float)
 signal stopped
 signal run_failed(reason: String)
 signal rope_side_changed(side: int)
+signal feedback_requested(cue: StringName, position: Vector2)
 
 @export var tuning: PlayerTuning
 @export var character: CharacterData
@@ -104,6 +105,7 @@ func _process_rope_input() -> void:
 		dash_remaining = tuning.dash_duration
 		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
 		state = State.DASH
+		emit_feedback(&"dash")
 		return
 	if rope_flip_lock_remaining > 0.0:
 		return
@@ -133,6 +135,7 @@ func _process_air_input() -> void:
 	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
 		dash_remaining = tuning.dash_duration
 		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
+		emit_feedback(&"dash")
 	if Input.is_action_just_pressed("jump"):
 		if _can_regrab_rope():
 			_attach_to_rope(ROPE_TOP)
@@ -141,6 +144,7 @@ func _process_air_input() -> void:
 			velocity.y = tuning.double_jump_velocity if jump_number == 2 else tuning.third_jump_velocity
 			jumps_remaining -= 1
 			_buffer_remaining = 0.0
+			emit_feedback(&"air_jump")
 	if Input.is_action_pressed("drop"):
 		velocity.y = maxf(velocity.y, 1000.0)
 
@@ -167,6 +171,7 @@ func _switch_rope(target_side: int) -> void:
 	velocity = Vector2.ZERO
 	_snap_to_rope()
 	rope_side_changed.emit(rope_side)
+	emit_feedback(&"flip")
 
 func _detach_from_rope(initial_vertical_velocity: float) -> void:
 	on_rope = false
@@ -175,6 +180,7 @@ func _detach_from_rope(initial_vertical_velocity: float) -> void:
 	jumps_remaining = max_jump_count - 1
 	velocity = Vector2(tuning.run_speed, initial_vertical_velocity)
 	state = State.JUMP if initial_vertical_velocity < 0.0 else State.FALL
+	emit_feedback(&"jump")
 
 func _attach_to_rope(target_side: int) -> void:
 	rope_side = target_side
@@ -184,6 +190,7 @@ func _attach_to_rope(target_side: int) -> void:
 	velocity = Vector2.ZERO
 	_snap_to_rope()
 	rope_side_changed.emit(rope_side)
+	emit_feedback(&"land")
 
 func _snap_to_rope() -> void:
 	global_position.y = rope_y - float(rope_side) * rope_offset
@@ -197,17 +204,22 @@ func collect_crystal() -> void:
 		return
 	crystals += 1
 	crystal_collected.emit()
+	emit_feedback(&"pickup")
 
 func is_invulnerable() -> bool:
 	return skill_immunity_remaining > 0.00001 or immunity_remaining > 0.00001 or dash_remaining > 0.00001
 
 func take_damage(amount: int = 1) -> void:
-	if not active or is_invulnerable():
+	if not active:
+		return
+	if is_invulnerable():
+		emit_feedback(&"guard")
 		return
 	damage_count += 1
 	health = maxi(health - amount, 0)
 	immunity_remaining = tuning.hurt_immunity
 	health_changed.emit(health, tuning.max_health)
+	emit_feedback(&"hit")
 	if health == 0:
 		fail("生命耗尽")
 
@@ -227,6 +239,9 @@ func stop() -> void:
 
 func get_state_name() -> String:
 	return State.keys()[state]
+
+func emit_feedback(cue: StringName, at: Vector2 = Vector2.INF) -> void:
+	feedback_requested.emit(cue, global_position if at == Vector2.INF else at)
 
 func get_rope_side_name() -> String:
 	if not on_rope:

@@ -31,6 +31,8 @@ func _process(delta: float) -> void:
 		var distance := global_position.x - _player.global_position.x
 		_warning_active = distance > -48.0 and distance <= warning_distance
 	if was_active != _warning_active:
+		if _warning_active:
+			_player.emit_feedback(&"warning_top" if cable_side == "top" else &"warning_bottom", global_position)
 		queue_redraw()
 	elif _warning_active:
 		queue_redraw()

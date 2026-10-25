@@ -27,13 +27,18 @@ extends Node2D
 @onready var boss_name: Label = $UI/HUD/BossPanel/BossName
 @onready var boss_hint: Label = $UI/HUD/BossPanel/BossHint
 @onready var boss_health_fill: ColorRect = $UI/HUD/BossPanel/HealthBack/HealthFill
+@onready var feedback: RunFeedback = $Player/Feedback
 
 var _elapsed_time := 0.0
 var _finished := false
 var run_result: RunResult
+var feedback_menu: PanelContainer
+var _feedback_checks: Dictionary = {}
 
 func _ready() -> void:
 	_ensure_input_map()
+	feedback.bind_player(player)
+	_setup_feedback_controls()
 	if not player.configuration_errors.is_empty():
 		_show_result("角色配置无效", "请检查角色主动和被动资源，详细原因见调试输出。")
 		return
@@ -50,6 +55,8 @@ func _ready() -> void:
 		return
 	player.active = true
 	if start_at_boss and level.boss_data != null:
+		for shooter in level.shooters:
+			shooter.cancel()
 		player.global_position.x = level.data.get_finish_x() - 65.0
 		(player.get_node("Camera2D") as Camera2D).reset_smoothing()
 	_update_status()
@@ -60,6 +67,14 @@ func _process(delta: float) -> void:
 		_update_status()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("feedback_settings"):
+		feedback_menu.visible = not feedback_menu.visible
+		return
+	if event.is_action_pressed("mute"):
+		FeedbackSettings.sound_enabled = not FeedbackSettings.sound_enabled
+		_sync_feedback_controls()
+		feedback.apply_settings()
+		return
 	if event.is_action_pressed("restart"):
 		_restart_run()
 		return
@@ -82,6 +97,61 @@ func _ensure_input_map() -> void:
 	_add_key_action("skill", [KEY_K])
 	_add_key_action("pause", [KEY_ESCAPE])
 	_add_key_action("restart", [KEY_R, KEY_ENTER, KEY_KP_ENTER])
+	_add_key_action("feedback_settings", [KEY_F2])
+	_add_key_action("mute", [KEY_M])
+
+func _setup_feedback_controls() -> void:
+	var button := Button.new()
+	button.text = "设置 F2"
+	button.position = Vector2(1136.0, 114.0)
+	button.size = Vector2(100.0, 32.0)
+	button.focus_mode = Control.FOCUS_NONE
+	$UI/HUD.add_child(button)
+	feedback_menu = PanelContainer.new()
+	feedback_menu.position = Vector2(900.0, 404.0)
+	feedback_menu.custom_minimum_size = Vector2(336.0, 220.0)
+	feedback_menu.hide()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("111827")
+	style.border_color = Color("d8b56a")
+	style.set_border_width_all(2)
+	style.content_margin_left = 16.0
+	style.content_margin_right = 16.0
+	style.content_margin_top = 12.0
+	style.content_margin_bottom = 12.0
+	feedback_menu.add_theme_stylebox_override("panel", style)
+	$UI/HUD.add_child(feedback_menu)
+	button.pressed.connect(func() -> void: feedback_menu.visible = not feedback_menu.visible)
+	var box := VBoxContainer.new()
+	feedback_menu.add_child(box)
+	var title := Label.new()
+	title.text = "体验反馈"
+	title.add_theme_color_override("font_color", Color("d8b56a"))
+	title.add_theme_font_size_override("font_size", 20)
+	box.add_child(title)
+	for entry in [["sound", "音效（M 静音）"], ["particles", "粒子"], ["shake", "画面震动"], ["flash", "冲击闪光"]]:
+		var check := CheckButton.new()
+		check.text = entry[1]
+		check.focus_mode = Control.FOCUS_NONE
+		check.add_theme_font_size_override("font_size", 18)
+		box.add_child(check)
+		_feedback_checks[entry[0]] = check
+		check.toggled.connect(_on_feedback_setting.bind(entry[0]))
+	_sync_feedback_controls()
+
+func _on_feedback_setting(enabled: bool, setting: String) -> void:
+	match setting:
+		"sound": FeedbackSettings.sound_enabled = enabled
+		"particles": FeedbackSettings.particles_enabled = enabled
+		"shake": FeedbackSettings.shake_enabled = enabled
+		"flash": FeedbackSettings.flash_enabled = enabled
+	feedback.apply_settings()
+
+func _sync_feedback_controls() -> void:
+	_feedback_checks["sound"].set_pressed_no_signal(FeedbackSettings.sound_enabled)
+	_feedback_checks["particles"].set_pressed_no_signal(FeedbackSettings.particles_enabled)
+	_feedback_checks["shake"].set_pressed_no_signal(FeedbackSettings.shake_enabled)
+	_feedback_checks["flash"].set_pressed_no_signal(FeedbackSettings.flash_enabled)
 
 func _add_key_action(action_name: StringName, keycodes: Array) -> void:
 	if not InputMap.has_action(action_name):
@@ -128,6 +198,7 @@ func _on_finish_reached() -> void:
 		return
 	player.stop()
 	run_result = _calculate_result()
+	feedback.finish(true)
 	_update_status()
 	progress_fill.size.x = progress_fill.get_parent().size.x
 	progress_label.text = ("首领练习" if start_at_boss else ("关卡进度" if level.boss_data != null else "终点进度")) + "  100%"

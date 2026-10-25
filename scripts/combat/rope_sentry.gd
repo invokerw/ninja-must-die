@@ -37,10 +37,13 @@ func _physics_process(delta: float) -> void:
 		return
 	if not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player") as PlayerController
+	var was_warning := _warning_active
 	_warning_active = false
 	if is_instance_valid(_player) and _player.active:
 		var distance := global_position.x - _player.global_position.x
 		_warning_active = distance >= -36.0 and distance <= warning_distance
+	if _warning_active and not was_warning:
+		_player.emit_feedback(&"warning_top" if cable_side == "top" else &"warning_bottom", global_position)
 	for body in get_overlapping_bodies():
 		if body is PlayerController:
 			body.take_damage()
@@ -53,6 +56,8 @@ func take_hit(amount: int) -> bool:
 	if health > 0:
 		return false
 	alive = false
+	if is_instance_valid(_player):
+		_player.emit_feedback(&"kill", global_position)
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
 	return true

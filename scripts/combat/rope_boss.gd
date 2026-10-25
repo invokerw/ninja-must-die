@@ -42,6 +42,7 @@ func _ready() -> void:
 	_target_shape = player.get_node("CollisionShape2D") as CollisionShape2D
 	player.stopped.connect(_cancel)
 	_sync_position()
+	player.emit_feedback(&"boss_enter", global_position)
 
 func _physics_process(delta: float) -> void:
 	if state == State.CANCELLED or _completion_emitted:
@@ -61,6 +62,8 @@ func _physics_process(delta: float) -> void:
 			if remaining <= 0.00001:
 				state = State.ACTIVE
 				remaining = data.active_seconds
+				if attack != Attack.PARALLEL_VOLLEY:
+					player.emit_feedback(&"sweep", global_position)
 		State.ACTIVE:
 			if attack != Attack.PARALLEL_VOLLEY:
 				_check_beam_contact()
@@ -69,6 +72,7 @@ func _physics_process(delta: float) -> void:
 			if remaining <= 0.00001:
 				state = State.RECOVERY
 				remaining = data.recovery_seconds
+				player.emit_feedback(&"weakpoint", global_position)
 		State.RECOVERY:
 			if remaining <= 0.00001:
 				_clear_source()
@@ -89,6 +93,8 @@ func _begin_attack() -> void:
 	remaining = data.windup_seconds
 	_beam_contact_resolved = false
 	attacks_started += 1
+	var lower_warning := attack == Attack.LOWER_SWEEP or (attack == Attack.PARALLEL_VOLLEY and data.volley.cable_side == "bottom")
+	player.emit_feedback(&"warning_bottom" if lower_warning else &"warning_top", global_position)
 	if attack != Attack.PARALLEL_VOLLEY:
 		return
 	var pattern := data.volley
@@ -102,6 +108,7 @@ func _begin_attack() -> void:
 	_volley_source.fire_direction = pattern.fire_direction
 	_volley_source.volley_count = pattern.volley_count
 	_volley_source.volley_spacing = pattern.volley_spacing
+	_volley_source.warning_sound_enabled = false
 	_volley_source.projectile_parent = projectile_parent
 	_volley_source.bind_player(player)
 	_volley_source.projectile_fired.connect(_on_projectile_fired)
@@ -119,10 +126,12 @@ func take_hit(amount: int) -> bool:
 	health = maxi(health - amount, 0)
 	_hit_flash = 0.18
 	if health > 0:
+		player.emit_feedback(&"impact", global_position)
 		return false
 	alive = false
 	state = State.DEFEATED
 	remaining = data.death_seconds
+	player.emit_feedback(&"boss_kill", global_position)
 	set_deferred("monitorable", false)
 	_clear_source()
 	death_started.emit()

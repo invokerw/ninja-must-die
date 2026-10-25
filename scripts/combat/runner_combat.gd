@@ -26,7 +26,10 @@ func _ready() -> void:
 	player.physics_tick.connect(_physics_tick)
 
 func _physics_tick(delta: float) -> void:
+	var was_cooling := skill_cooldown_remaining > 0.00001
 	skill_cooldown_remaining = maxf(skill_cooldown_remaining - delta, 0.0)
+	if was_cooling and skill_cooldown_remaining <= 0.00001:
+		player.emit_feedback(&"ready")
 	skill_flash_remaining = maxf(skill_flash_remaining - delta, 0.0)
 	_combo_remaining = maxf(_combo_remaining - delta, 0.0)
 	_feedback_remaining = maxf(_feedback_remaining - delta, 0.0)
@@ -58,6 +61,7 @@ func try_skill() -> bool:
 	_skill_pending = true
 	_hit_ids.clear()
 	_set_feedback(skill.display_name)
+	player.emit_feedback(&"skill")
 	changed.emit()
 	return true
 
@@ -66,6 +70,7 @@ func _strike() -> void:
 		return
 	var skill := player.character.active_skill
 	_strike_origin = Vector2(player.global_position.x, player.rope_y if player.on_rope else player.global_position.y)
+	player.emit_feedback(&"strike", _strike_origin)
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(skill.forward_range, skill.half_height * 2.0)
 	var query := PhysicsShapeQueryParameters2D.new()
@@ -86,6 +91,8 @@ func _strike() -> void:
 			_set_feedback("月蚀斩 · 首领击破" if target is RopeBoss else "月蚀斩 · 击破哨兵")
 		elif target is RopeBoss:
 			_set_feedback("月蚀斩 · 命中弱点" if target.health < health_before else "护甲未破 · 收招时再用 K")
+			if target.health == health_before:
+				player.emit_feedback(&"guard", target.global_position)
 
 func _cancel_skill() -> void:
 	_skill_pending = false
