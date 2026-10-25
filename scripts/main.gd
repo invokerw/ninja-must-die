@@ -34,6 +34,24 @@ var _finished := false
 var run_result: RunResult
 var feedback_menu: PanelContainer
 var _feedback_checks: Dictionary = {}
+var run_loadout: RunLoadout
+var weapon_text: Label
+var weapon_hint: Label
+var weapon_fill: ColorRect
+var character_details: PanelContainer
+var _details_was_paused := false
+var _transitioning := false
+
+func _enter_tree() -> void:
+	add_to_group("run_sessions")
+	if run_loadout == null:
+		run_loadout = RunNavigation.take_pending(scene_file_path)
+	if run_loadout == null:
+		run_loadout = PlayerProfile.current().resolve(($Player as PlayerController).character)
+	else:
+		run_loadout = run_loadout.copy()
+	$Player.run_loadout = run_loadout
+	$Player.character = run_loadout.character
 
 func _ready() -> void:
 	_ensure_input_map()
@@ -42,6 +60,7 @@ func _ready() -> void:
 	if not player.configuration_errors.is_empty():
 		_show_result("角色配置无效", "请检查角色主动和被动资源，详细原因见调试输出。")
 		return
+	_setup_equipment_controls()
 	level.segment_changed.connect(_on_segment_changed)
 	level.finish_reached.connect(_on_finish_reached)
 	level.boss_started.connect(_on_boss_started)
@@ -67,6 +86,12 @@ func _process(delta: float) -> void:
 		_update_status()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("character_details"):
+		_toggle_character_details()
+		return
+	if event.is_action_pressed("pause") and is_instance_valid(character_details) and character_details.visible:
+		_toggle_character_details()
+		return
 	if event.is_action_pressed("feedback_settings"):
 		feedback_menu.visible = not feedback_menu.visible
 		return
@@ -95,6 +120,8 @@ func _ensure_input_map() -> void:
 	if InputMap.has_action("attack"):
 		InputMap.erase_action("attack")
 	_add_key_action("skill", [KEY_K])
+	_add_key_action("weapon", [KEY_J])
+	_add_key_action("character_details", [KEY_C])
 	_add_key_action("pause", [KEY_ESCAPE])
 	_add_key_action("restart", [KEY_R, KEY_ENTER, KEY_KP_ENTER])
 	_add_key_action("feedback_settings", [KEY_F2])
@@ -188,9 +215,10 @@ func _on_run_failed(reason: String) -> void:
 	_show_result("挑战失败", "%s · %s\n用时 %.1f 秒" % [section, reason, _elapsed_time])
 
 func _on_boss_started(boss: RopeBoss) -> void:
+	combat.bind_boss(boss)
 	boss_panel.show()
 	segment_title.text = "%s · 首领  %s" % ["首领练习" if start_at_boss else level.data.title, boss.data.display_name]
-	segment_hint.text = "上侧横扫往下翻，下侧横扫往上翻；齐射留意间隙，核心变金时按 K 攻击。"
+	segment_hint.text = "翻绳躲避并接住三刃球自动反击 · J 武器 · K 忍术 · 核心变金时伤害更高。"
 	_update_status()
 
 func _on_finish_reached() -> void:
@@ -206,8 +234,10 @@ func _on_finish_reached() -> void:
 	var body := "评级 %s    总分 %d\n用时 %.1f 秒    受击 %d 次\n影晶 %d / %d    击破 %d\n最高连击 %d" % [run_result.rank, run_result.score, run_result.time_seconds, run_result.damage_count, run_result.collectible_count, run_result.collectible_total, run_result.kills, run_result.max_combo]
 	if is_instance_valid(level.boss):
 		body += "\n首领：%s · 已击破" % level.boss.data.display_name
+		body += "\n伤害：武器 %d · 忍术 %d · 飞镖 %d" % [combat.damage_by_source[&"weapon"], combat.damage_by_source[&"skill"], combat.damage_by_source[&"pickup"]]
 	if boss_practice:
 		body = "首领：%s · 已击破\n用时 %.1f 秒    受击 %d 次\n练习完成，可重试熟悉其他躲法" % [level.boss.data.display_name, run_result.time_seconds, run_result.damage_count]
+		body += "\n%s · 武器 %d / 忍术 %d / 飞镖 %d" % [run_loadout.weapon.display_name, combat.damage_by_source[&"weapon"], combat.damage_by_source[&"skill"], combat.damage_by_source[&"pickup"]]
 	_show_result("%s · 完成" % ("首领练习" if boss_practice else level.data.title), body)
 
 func _calculate_result() -> RunResult:
@@ -227,8 +257,136 @@ func _show_result(title: String, body: String) -> void:
 	get_tree().paused = true
 
 func _restart_run() -> void:
-	get_tree().paused = false
-	get_tree().reload_current_scene()
+	if _transitioning:
+		return
+	_transitioning = true
+	player.stop()
+	if RunNavigation.launch(get_tree(), scene_file_path, run_loadout) != OK:
+		_transitioning = false
+
+func _return_to_setup() -> void:
+	if _transitioning:
+		return
+	_transitioning = true
+	player.stop()
+	if RunNavigation.return_to_setup(get_tree()) != OK:
+		_transitioning = false
+
+func _setup_equipment_controls() -> void:
+	_hud_button($UI/HUD, "角色 / 武器 C", Rect2(880, 114, 230, 32), _toggle_character_details)
+	# Keep the full HUD above the boss volley's highest lane (y=396).
+	$UI/HUD/CharacterPanel.size.y = 72.0
+	character_text.position.y = 2.0
+	character_text.size.y = 26.0
+	passive_text.position.y = 28.0
+	passive_text.size.y = 22.0
+	combat_text.position.y = 50.0
+	combat_text.size.y = 20.0
+	combat_text.add_theme_font_size_override("font_size", 14)
+	$UI/HUD/SkillPanel.position.y = 236.0
+	$UI/HUD/SkillPanel.size.y = 76.0
+	skill_text.position.y = 2.0
+	skill_text.size.y = 30.0
+	skill_text.add_theme_font_size_override("font_size", 20)
+	protection_text.position.y = 32.0
+	protection_text.size.y = 22.0
+	protection_text.add_theme_font_size_override("font_size", 14)
+	$UI/HUD/SkillPanel/CooldownBack.position.y = 64.0
+	$UI/HUD/SkillPanel/CooldownBack.size.y = 4.0
+	skill_fill.size.y = 4.0
+	var panel := ColorRect.new()
+	panel.position = Vector2(880, 324)
+	panel.size = Vector2(356, 60)
+	panel.color = Color(0.067, 0.094, 0.149, 0.94)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$UI/HUD.add_child(panel)
+	var icon := WeaponPreview.new()
+	icon.weapon = run_loadout.weapon
+	icon.icon_only = true
+	icon.position = Vector2(8, 6)
+	icon.size = Vector2(40, 40)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(icon)
+	weapon_text = _hud_label(panel, Rect2(54, 2, 294, 28), 18)
+	weapon_hint = _hud_label(panel, Rect2(54, 31, 294, 22), 14)
+	var back := ColorRect.new()
+	back.position = Vector2(18, 54)
+	back.size = Vector2(320, 4)
+	back.color = Color("233142")
+	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(back)
+	weapon_fill = ColorRect.new()
+	weapon_fill.size = back.size
+	weapon_fill.color = Color("d8b56a")
+	weapon_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	back.add_child(weapon_fill)
+	combat_feedback.position = Vector2(60, 318)
+	combat_feedback.size = Vector2(720, 28)
+	character_details = PanelContainer.new()
+	character_details.position = Vector2(320, 160)
+	character_details.size = Vector2(640, 400)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("111827")
+	style.border_color = Color("d8b56a")
+	style.set_border_width_all(2)
+	character_details.add_theme_stylebox_override("panel", style)
+	$UI/HUD.add_child(character_details)
+	var content := Control.new()
+	content.custom_minimum_size = Vector2(636, 396)
+	character_details.add_child(content)
+	var title := _hud_label(content, Rect2(32, 24, 570, 42), 28)
+	title.text = "%s · 本局装备" % player.character.display_name
+	title.modulate = Color("d8b56a")
+	var body := _hud_label(content, Rect2(32, 86, 570, 212), 20)
+	var skill := run_loadout.weapon.skill
+	body.text = "K  %s · 冷却 %.0f 秒 / 无敌 %.0f 秒\n被动  %s\n\nJ  %s · 冷却 %.0f 秒\n%d 枚 × %d 首领战基础伤害 · 无无敌\n本局装备固定，返回准备页可更换。" % [player.character.active_skill.display_name, player.character.active_skill.cooldown_seconds, player.character.active_skill.invulnerability_seconds, player.character.passive.display_name, run_loadout.weapon.display_name, skill.cooldown_seconds, skill.projectile_count, skill.boss_damage]
+	_hud_button(content, "继续 / 关闭 C", Rect2(32, 324, 228, 44), _toggle_character_details)
+	_hud_button(content, "结束本局并返回准备", Rect2(280, 324, 324, 44), _return_to_setup)
+	character_details.hide()
+	result_overlay.position = Vector2(320, 160)
+	result_overlay.size = Vector2(640, 400)
+	result_title.position = Vector2(32, 24)
+	result_title.size = Vector2(576, 50)
+	result_body.position = Vector2(32, 84)
+	result_body.size = Vector2(576, 220)
+	$UI/HUD/ResultOverlay/RetryHint.hide()
+	_hud_button(result_overlay, "重试 R / Enter", Rect2(32, 330, 272, 44), _restart_run)
+	_hud_button(result_overlay, "角色与武器", Rect2(328, 330, 280, 44), _return_to_setup)
+
+func _toggle_character_details() -> void:
+	if not is_instance_valid(character_details):
+		return
+	if character_details.visible:
+		character_details.hide()
+		get_tree().paused = _details_was_paused
+		result_dimmer.visible = _details_was_paused
+		result_overlay.visible = _details_was_paused
+	else:
+		_details_was_paused = get_tree().paused
+		get_tree().paused = true
+		result_dimmer.show()
+		result_overlay.hide()
+		character_details.show()
+
+func _hud_button(parent: Node, text: String, rect: Rect2, callback: Callable) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.position = rect.position
+	button.size = rect.size
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_size_override("font_size", 18)
+	parent.add_child(button)
+	button.pressed.connect(callback)
+	return button
+
+func _hud_label(parent: Node, rect: Rect2, font_size: int) -> Label:
+	var label := Label.new()
+	label.position = rect.position
+	label.size = rect.size
+	label.add_theme_font_size_override("font_size", font_size)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(label)
+	return label
 
 func _update_status() -> void:
 	if not is_instance_valid(player) or player.tuning == null:
@@ -259,6 +417,16 @@ func _update_status() -> void:
 	passive_text.text = "空中追加跳跃  %d / %d" % [player.jumps_remaining, player.max_jump_count - 1]
 	combat_text.text = "击破 %d  ·  连击 %d  ·  最高 %d" % [combat.kills, combat.combo, combat.max_combo]
 	combat_feedback.text = combat.feedback
+	var weapon_remaining := combat.weapon.cooldown_remaining
+	var weapon_state := "就绪" if weapon_remaining <= 0.00001 else "%.1fs" % weapon_remaining
+	if not is_instance_valid(level.boss):
+		weapon_state = "首领战启用"
+	elif not level.boss.is_in_combat():
+		weapon_state = "等待交战" if level.boss.alive else "已击破"
+	weapon_text.text = "J  %s · %s" % [run_loadout.weapon.display_name, weapon_state]
+	weapon_text.modulate = Color("d8b56a") if combat.is_weapon_ready() else Color("91a1ad")
+	weapon_hint.text = "%d 枚 × %d 伤害 · 冷却 %.0fs · 无无敌" % [run_loadout.weapon.skill.projectile_count, run_loadout.weapon.skill.boss_damage, run_loadout.weapon.skill.cooldown_seconds]
+	weapon_fill.size.x = 320.0 * clampf(1.0 - weapon_remaining / run_loadout.weapon.skill.cooldown_seconds, 0.0, 1.0)
 	if is_instance_valid(level.boss):
 		var boss := level.boss
 		boss_name.text = "%s · %d / %d" % [boss.data.display_name, boss.health, boss.data.max_health]

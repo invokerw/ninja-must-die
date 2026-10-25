@@ -6,6 +6,7 @@ extends Resource
 @export_multiline var description: String = "月蚀破敌，踏影凌空。"
 @export var active_skill: ActiveSkillData
 @export var passive: PassiveData
+@export var default_weapon_id: StringName = &"crescent_wheel"
 
 func get_max_jump_count(base_count: int) -> int:
 	return base_count + (passive.extra_air_jumps if passive != null else 0)

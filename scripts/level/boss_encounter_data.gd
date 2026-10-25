@@ -2,8 +2,8 @@ class_name BossEncounterData
 extends Resource
 
 @export var display_name := "断桥机关鸢"
-@export var max_health := 9
-@export var nominal_seconds := 30.0
+@export var max_health := 180
+@export var nominal_seconds := 40.0
 @export var entrance_seconds := 1.5
 @export var windup_seconds := 1.2
 @export var active_seconds := 0.45
@@ -11,6 +11,7 @@ extends Resource
 @export var death_seconds := 0.65
 @export var forward_offset := 500.0
 @export var beam_height := 48.0
+@export var shuriken_balls_enabled := true
 @export var volley: RopeEnemyData
 
 func get_validation_errors(run_speed: float) -> PackedStringArray:

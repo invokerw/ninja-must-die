@@ -151,7 +151,7 @@ func _test_boss_signals() -> void:
 		_check(events.has(cue), "Real boss transitions must emit %s once per transition" % cue)
 	await _tap("skill")
 	await _frames(10)
-	_check(events.has(&"impact") and not events.has(&"hit"), "Hitting the weak point must have its own impact without pretending the player was hurt")
+	_check(events.has(&"weak_hit") and not events.has(&"hit"), "Hitting the weak point must have its own impact without pretending the player was hurt")
 	_check(main.feedback.flash_remaining == 0.0, "An offensive hit must not create a red player-damage flash")
 	var warnings_before := events.count(&"warning_bottom")
 	var launches_before := events.count(&"volley")

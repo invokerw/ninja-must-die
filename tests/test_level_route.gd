@@ -50,6 +50,7 @@ func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: 
 		var baseline := load("res://data/characters/shadow_runner.tres").duplicate(true) as CharacterData
 		baseline.passive.extra_air_jumps = 0
 		main.get_node("Player").character = baseline
+	main.run_loadout = RunLoadout.capture(main.get_node("Player").character, PlayerProfile.WEAPONS[&"crescent_wheel"])
 	root.add_child(main)
 	var player := main.get_node("Player") as PlayerController
 	var world := main.get_node("Level") as RopeLevelController
@@ -92,6 +93,8 @@ func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: 
 				await _tap(&"drop" if safe_side == PlayerController.ROPE_BOTTOM else &"jump")
 			if boss.is_vulnerable() and boss.remaining > 0.3 and combat.is_skill_ready():
 				await _tap(&"skill")
+			if boss.is_vulnerable() and boss.remaining > 0.9 and combat.is_weapon_ready():
+				await _tap(&"weapon")
 		elif with_combat and combat.is_skill_ready():
 			for enemy in world.enemies:
 				if not is_instance_valid(enemy) or not enemy.alive:
@@ -120,8 +123,10 @@ func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: 
 	_check(main.progress_label.text.contains("100%"), "Finish HUD must reach 100%")
 	_check(main._get_rank() == "S", "A clean 60 second run must qualify for S")
 	if not with_actions and not with_combat:
-		var expected_time := 90.0 if with_boss else 60.0
-		_check(absf(main._elapsed_time - expected_time) < 1.5, "Normal-speed route must last approximately its authored duration")
+		if with_boss:
+			_check(main._elapsed_time >= 85.0 and main._elapsed_time <= 105.0, "The route plus three-channel boss fight must meet the new duration target")
+		else:
+			_check(absf(main._elapsed_time - 60.0) < 1.5, "Normal-speed route must last approximately its authored duration")
 	if with_boss:
 		_check(world.boss.health == 0 and main.result_body.text.contains("首领"), "The default route must require and report an actual boss defeat")
 		_check(world.boss.attacks_started >= 7 and world.boss.shots_fired >= 6, "A full clear must experience all three boss patterns repeatedly")

@@ -2,7 +2,7 @@
 
 当前主场景的 `Level` 节点读取 `fog_ridge_60s.tres`。该资源使用 Godot 自定义 `Resource`，可在检查器中直接展开修改；`main.gd` 不再保存机关或影晶坐标。
 
-默认主场景同时配置 `Boss Data=res://data/enemies/bridge_kite.tres`，在这条 60 秒路线之后进入约 30 秒首领追逐战。`scenes/practice.tscn` 将 `Boss Data` 设为空，保留原终点；`scenes/boss_practice.tscn` 直接进入首领。首领参数、攻击窗口与评级说明见 [小型首领](../../docs/BOSS_ENCOUNTER.md)。
+F5 准备页选择完整关卡后，`scenes/main.tscn` 配置 `Boss Data=res://data/enemies/bridge_kite.tres`，在这条 60 秒路线之后进入约 40 秒首领追逐战。`scenes/practice.tscn` 将 `Boss Data` 设为空，保留原终点；`scenes/boss_practice.tscn` 直接进入首领。首领参数、攻击窗口与评级说明见 [小型首领](../../docs/BOSS_ENCOUNTER.md)。
 
 ## 当前路线
 

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/weapons/weapon_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/characters/weapons/weapon_skill_data.gd" id="2"]
+
+[sub_resource type="Resource" id="Skill"]
+script = ExtResource("2")
+effect_id = "lance"
+cooldown_seconds = 8.0
+cast_delay_seconds = 0.3
+projectile_count = 1
+shot_interval = 0.0
+boss_damage = 16
+projectile_speed = 1600.0
+turn_speed = 3.0
+
+[resource]
+script = ExtResource("1")
+weapon_id = &"star_lance"
+display_name = "贯星矛"
+description = "短暂蓄势后投出长矛。单次重击，适合预判弱点。"
+skill = SubResource("Skill")

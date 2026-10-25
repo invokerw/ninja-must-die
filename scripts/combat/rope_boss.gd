@@ -3,6 +3,7 @@ extends Area2D
 
 signal death_started
 signal defeated
+signal attack_started
 
 enum State { ENTRANCE, WINDUP, ACTIVE, RECOVERY, DEFEATED, CANCELLED }
 enum Attack { UPPER_SWEEP, LOWER_SWEEP, PARALLEL_VOLLEY }
@@ -24,6 +25,8 @@ var _beam_contact_resolved := false
 var _target_shape: CollisionShape2D
 var _beam_shape := RectangleShape2D.new()
 var _volley_source: ScreenShooter
+var hit_shape: CollisionShape2D
+var previous_physics_position := Vector2.ZERO
 var _completion_emitted := false
 
 func _ready() -> void:
@@ -34,6 +37,7 @@ func _ready() -> void:
 	health = data.max_health
 	remaining = data.entrance_seconds
 	var collision := CollisionShape2D.new()
+	hit_shape = collision
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(104.0, 112.0)
 	collision.shape = shape
@@ -42,6 +46,7 @@ func _ready() -> void:
 	_target_shape = player.get_node("CollisionShape2D") as CollisionShape2D
 	player.stopped.connect(_cancel)
 	_sync_position()
+	previous_physics_position = global_position
 	player.emit_feedback(&"boss_enter", global_position)
 
 func _physics_process(delta: float) -> void:
@@ -50,6 +55,7 @@ func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player) or not player.active:
 		_cancel()
 		return
+	previous_physics_position = global_position
 	_sync_position()
 	_phase += delta
 	_hit_flash = maxf(_hit_flash - delta, 0.0)
@@ -95,6 +101,7 @@ func _begin_attack() -> void:
 	attacks_started += 1
 	var lower_warning := attack == Attack.LOWER_SWEEP or (attack == Attack.PARALLEL_VOLLEY and data.volley.cable_side == "bottom")
 	player.emit_feedback(&"warning_bottom" if lower_warning else &"warning_top", global_position)
+	attack_started.emit()
 	if attack != Attack.PARALLEL_VOLLEY:
 		return
 	var pattern := data.volley
@@ -120,13 +127,24 @@ func _on_projectile_fired(_projectile: EnemyProjectile) -> void:
 func is_vulnerable() -> bool:
 	return alive and state == State.RECOVERY
 
+func is_in_combat() -> bool:
+	return alive and state in [State.WINDUP, State.ACTIVE, State.RECOVERY]
+
+func receive_attack(attack_info: CombatAttack) -> int:
+	var before := health
+	take_hit(attack_info.damage)
+	return before - health
+
 func take_hit(amount: int) -> bool:
-	if not is_vulnerable() or amount <= 0 or not player.active:
+	if not is_in_combat() or amount <= 0 or not player.active:
+		return false
+	amount = amount if is_vulnerable() else floori(float(amount) * 0.5)
+	if amount <= 0:
 		return false
 	health = maxi(health - amount, 0)
 	_hit_flash = 0.18
 	if health > 0:
-		player.emit_feedback(&"impact", global_position)
+		player.emit_feedback(&"weak_hit" if is_vulnerable() else &"armor_hit", global_position)
 		return false
 	alive = false
 	state = State.DEFEATED
@@ -166,13 +184,13 @@ func get_attack_name() -> String:
 func get_hint() -> String:
 	match state:
 		State.ENTRANCE:
-			return "首领现身 · 观察预警，收招时按 K"
+			return "首领现身 · 飞镖球反击，J 武器 / K 忍术"
 		State.WINDUP:
-			return "%s · 蓄力 %.1fs" % [get_attack_name(), remaining]
+			return "%s · 蓄力 %.1fs · 护甲减伤" % [get_attack_name(), remaining]
 		State.ACTIVE:
-			return "%s · 躲避" % get_attack_name()
+			return "%s · 躲避 / 护甲减伤" % get_attack_name()
 		State.RECOVERY:
-			return "弱点暴露 %.1fs · K 月蚀斩" % remaining
+			return "弱点开放 %.1fs · J / K 爆发" % remaining
 		State.DEFEATED:
 			return "首领击破"
 	return ""

@@ -16,6 +16,10 @@ const STREAMS := {
 	&"strike": preload("res://audio/sfx/strike.wav"),
 	&"hit": preload("res://audio/sfx/hit.wav"),
 	&"impact": preload("res://audio/sfx/hit.wav"),
+	&"weak_hit": preload("res://audio/sfx/hit.wav"),
+	&"armor_hit": preload("res://audio/sfx/guard.wav"),
+	&"weapon_cast": preload("res://audio/sfx/volley.wav"),
+	&"dart_pickup": preload("res://audio/sfx/pickup.wav"),
 	&"guard": preload("res://audio/sfx/guard.wav"),
 	&"kill": preload("res://audio/sfx/kill.wav"),
 	&"warning_top": preload("res://audio/sfx/warning_top.wav"),
@@ -142,7 +146,11 @@ func _spawn_particles(cue: StringName, position: Vector2) -> void:
 	match cue:
 		&"jump", &"air_jump", &"flip", &"land": count = 7
 		&"dash": count = 12
-		&"pickup", &"ready": count = 10
+		&"pickup", &"ready", &"dart_pickup": count = 10
+		&"weak_hit", &"weapon_cast": count = 6
+		&"armor_hit":
+			count = 5
+			tint = Color("dde7e7")
 		&"skill", &"strike", &"weakpoint", &"impact": count = 18
 		&"guard":
 			count = 10

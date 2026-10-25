@@ -41,11 +41,12 @@ func _test_data() -> void:
 	bad.max_health = 0
 	_check(not bad.get_validation_errors(320.0).is_empty(), "An already dead boss configuration must be rejected")
 
-func _enter(health: int = 9, below: bool = false) -> Node2D:
+func _enter(health: int = 180, below: bool = false) -> Node2D:
 	var main := MAIN_SCENE.instantiate()
 	var level := main.get_node("Level") as RopeLevelController
 	level.boss_data = BOSS_DATA.duplicate(true)
 	level.boss_data.max_health = health
+	level.boss_data.shuriken_balls_enabled = false
 	root.add_child(main)
 	if below:
 		await _tap("drop")
@@ -57,10 +58,10 @@ func _enter(health: int = 9, below: bool = false) -> Node2D:
 
 func _test_entry_and_pause() -> void:
 	for below in [false, true]:
-		var main := await _enter(9, below)
+		var main := await _enter(180, below)
 		var boss := main.level.boss as RopeBoss
 		_check(not main._finished and main.player.active and main.boss_panel.visible, "Both rope sides must enter the boss fight without showing completion")
-		_check(is_equal_approx(main.level.get_nominal_seconds(), 90.0) and boss.health == 9, "Default route must include the boss's thirty second rating allowance")
+		_check(is_equal_approx(main.level.get_nominal_seconds(), 100.0) and boss.health == 180, "Default route must include the boss's forty second rating allowance")
 		_check(main.progress_label.text.contains("75%") and main.segment_title.text.contains(boss.data.display_name), "HUD must distinguish route completion from boss completion")
 		_check(boss.state == RopeBoss.State.ENTRANCE and boss.attacks_started == 0, "The boss must leave an entrance observation window")
 		main.level._on_route_end()
@@ -80,7 +81,7 @@ func _test_sweeps() -> void:
 		for evade in [false, true]:
 			var same_side := PlayerController.ROPE_TOP if attack == RopeBoss.Attack.UPPER_SWEEP else PlayerController.ROPE_BOTTOM
 			var selected_side := -same_side if evade else same_side
-			var main := await _enter(9, selected_side == PlayerController.ROPE_BOTTOM)
+			var main := await _enter(180, selected_side == PlayerController.ROPE_BOTTOM)
 			var boss := main.level.boss as RopeBoss
 			boss.attack = attack
 			boss._begin_attack()
@@ -122,7 +123,7 @@ func _test_protection() -> void:
 
 func _test_volley() -> void:
 	for evade in [false, true]:
-		var main := await _enter(9, not evade)
+		var main := await _enter(180, not evade)
 		var boss := main.level.boss as RopeBoss
 		boss.attack = RopeBoss.Attack.PARALLEL_VOLLEY
 		boss._begin_attack()
@@ -146,24 +147,29 @@ func _test_volley() -> void:
 		main.free()
 
 func _test_weak_point() -> void:
-	var main := await _enter(9, true)
+	var main := await _enter(180, true)
 	var boss := main.level.boss as RopeBoss
 	await _tap("skill")
 	await _frames(10)
-	_check(boss.health == 9 and main.combat.feedback.contains("护甲"), "An early skill must show armor feedback without damaging the boss")
+	_check(boss.health == 180, "The entrance observation window must not accept damage")
 	_check(main.player.skill_immunity_remaining > 0.0 and main.combat.skill_cooldown_remaining > 11.0, "A guarded cast must still grant normal protection and consume cooldown")
+	boss._begin_attack()
+	main.combat.skill_cooldown_remaining = 0.0
+	await _tap("skill")
+	await _frames(10)
+	_check(boss.health == 168 and main.combat.feedback.contains("护甲"), "Armor must accept half of the boss-specific skill damage")
 	await _wait_for_recovery(boss)
 	main.combat.skill_cooldown_remaining = 0.0
 	await _tap("skill")
 	await _frames(12)
-	_check(boss.health == 6 and main.combat.kills == 0 and main.combat.feedback.contains("弱点"), "A real skill during recovery must deal exactly three damage without a premature kill")
-	_check(main.boss_name.text.contains("6 / 9") and main.boss_hint.text.contains("弱点"), "Boss HUD must show the real health and attack window")
+	_check(boss.health == 144 and main.combat.kills == 0 and main.combat.feedback.contains("弱点"), "A real skill during recovery must deal twenty-four damage without a premature kill")
+	_check(main.boss_name.text.contains("144 / 180") and main.boss_hint.text.contains("弱点"), "Boss HUD must show the real health and attack window")
 	await _frames(12)
-	_check(boss.health == 6, "One cast must not damage a boss more than once")
+	_check(boss.health == 144, "One cast must not damage a boss more than once")
 	main.free()
 
 func _test_defeat_and_restart() -> void:
-	var main := await _enter(3, true)
+	var main := await _enter(24, true)
 	current_scene = main
 	var boss := main.level.boss as RopeBoss
 	await _wait_for_recovery(boss)
@@ -200,7 +206,7 @@ func _test_death_cancels() -> void:
 	_check(main.level.projectile_root.get_child_count() == 0 and boss.shots_fired == 0, "A cancelled windup must never leave or emit live bullets")
 	paused = false
 	main.free()
-	main = await _enter(9)
+	main = await _enter(180)
 	boss = main.level.boss
 	main.player.health = 1
 	boss.data.active_seconds = 1.0 / 60.0
@@ -211,8 +217,9 @@ func _test_death_cancels() -> void:
 	main.free()
 
 func _test_long_chase() -> void:
-	var main := await _enter()
+	var main := await _enter(100000)
 	var boss := main.level.boss as RopeBoss
+	boss.data.shuriken_balls_enabled = true
 	var initial_nodes: int = main.level.get_child_count()
 	for tick in range(36000):
 		if main._finished:
@@ -221,6 +228,7 @@ func _test_long_chase() -> void:
 		await _frames(1)
 	_check(not main._finished and main.player.damage_count == 0 and boss.attacks_started >= 140, "Ten minutes of repeated patterns must remain avoidable with basic rope flips")
 	_check(main.level.get_child_count() == initial_nodes and main.level.source_root.get_child_count() <= 3 and main.level.projectile_root.get_child_count() <= 3, "Repeated patterns must not accumulate bosses, emitters or bullets")
+	_check(main.combat.friendly_root.get_child_count() <= 32 and main.combat.pickup_root.get_child_count() <= 1, "Long-running counterattacks and pickups must also remain bounded")
 	_check(main.player.position.x > 200000.0 and boss.position.x > main.player.position.x, "A long chase must keep moving beyond the original camera boundary")
 	main.free()
 

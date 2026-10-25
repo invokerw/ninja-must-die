@@ -36,18 +36,30 @@ var rope_flip_feedback_side := ROPE_TOP
 var jumps_remaining := 0
 var max_jump_count := 2
 var configuration_errors := PackedStringArray()
+var run_loadout: RunLoadout
 var previous_physics_position := Vector2.ZERO
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
 
 const ROPE_FLIP_FEEDBACK_DURATION := 0.24
 
+func _enter_tree() -> void:
+	if run_loadout == null:
+		run_loadout = PlayerProfile.current().resolve(character)
+	character = run_loadout.character
+
 func _ready() -> void:
 	if tuning == null:
 		tuning = load("res://data/control_tuning.tres")
 	if character == null:
 		character = load("res://data/characters/shadow_runner.tres")
+	if run_loadout == null:
+		run_loadout = PlayerProfile.current().resolve(character)
+	character = run_loadout.character
 	configuration_errors = character.get_validation_errors(tuning.base_max_jump_count)
+	configuration_errors.append_array(run_loadout.weapon.get_validation_errors())
+	if not run_loadout.weapon.allows(character.character_id):
+		configuration_errors.append("当前角色与武器不兼容")
 	if not configuration_errors.is_empty():
 		push_error("\n".join(configuration_errors))
 		return
@@ -261,6 +273,8 @@ func _draw() -> void:
 	draw_style_box(_body_style(tint), Rect2(-18, -30, 36, 60))
 	var direction := -1.0 if rope_side == ROPE_BOTTOM else 1.0
 	draw_line(Vector2(-9, 17.0 * direction), Vector2(13, 17.0 * direction), Color("111827"), 3)
+	if run_loadout != null:
+		WeaponArt.draw_icon(self, run_loadout.weapon.weapon_id, Vector2(-24, -9), 13.0)
 	if state == State.DASH:
 		draw_line(Vector2(-24, 0), Vector2(-90, 0), Color(0.85, 0.71, 0.42, 0.45), 7)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)

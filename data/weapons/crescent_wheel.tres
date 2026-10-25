@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/weapons/weapon_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/characters/weapons/weapon_skill_data.gd" id="2"]
+
+[sub_resource type="Resource" id="Skill"]
+script = ExtResource("2")
+
+[resource]
+script = ExtResource("1")
+weapon_id = &"crescent_wheel"
+display_name = "弦月轮"
+description = "三枚弦月刃波连续追击。出手频繁，适合穿插输出。"
+skill = SubResource("Skill")
