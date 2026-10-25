@@ -19,6 +19,9 @@ var attack := Attack.UPPER_SWEEP
 var remaining := 0.0
 var attacks_started := 0
 var shots_fired := 0
+var enraged := false
+var volley_wave := 0
+var volley_waves := 1
 var _phase := 0.0
 var _hit_flash := 0.0
 var _beam_contact_resolved := false
@@ -76,9 +79,12 @@ func _physics_process(delta: float) -> void:
 			if not player.active:
 				return
 			if remaining <= 0.00001:
-				state = State.RECOVERY
-				remaining = data.recovery_seconds
-				player.emit_feedback(&"weakpoint", global_position)
+				if attack == Attack.PARALLEL_VOLLEY and volley_wave < volley_waves:
+					_begin_windup()
+				else:
+					state = State.RECOVERY
+					remaining = data.recovery_seconds
+					player.emit_feedback(&"weakpoint", global_position)
 		State.RECOVERY:
 			if remaining <= 0.00001:
 				_clear_source()
@@ -95,15 +101,23 @@ func _sync_position() -> void:
 	global_position = Vector2(player.global_position.x + data.forward_offset, player.rope_y - 64.0)
 
 func _begin_attack() -> void:
+	# Snapshot the pattern so crossing half health cannot rewrite a telegraphed attack.
+	volley_wave = 0
+	volley_waves = data.enraged_volley_waves if enraged and attack == Attack.PARALLEL_VOLLEY else 1
+	attacks_started += 1
+	_begin_windup()
+	attack_started.emit()
+
+func _begin_windup() -> void:
+	_clear_source()
 	state = State.WINDUP
 	remaining = data.windup_seconds
 	_beam_contact_resolved = false
-	attacks_started += 1
 	var lower_warning := attack == Attack.LOWER_SWEEP or (attack == Attack.PARALLEL_VOLLEY and data.volley.cable_side == "bottom")
 	player.emit_feedback(&"warning_bottom" if lower_warning else &"warning_top", global_position)
-	attack_started.emit()
 	if attack != Attack.PARALLEL_VOLLEY:
 		return
+	volley_wave += 1
 	var pattern := data.volley
 	_volley_source = ScreenShooter.new()
 	_volley_source.trigger_x = player.global_position.x
@@ -120,6 +134,9 @@ func _begin_attack() -> void:
 	_volley_source.bind_player(player)
 	_volley_source.projectile_fired.connect(_on_projectile_fired)
 	source_parent.add_child(_volley_source)
+
+func get_seconds_until_recovery() -> float:
+	return (data.windup_seconds + data.active_seconds) * float(volley_waves)
 
 func _on_projectile_fired(_projectile: EnemyProjectile) -> void:
 	shots_fired += 1
@@ -145,6 +162,9 @@ func take_hit(amount: int) -> bool:
 	_hit_flash = 0.18
 	if health > 0:
 		player.emit_feedback(&"weak_hit" if is_vulnerable() else &"armor_hit", global_position)
+		if not enraged and float(health) <= float(data.max_health) * data.enrage_health_ratio:
+			enraged = true
+			player.emit_feedback(&"boss_enrage", global_position)
 		return false
 	alive = false
 	state = State.DEFEATED
@@ -179,6 +199,8 @@ func _check_beam_contact() -> void:
 		player.take_damage()
 
 func get_attack_name() -> String:
+	if attack == Attack.PARALLEL_VOLLEY and volley_waves > 1:
+		return "%d 波齐射 · 第 %d/%d 波" % [volley_waves, volley_wave, volley_waves]
 	return ["断索横扫 · 上侧", "反刃掠绳 · 下侧", "三重平射 · 留意间隙"][attack]
 
 func get_hint() -> String:
@@ -227,8 +249,11 @@ func _draw() -> void:
 				draw_line(marker + Vector2(8, -8), marker + Vector2(-8, 0), Color(tint, 0.4 + charge * 0.5), 3.0)
 				draw_line(marker + Vector2(-8, 0), marker + Vector2(8, 8), Color(tint, 0.4 + charge * 0.5), 3.0)
 	var fade := clampf(remaining / data.death_seconds, 0.0, 1.0) if state == State.DEFEATED else 1.0
-	var tint := Color("dde7e7") if _hit_flash > 0.0 else Color("b24b4b")
+	var tint := Color("dde7e7") if _hit_flash > 0.0 else Color("f08b68" if enraged else "b24b4b")
 	tint.a = fade
+	if enraged:
+		var pulse := 0.5 + 0.5 * sin(_phase * 6.0)
+		draw_arc(Vector2.ZERO, 76.0 + pulse * 6.0, 0.0, TAU, 48, Color(0.94, 0.55, 0.41, (0.35 + pulse * 0.25) * fade), 3.0)
 	var wing := sin(_phase * 4.0) * 8.0
 	draw_colored_polygon(PackedVector2Array([Vector2(-128, -34 + wing), Vector2(-48, -22), Vector2(0, -70), Vector2(48, -22), Vector2(128, -34 + wing), Vector2(74, 32), Vector2(0, 64), Vector2(-74, 32)]), tint)
 	draw_colored_polygon(PackedVector2Array([Vector2(-40, -30), Vector2(0, -52), Vector2(40, -30), Vector2(34, 34), Vector2(0, 50), Vector2(-34, 34)]), Color(Color("233142"), fade))

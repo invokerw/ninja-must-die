@@ -206,7 +206,7 @@ func _spawn_ball() -> void:
 	var ball := BossShurikenPickup.new()
 	ball.player = player
 	ball.boss = boss
-	ball.position = Vector2(player.global_position.x + player.tuning.run_speed * (boss.data.windup_seconds + boss.data.active_seconds + 0.35), player.rope_y - float(side) * player.rope_offset)
+	ball.position = Vector2(player.global_position.x + player.tuning.run_speed * (boss.get_seconds_until_recovery() + 0.35), player.rope_y - float(side) * player.rope_offset)
 	ball.collected.connect(_collect_ball)
 	pickup_root.add_child(ball)
 

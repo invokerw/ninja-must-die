@@ -17,11 +17,14 @@ func _run() -> void:
 	await _test_protection()
 	await _test_volley()
 	await _test_weak_point()
+	await _test_enrage_threshold()
+	await _test_enraged_volley()
+	await _test_enraged_cancellation_and_retry()
 	await _test_defeat_and_restart()
 	await _test_death_cancels()
 	await _test_long_chase()
 	if _failures == 0:
-		print("BOSS_PASS (entry, 3 readable attacks, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)")
+		print("BOSS_PASS (entry, 3 readable attacks, half-health enrage, double volley, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)")
 	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
@@ -42,6 +45,14 @@ func _test_data() -> void:
 	bad = BOSS_DATA.duplicate(true)
 	bad.max_health = 0
 	_check(not bad.get_validation_errors(320.0).is_empty(), "An already dead boss configuration must be rejected")
+	for ratio in [0.0, 1.0, NAN]:
+		bad = BOSS_DATA.duplicate(true)
+		bad.enrage_health_ratio = ratio
+		_check(not bad.get_validation_errors(320.0).is_empty(), "Invalid enrage health ratios must be rejected")
+	for waves in [0, 4]:
+		bad = BOSS_DATA.duplicate(true)
+		bad.enraged_volley_waves = waves
+		_check(not bad.get_validation_errors(320.0).is_empty(), "Enraged volleys must have a bounded wave count")
 
 func _enter(health: int = 180, below: bool = false) -> Node2D:
 	var main := MAIN_SCENE.instantiate()
@@ -182,6 +193,7 @@ func _test_defeat_and_restart() -> void:
 	await _tap("skill")
 	await _frames(10)
 	_check(boss.state == RopeBoss.State.DEFEATED and main.combat.kills == 1 and not main._finished, "A lethal skill must credit the kill before the short defeat animation")
+	_check(not boss.enraged, "A lethal hit must skip enrage and go directly to defeat")
 	_check(not is_instance_valid(shot), "Boss defeat must clear pending danger before the result delay")
 	var remaining := boss.remaining
 	paused = true
@@ -222,17 +234,127 @@ func _test_long_chase() -> void:
 	var main := await _enter(100000)
 	var boss := main.level.boss as RopeBoss
 	boss.data.shuriken_balls_enabled = true
+	boss._begin_attack()
+	boss.take_hit(100000)
+	_check(boss.enraged and boss.health == 50000, "The stability replay must exercise the enhanced half-health patterns")
 	var initial_nodes: int = main.level.get_child_count()
 	for tick in range(36000):
 		if main._finished:
 			break
 		await _dodge(boss)
 		await _frames(1)
-	_check(not main._finished and main.player.damage_count == 0 and boss.attacks_started >= 140, "Ten minutes of repeated patterns must remain avoidable with basic rope flips")
-	_check(main.level.get_child_count() == initial_nodes and main.level.source_root.get_child_count() <= 3 and main.level.projectile_root.get_child_count() <= 3, "Repeated patterns must not accumulate bosses, emitters or bullets")
+	_check(not main._finished and main.player.damage_count == 0 and boss.attacks_started >= 120, "Ten minutes of repeated enhanced patterns must remain avoidable with basic rope flips")
+	_check(main.level.get_child_count() == initial_nodes and main.level.source_root.get_child_count() <= 3 and main.level.projectile_root.get_child_count() <= 6, "Repeated enhanced patterns must not accumulate bosses, emitters or bullets")
 	_check(main.combat.friendly_root.get_child_count() <= 32 and main.combat.pickup_root.get_child_count() <= 1, "Long-running counterattacks and pickups must also remain bounded")
 	_check(main.player.position.x > 200000.0 and boss.position.x > main.player.position.x, "A long chase must keep moving beyond the original camera boundary")
 	main.free()
+
+func _test_enrage_threshold() -> void:
+	for hit_state in [RopeBoss.State.WINDUP, RopeBoss.State.ACTIVE, RopeBoss.State.RECOVERY]:
+		var main := await _enter(181)
+		var boss := main.level.boss as RopeBoss
+		var events: Array[StringName] = []
+		main.feedback.cue_played.connect(func(cue: StringName) -> void: events.append(cue))
+		boss.take_hit(500)
+		_check(boss.health == 181 and not boss.enraged, "Entrance immunity must also prevent premature enrage")
+		boss.attack = RopeBoss.Attack.PARALLEL_VOLLEY
+		boss._begin_attack()
+		await _wait_for_state(boss, hit_state)
+		var armored := not boss.is_vulnerable()
+		boss.take_hit(180 if armored else 90)
+		_check(boss.health == 91 and not boss.enraged, "Odd maximum health must not round the half-health trigger upwards")
+		var remaining := boss.remaining
+		boss.take_hit(2 if armored else 1)
+		_check(boss.health == 90 and boss.enraged and events.count(&"boss_enrage") == 1, "Crossing half health must emit enrage exactly once in every combat state")
+		_check(boss.state == hit_state and boss.remaining == remaining and boss.volley_waves == 1, "Enrage must preserve the current warning, active duration, recovery and snapshotted volley")
+		boss.take_hit(2)
+		_check(events.count(&"boss_enrage") == 1, "Further damage below half health must not retrigger enrage")
+		await _wait_for_recovery(boss)
+		await _frames(2)
+		_check(boss.shots_fired == 3 and boss.is_vulnerable(), "A normal volley that crosses half health must still finish after one wave")
+		_check(main.boss_name.text.contains("半血强化") and main.boss_hint.text.contains("弱点"), "HUD must show enrage while preserving the current weak-point hint")
+		main.free()
+
+func _test_enraged_volley() -> void:
+	var main := await _enter()
+	var boss := main.level.boss as RopeBoss
+	boss._begin_attack()
+	boss.take_hit(180)
+	boss.data.shuriken_balls_enabled = true
+	var events: Array[StringName] = []
+	main.feedback.cue_played.connect(func(cue: StringName) -> void: events.append(cue))
+	boss.attack = RopeBoss.Attack.PARALLEL_VOLLEY
+	boss._begin_attack()
+	var attack_count := boss.attacks_started
+	var shots: Array[Dictionary] = []
+	var record_shot := func(shot: EnemyProjectile) -> void:
+		shots.append({"velocity": shot.velocity, "screen": shot.get_global_transform_with_canvas().origin})
+	boss._volley_source.projectile_fired.connect(record_shot)
+	_check(boss.volley_wave == 1 and boss.volley_waves == 2 and boss.get_hint().contains("1/2"), "Enhanced volley must announce the first of two waves")
+	var ball := main.combat.pickup_root.get_child(0) as BossShurikenPickup
+	var arrival: float = (ball.position.x - main.player.position.x) / main.player.tuning.run_speed
+	_check(is_equal_approx(arrival, 3.65), "A double volley's single pickup must arrive after both waves, during recovery")
+	await _frames(70)
+	_check(boss.shots_fired == 0, "The first enhanced wave must preserve the full windup")
+	await _wait_for_state(boss, RopeBoss.State.ACTIVE)
+	await _wait_for_state(boss, RopeBoss.State.WINDUP)
+	_check(boss.shots_fired == 3 and boss.volley_wave == 2 and not boss.is_vulnerable(), "The first wave must lead to a separately warned second wave without opening the weak point")
+	_check(boss.attacks_started == attack_count and main.combat.pickup_root.get_child_count() == 1, "A follow-up wave must not create another action or pickup")
+	_check(boss.get_hint().contains("2/2") and events.count(&"warning_bottom") == 2, "Each wave must show its own numbered warning and sound")
+	boss._volley_source.projectile_fired.connect(record_shot)
+	var remaining := boss.remaining
+	var player_position: Vector2 = main.player.position
+	paused = true
+	await _frames(30)
+	_check(boss.remaining == remaining and boss.shots_fired == 3 and main.player.position == player_position, "Pause must freeze the second warning and existing bullets")
+	paused = false
+	await _frames(68)
+	_check(boss.shots_fired == 3 and boss.state == RopeBoss.State.WINDUP, "The second wave must also retain the full 1.2 second warning")
+	await _wait_for_recovery(boss)
+	_check(boss.shots_fired == 6 and shots.size() == 6 and boss.remaining > 2.5, "Both enhanced waves must fire three bullets before a complete recovery window")
+	for shot in shots:
+		_check(shot.velocity == Vector2(-720, 0) and shot.screen.x > root.get_visible_rect().end.x, "Every enhanced bullet must keep the configured direction, speed and offscreen origin")
+	await _frames(40)
+	_check(main.player.damage_count == 0 and main.combat.dart_groups == 1 and main.player.crystals == 0, "Basic rope positioning must dodge both waves and collect exactly one counterattack ball")
+	main.free()
+
+func _test_enraged_cancellation_and_retry() -> void:
+	for stop in ["player_death", "boss_death", "retry"]:
+		var main := await _enter()
+		current_scene = main
+		var boss := main.level.boss as RopeBoss
+		boss._begin_attack()
+		boss.take_hit(180)
+		boss.attack = RopeBoss.Attack.PARALLEL_VOLLEY
+		boss._begin_attack()
+		await _wait_for_state(boss, RopeBoss.State.ACTIVE)
+		await _wait_for_state(boss, RopeBoss.State.WINDUP)
+		if stop == "player_death":
+			main.player.take_damage(main.player.health)
+		elif stop == "boss_death":
+			boss.take_hit(1000)
+		else:
+			main._restart_run()
+			await _frames(3)
+			main = current_scene
+			main.player.position.x = main.level.data.get_finish_x() - 65.0
+			await _frames(12)
+			var fresh := main.level.boss as RopeBoss
+			_check(not is_instance_valid(boss) and fresh.health == 180 and not fresh.enraged and fresh.shots_fired == 0, "Retry after enrage must restore a fresh normal boss without pending waves")
+			main.free()
+			continue
+		await _frames(90)
+		_check(boss.shots_fired == 3 and boss._volley_source == null and main.level.source_root.get_child_count() == main.level.shooters.size() and main.level.projectile_root.get_child_count() == 0, "Death during the second warning must cancel the follow-up and clear all danger")
+		paused = false
+		main.free()
+
+func _wait_for_state(boss: RopeBoss, target_state: RopeBoss.State) -> void:
+	for tick in range(500):
+		if boss.state == target_state:
+			return
+		await _dodge(boss)
+		await _frames(1)
+	_check(false, "The boss must reach state %s" % target_state)
 
 func _wait_for_recovery(boss: RopeBoss) -> void:
 	for tick in range(500):

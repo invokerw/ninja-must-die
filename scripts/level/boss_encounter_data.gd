@@ -12,6 +12,8 @@ extends Resource
 @export var forward_offset := 500.0
 @export var beam_height := 48.0
 @export var shuriken_balls_enabled := true
+@export var enrage_health_ratio := 0.5
+@export_range(1, 3) var enraged_volley_waves := 2
 @export var volley: RopeEnemyData
 
 func get_validation_errors(run_speed: float) -> PackedStringArray:
@@ -34,6 +36,10 @@ func get_validation_errors(run_speed: float) -> PackedStringArray:
 		errors.append("首领须保持在前方 200～560 px 的技能范围内")
 	if not is_finite(beam_height) or beam_height < 16.0 or beam_height > 56.0:
 		errors.append("横扫高度须在 16～56 px 之间，为另一侧保留空间")
+	if not is_finite(enrage_health_ratio) or enrage_health_ratio <= 0.0 or enrage_health_ratio >= 1.0:
+		errors.append("首领强化生命比例须大于 0 且小于 1")
+	if enraged_volley_waves < 1 or enraged_volley_waves > 3:
+		errors.append("首领强化齐射须为 1～3 波，每波独立预警")
 	if volley == null or volley.enemy_type != "shooter":
 		errors.append("首领须配置右侧齐射")
 	else:

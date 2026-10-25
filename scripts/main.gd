@@ -422,9 +422,10 @@ func _update_status() -> void:
 	weapon_fill.size.x = 320.0 * clampf(1.0 - weapon_remaining / run_loadout.weapon.skill.cooldown_seconds, 0.0, 1.0)
 	if is_instance_valid(level.boss):
 		var boss := level.boss
-		boss_name.text = "%s · %d / %d" % [boss.data.display_name, boss.health, boss.data.max_health]
+		boss_name.text = "%s%s · %d / %d" % [boss.data.display_name, " · 半血强化" if boss.enraged else "", boss.health, boss.data.max_health]
 		boss_hint.text = boss.get_hint()
 		boss_hint.modulate = Color("f0c36d") if boss.is_vulnerable() else Color("dde7e7")
+		boss_health_fill.color = Color("f08b68") if boss.enraged else Color("b24b4b")
 		boss_health_fill.size.x = boss_health_fill.get_parent().size.x * float(boss.health) / float(boss.data.max_health)
 	_update_threat_hint()
 

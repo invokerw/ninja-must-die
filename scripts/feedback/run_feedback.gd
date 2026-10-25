@@ -26,6 +26,7 @@ const STREAMS := {
 	&"warning_bottom": preload("res://audio/sfx/warning_bottom.wav"),
 	&"volley": preload("res://audio/sfx/volley.wav"),
 	&"boss_enter": preload("res://audio/sfx/boss_enter.wav"),
+	&"boss_enrage": preload("res://audio/sfx/boss_enter.wav"),
 	&"sweep": preload("res://audio/sfx/sweep.wav"),
 	&"weakpoint": preload("res://audio/sfx/weakpoint.wav"),
 	&"boss_kill": preload("res://audio/sfx/boss_kill.wav"),
@@ -118,7 +119,7 @@ func play(cue: StringName, position: Vector2 = Vector2.ZERO) -> void:
 func _play_sound(cue: StringName) -> void:
 	if not FeedbackSettings.sound_enabled:
 		return
-	var priority := 2 if cue in [&"warning_top", &"warning_bottom", &"boss_enter", &"hit", &"boss_kill"] else 1
+	var priority := 2 if cue in [&"warning_top", &"warning_bottom", &"boss_enter", &"boss_enrage", &"hit", &"boss_kill"] else 1
 	var selected := -1
 	for index in range(voices.size()):
 		if not voices[index].playing:
@@ -135,7 +136,7 @@ func _play_sound(cue: StringName) -> void:
 	voice.stop()
 	voice.stream = STREAMS[cue]
 	voice.volume_db = -12.0 if priority == 2 else (-19.0 if cue == &"pickup" else -16.0)
-	voice.pitch_scale = 1.0
+	voice.pitch_scale = 1.25 if cue == &"boss_enrage" else 1.0
 	if audio_output_enabled:
 		voice.play()
 	_voice_priorities[selected] = priority
@@ -159,6 +160,9 @@ func _spawn_particles(cue: StringName, position: Vector2) -> void:
 			count = 20
 			tint = Color("b24b4b")
 		&"boss_kill": count = 48
+		&"boss_enrage":
+			count = 28
+			tint = Color("f08b68")
 	if count == 0:
 		return
 	# Deterministic visual spread uses no gameplay random state or scene nodes.
