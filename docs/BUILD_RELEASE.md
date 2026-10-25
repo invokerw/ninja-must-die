@@ -69,4 +69,8 @@ Windows PowerShell 将文件转成 Base64 并复制到剪贴板的示例：
 
 必须先将工作流提交并推送到仓库，再推送包含该工作流的 tag 或发布其 Release；手动触发入口需要工作流已存在于默认分支。本地写入配置不会自动运行 GitHub 的构建。首次运行可在 [仓库 Actions 页面](https://github.com/invokerw/ninja-must-die/actions) 查看，失败时下载 `regression-logs` 或查看失败 step。
 
-本轮本地检查通过 Actions / Bash 语法、5 项元数据单元测试、十套 Godot 回归与跨进程存档检查；使用官方标准模板实际导出了 Windows release EXE，并验证了启动。云端首次双平台构建和 Android 实机安装结果需在工作流推送后确认。
+本地检查通过 Actions / Bash 语法、5 项元数据单元测试、十套 Godot 回归与跨进程存档检查；使用官方标准模板实际导出了 Windows release EXE，并验证了启动。
+
+2026-10-25 已用 `gh workflow run` 完成[云端双平台构建验证](https://github.com/invokerw/ninja-must-die/actions/runs/40184806135)，源码提交为 `65ea43e`，构建 job 耗时 2 分 49 秒。回归、SDK 初始化、Windows release 导出、Android debug 导出、APK 签名校验与 artifact 上传均通过。下载产物后核对了全部 SHA-256，检查 APK 包含 ARMv7 / ARM64 库，并用云端生成的 Windows EXE 完成 120 帧无窗口启动检查，退出码为 0。
+
+此轮使用手动触发，未发布测试 tag / Release；正式 Android keystore 签名、Release 附件上传及 Android 实机安装尚未实测。
