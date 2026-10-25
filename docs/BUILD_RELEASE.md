@@ -4,6 +4,8 @@
 
 项目为 GDScript，不需要 .NET 编译。Windows 可从 Linux 直接导出；Android 使用 Java 17、SDK 36 / Build Tools 36.1.0 和预编译 APK 模板，不启用 Gradle，也不需要安装 NDK 来编译引擎。通过固定版本的 `setup-android` 明确初始化 SDK 与命令路径，不依赖 runner 默认 PATH。`export_presets.cfg` 包含可在 Godot 中使用的两套预设。
 
+Android 的 Min / Target SDK 留空，使用 Godot 4.7 官方模板自带的 API 24 / 36；预编译模板不允许覆写这两个选项。项目已启用导出所需的 ETC2/ASTC 纹理导入。
+
 ## 触发与下载
 
 | 触发 | 行为 | 下载位置 |
