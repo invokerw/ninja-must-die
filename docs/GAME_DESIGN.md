@@ -190,6 +190,12 @@ FALL ── jump（手动抓绳窗口）──> ROPE_TOP
 
 角色开局前确定，本局内不切换；每名角色恰好一个主动和一个被动，当前先实现影刃。详细参数、边界、HUD、资源结构和迁移验收见 [角色主动技能与被动能力设计](CHARACTER_SKILL_DESIGN.md)。
 
+### 4.6 下一轮：角色模块中的可更换武器（待实现）
+
+已确认下一轮在角色模块内增加一个主武器槽，角色固有主动 / 被动保持独立，装备决定 J 的武器技能。准备页可更换弦月轮与贯星矛并保存每名角色的选择；出战时生成配置快照，局内和暂停时固定装备，重试沿用同一配置。武器定义可以供后续多个角色复用，首领脚本不指定玩家装备。
+
+首轮武器技能与飞镖球在首领战开放，结合护甲减伤和弱点完整伤害形成三层输出。本文其余已实现的 J 禁用、旧伤害与时长记录仍指 v0.10。准备页、装备规则、模块边界与存档见 [角色模块与可更换武器](CHARACTER_WEAPON_DESIGN.md)，首领数值与战斗验收见 [首领战斗扩展](BOSS_COMBAT_DESIGN.md)。
+
 ## 5. 关卡设计
 
 ### 5.1 关卡结构
@@ -391,6 +397,8 @@ extends Resource
 
 v0.7 的 `Player/Combat` 中，`RunnerCombat` 已改为管理主动技能、冷却、命中记录、连击和击破统计，删除普通斩击与影能分支。角色由 `CharacterData` 引用一个 `ActiveSkillData` 和一个 `PassiveData`；跳跃额度由共享基础段数与角色被动计算。`RunResult` 保留原评分；局内状态不写回 `.tres`，重开重新创建。
 
+下一轮装备扩展由角色模块提供 `WeaponData`、`WeaponSkillData`、`CharacterLoadout`、`RunLoadout` 与 `WeaponRuntime`。静态武器定义、玩家选择、本局快照和冷却分别存放；`RunnerCombat` 执行角色所装备的技能，首领只接收攻击与处理减伤。以上结构尚未实现，具体职责以 [角色与武器设计](CHARACTER_WEAPON_DESIGN.md) 为准。
+
 完整编辑步骤与资源字段见 `data/levels/README.md`。通关回放位于 `tests/test_level_route.gd`，原有落绳和影晶碰撞测试继续保留。
 
 ## 7. 碰撞与物理约定
@@ -544,6 +552,11 @@ art/
 ```json
 {
   "version": 1,
+  "selected_character_id": "shadow_runner",
+  "owned_weapon_ids": ["crescent_wheel", "star_lance"],
+  "character_loadouts": {
+    "shadow_runner": { "weapon_id": "crescent_wheel" }
+  },
   "unlocked_levels": ["level_01_fog_ridge"],
   "best_times": {"level_01_fog_ridge": 93.4},
   "best_ranks": {"level_01_fog_ridge": "A"},
@@ -559,6 +572,8 @@ art/
 ```
 
 写入时使用临时文件再替换，读取失败时回退到默认存档；所有字段都带版本号，便于以后迁移。
+
+以上为拟定结构，当前尚未实现磁盘存档。角色 / 武器选择计划随下一轮装备功能持久化；保存稳定 ID 与每名角色的装备记录，不保存武器冷却、弹体或本局保护时间。旧数据缺失装备字段时补入起始配置，未知 / 未拥有 / 不兼容的武器回退为有效默认武器，同时保留其余成绩与设置。详见 [装备保存与迁移规则](CHARACTER_WEAPON_DESIGN.md#7-装备选择的保存)。
 
 ## 11. 垂直切片范围
 
