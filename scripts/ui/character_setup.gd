@@ -62,6 +62,12 @@ func _ready() -> void:
 	profile.save_status_changed.connect(_refresh_profile)
 	_select_weapon(profile.get_equipped_weapon(character))
 	_refresh_profile()
+	get_viewport().size_changed.connect(_layout_ui)
+	_layout_ui()
+
+func _layout_ui() -> void:
+	ScreenLayout.configure_window(get_viewport(), TouchControls.is_requested())
+	ScreenLayout.fit_control(self, ScreenLayout.safe_rect(get_viewport()))
 
 func _select_weapon(weapon: WeaponData) -> void:
 	selected_weapon = weapon
@@ -110,6 +116,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		return
 	if event.physical_keycode == KEY_F2:
 		_toggle_settings()
+	elif event.physical_keycode == KEY_F3:
+		TouchControls.preview_enabled = not TouchControls.preview_enabled
+		_layout_ui()
 	elif event.physical_keycode == KEY_M:
 		feedback_menu.set_setting(not FeedbackSettings.sound_enabled, "sound")
 

@@ -74,9 +74,9 @@ func _physics_tick(delta: float) -> void:
 			_skill_pending = false
 			skill_flash_remaining = 0.30
 			_strike()
-	if Input.is_action_just_pressed("skill"):
+	if player.run_input.is_action_just_pressed("skill"):
 		try_skill()
-	if InputMap.has_action("weapon") and Input.is_action_just_pressed("weapon"):
+	if InputMap.has_action("weapon") and player.run_input.is_action_just_pressed("weapon"):
 		try_weapon()
 	queue_redraw()
 

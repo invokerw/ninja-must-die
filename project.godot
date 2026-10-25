@@ -23,10 +23,18 @@ window/size/viewport_height=720
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+window/stretch/aspect.mobile="expand"
+window/handheld/orientation=4
 
 [dotnet]
 
 project/assembly_name="影刃疾行"
+
+[input_devices]
+
+pointing/emulate_mouse_from_touch=true
+pointing/emulate_touch_from_mouse=false
 
 [rendering]
 

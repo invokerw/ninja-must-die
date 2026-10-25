@@ -8,7 +8,7 @@ var save_status: Label
 var retry_button: Button
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(336, 296)
+	custom_minimum_size = Vector2(336, 312)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color("111827")
 	style.border_color = Color("d8b56a")
@@ -17,15 +17,25 @@ func _ready() -> void:
 	add_theme_stylebox_override("panel", style)
 	var box := VBoxContainer.new()
 	add_child(box)
+	var header := HBoxContainer.new()
+	box.add_child(header)
 	var title := Label.new()
 	title.text = "体验反馈 · 自动保存"
 	title.add_theme_color_override("font_color", Color("d8b56a"))
 	title.add_theme_font_size_override("font_size", 20)
-	box.add_child(title)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(title)
+	var close := Button.new()
+	close.text = "关闭"
+	close.custom_minimum_size = Vector2(56, 32)
+	close.focus_mode = Control.FOCUS_NONE
+	close.pressed.connect(hide)
+	header.add_child(close)
 	for entry in [["sound", "音效（M 静音）"], ["particles", "粒子"], ["shake", "画面震动"], ["flash", "冲击闪光"]]:
 		var check := CheckButton.new()
 		check.text = entry[1]
 		check.focus_mode = Control.FOCUS_NONE
+		check.custom_minimum_size.y = 44
 		check.add_theme_font_size_override("font_size", 18)
 		box.add_child(check)
 		checks[entry[0]] = check
@@ -38,6 +48,7 @@ func _ready() -> void:
 	retry_button = Button.new()
 	retry_button.text = "重试保存"
 	retry_button.focus_mode = Control.FOCUS_NONE
+	retry_button.custom_minimum_size.y = 40
 	retry_button.pressed.connect(profile.save_profile)
 	box.add_child(retry_button)
 	profile.settings_changed.connect(sync_settings)

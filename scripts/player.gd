@@ -37,6 +37,7 @@ var jumps_remaining := 0
 var max_jump_count := 2
 var configuration_errors := PackedStringArray()
 var run_loadout: RunLoadout
+var run_input := RunInput.new()
 var previous_physics_position := Vector2.ZERO
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
@@ -82,7 +83,7 @@ func _physics_process(delta: float) -> void:
 	previous_physics_position = global_position
 	_update_timers(delta)
 	physics_tick.emit(delta)
-	if Input.is_action_just_pressed("jump"):
+	if run_input.is_action_just_pressed("jump"):
 		_buffer_remaining = tuning.jump_buffer
 
 	if on_rope:
@@ -113,7 +114,7 @@ func _update_timers(delta: float) -> void:
 	_buffer_remaining = maxf(_buffer_remaining - delta, 0.0)
 
 func _process_rope_input() -> void:
-	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
+	if run_input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
 		dash_remaining = tuning.dash_duration
 		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
 		state = State.DASH
@@ -121,11 +122,11 @@ func _process_rope_input() -> void:
 		return
 	if rope_flip_lock_remaining > 0.0:
 		return
-	if Input.is_action_just_pressed("drop"):
+	if run_input.is_action_just_pressed("drop"):
 		if rope_side == ROPE_TOP:
 			_switch_rope(ROPE_BOTTOM)
 		return
-	var jump_pressed := Input.is_action_just_pressed("jump") or _buffer_remaining > 0.0
+	var jump_pressed := run_input.is_action_just_pressed("jump") or _buffer_remaining > 0.0
 	if jump_pressed:
 		_buffer_remaining = 0.0
 		if rope_side == ROPE_BOTTOM:
@@ -144,11 +145,11 @@ func _process_rope_motion(delta: float) -> void:
 		state = State.ROPE_TOP if rope_side == ROPE_TOP else State.ROPE_BOTTOM
 
 func _process_air_input() -> void:
-	if Input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
+	if run_input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
 		dash_remaining = tuning.dash_duration
 		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
 		emit_feedback(&"dash")
-	if Input.is_action_just_pressed("jump"):
+	if run_input.is_action_just_pressed("jump"):
 		if _can_regrab_rope():
 			_attach_to_rope(ROPE_TOP)
 		elif jumps_remaining > 0:
@@ -157,7 +158,7 @@ func _process_air_input() -> void:
 			jumps_remaining -= 1
 			_buffer_remaining = 0.0
 			emit_feedback(&"air_jump")
-	if Input.is_action_pressed("drop"):
+	if run_input.is_action_pressed("drop"):
 		velocity.y = maxf(velocity.y, 1000.0)
 
 func _process_air_motion(delta: float) -> void:

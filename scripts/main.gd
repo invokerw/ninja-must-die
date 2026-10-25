@@ -1,6 +1,7 @@
 extends Node2D
 
 @export var start_at_boss := false
+@export var force_touch_controls := false
 
 @onready var player: PlayerController = $Player
 @onready var combat: RunnerCombat = $Player/Combat
@@ -44,6 +45,10 @@ var _transitioning := false
 var _completion_recorded := false
 var save_status: Label
 var save_retry: Button
+var touch_controls: TouchControls
+var resume_button: Button
+var _feedback_was_paused := false
+var _feedback_paused_run := false
 
 func _enter_tree() -> void:
 	add_to_group("run_sessions")
@@ -64,6 +69,7 @@ func _ready() -> void:
 		_show_result("角色配置无效", "请检查角色主动和被动资源，详细原因见调试输出。")
 		return
 	_setup_equipment_controls()
+	_setup_touch_controls()
 	level.segment_changed.connect(_on_segment_changed)
 	level.finish_reached.connect(_on_finish_reached)
 	level.boss_started.connect(_on_boss_started)
@@ -84,11 +90,17 @@ func _ready() -> void:
 	_update_status()
 
 func _process(delta: float) -> void:
+	_sync_touch_controls()
 	if not get_tree().paused and not _finished:
 		_elapsed_time += delta
 		_update_status()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("touch_preview"):
+		TouchControls.preview_enabled = not TouchControls.preview_enabled
+		_sync_touch_controls()
+		_layout_ui()
+		return
 	if event.is_action_pressed("character_details"):
 		_toggle_character_details()
 		return
@@ -97,6 +109,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("feedback_settings"):
 		feedback_menu.visible = not feedback_menu.visible
+		_sync_touch_controls()
 		return
 	if event.is_action_pressed("mute"):
 		_on_feedback_setting(not FeedbackSettings.sound_enabled, "sound")
@@ -105,14 +118,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		_restart_run()
 		return
 	if event.is_action_pressed("pause") and not _finished:
-		get_tree().paused = not get_tree().paused
-		result_dimmer.visible = get_tree().paused
-		if get_tree().paused:
-			result_title.text = "已暂停"
-			result_body.text = "按 Esc 继续\n按 R / Enter 重新开始"
-			result_overlay.visible = true
-		else:
-			result_overlay.visible = false
+		_toggle_pause()
+
+func _toggle_pause() -> void:
+	if _finished:
+		return
+	if feedback_menu.visible:
+		feedback_menu.hide()
+		return
+	if character_details.visible:
+		_toggle_character_details()
+		return
+	get_tree().paused = not get_tree().paused
+	result_dimmer.visible = get_tree().paused
+	result_overlay.visible = get_tree().paused
+	if get_tree().paused:
+		result_title.text = "已暂停"
+		result_body.text = "点击继续返回挑战\n也可重试或返回角色与武器准备页。" if touch_controls.enabled else "按 Esc 继续\n按 R / Enter 重新开始"
+	_sync_touch_controls()
 
 func _ensure_input_map() -> void:
 	_add_key_action("jump", [KEY_SPACE, KEY_UP, KEY_W])
@@ -127,6 +150,41 @@ func _ensure_input_map() -> void:
 	_add_key_action("restart", [KEY_R, KEY_ENTER, KEY_KP_ENTER])
 	_add_key_action("feedback_settings", [KEY_F2])
 	_add_key_action("mute", [KEY_M])
+	_add_key_action("touch_preview", [KEY_F3])
+
+func _setup_touch_controls() -> void:
+	touch_controls = TouchControls.new()
+	touch_controls.name = "TouchControls"
+	touch_controls.player = player
+	touch_controls.combat = combat
+	touch_controls.pause_requested.connect(_toggle_pause)
+	$UI.add_child(touch_controls)
+	get_viewport().size_changed.connect(_layout_ui)
+	_sync_touch_controls()
+	_layout_ui()
+
+func _sync_touch_controls() -> void:
+	if not is_instance_valid(touch_controls):
+		return
+	touch_controls.enabled = force_touch_controls or TouchControls.is_requested()
+	touch_controls.blocked = character_details.visible or feedback_menu.visible
+	touch_controls.finished = _finished
+	touch_controls.sync_state()
+	resume_button.visible = get_tree().paused and not _finished and not character_details.visible
+
+func _layout_ui() -> void:
+	var touch := is_instance_valid(touch_controls) and touch_controls.enabled
+	ScreenLayout.configure_window(get_viewport(), touch)
+	ScreenLayout.fit_control($UI/HUD, ScreenLayout.safe_rect(get_viewport()))
+	segment_hint.position = Vector2(44, 354 if touch else 656)
+	segment_hint.add_theme_font_size_override("font_size", 16 if touch else 18)
+	feedback_menu.position = Vector2(472, 186) if touch else Vector2(900, 404)
+
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT, NOTIFICATION_APPLICATION_PAUSED] and is_instance_valid(touch_controls):
+		touch_controls.release_all()
+		if touch_controls.enabled and player.active and not get_tree().paused and not _finished:
+			_toggle_pause()
 
 func _setup_feedback_controls() -> void:
 	var button := Button.new()
@@ -139,12 +197,33 @@ func _setup_feedback_controls() -> void:
 	panel.profile = PlayerProfile.current()
 	panel.feedback = feedback
 	feedback_menu = panel
+	feedback_menu.z_index = 10
 	feedback_menu.position = Vector2(900.0, 404.0)
 	feedback_menu.hide()
 	$UI/HUD.add_child(feedback_menu)
+	feedback_menu.visibility_changed.connect(_on_feedback_visibility_changed)
 	_feedback_checks = panel.checks
-	button.pressed.connect(func() -> void: feedback_menu.visible = not feedback_menu.visible)
+	button.pressed.connect(func() -> void:
+		feedback_menu.visible = not feedback_menu.visible
+		_sync_touch_controls()
+	)
 	_sync_feedback_controls()
+
+func _on_feedback_visibility_changed() -> void:
+	if _transitioning or not is_inside_tree():
+		return
+	if feedback_menu.visible and is_instance_valid(touch_controls) and touch_controls.enabled:
+		_feedback_was_paused = get_tree().paused
+		_feedback_paused_run = true
+		get_tree().paused = true
+		result_dimmer.show()
+		result_overlay.hide()
+	elif not feedback_menu.visible and _feedback_paused_run:
+		_feedback_paused_run = false
+		get_tree().paused = _feedback_was_paused or _finished or character_details.visible
+		result_dimmer.visible = get_tree().paused
+		result_overlay.visible = get_tree().paused and not character_details.visible
+	_sync_touch_controls()
 
 func _on_feedback_setting(enabled: bool, setting: String) -> void:
 	(feedback_menu as FeedbackSettingsPanel).set_setting(enabled, setting)
@@ -236,6 +315,7 @@ func _show_result(title: String, body: String) -> void:
 	result_dimmer.visible = true
 	result_overlay.visible = true
 	get_tree().paused = true
+	_sync_touch_controls()
 
 func _restart_run() -> void:
 	if _transitioning:
@@ -337,6 +417,8 @@ func _setup_equipment_controls() -> void:
 	$UI/HUD/ResultOverlay/RetryHint.hide()
 	_hud_button(result_overlay, "重试 R / Enter", Rect2(32, 330, 272, 44), _restart_run)
 	_hud_button(result_overlay, "角色与武器", Rect2(328, 330, 280, 44), _return_to_setup)
+	resume_button = _hud_button(result_overlay, "继续挑战", Rect2(440, 24, 168, 44), _toggle_pause)
+	resume_button.hide()
 	_update_save_status()
 
 func _update_save_status() -> void:
@@ -349,6 +431,8 @@ func _update_save_status() -> void:
 func _toggle_character_details() -> void:
 	if not is_instance_valid(character_details):
 		return
+	if feedback_menu.visible:
+		feedback_menu.hide()
 	if character_details.visible:
 		character_details.hide()
 		get_tree().paused = _details_was_paused
@@ -360,6 +444,7 @@ func _toggle_character_details() -> void:
 		result_dimmer.show()
 		result_overlay.hide()
 		character_details.show()
+	_sync_touch_controls()
 
 func _hud_button(parent: Node, text: String, rect: Rect2, callback: Callable) -> Button:
 	var button := Button.new()
@@ -395,7 +480,7 @@ func _update_status() -> void:
 	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [
 		player.health, player.tuning.max_health, player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
 	]
-	hint_text.text = "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：影步 · Esc：暂停 · R：重来"
+	hint_text.text = "左侧翻绳 / 跳跃 · 右侧影步 / 武器 / 忍术 · 顶部暂停" if is_instance_valid(touch_controls) and touch_controls.enabled else "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：影步 · Esc：暂停 · R：重来"
 	var skill := player.character.active_skill
 	var remaining := combat.skill_cooldown_remaining
 	var cooldown_text := "就绪"
