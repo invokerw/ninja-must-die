@@ -2,7 +2,7 @@
 
 工作流为 `.github/workflows/package.yml`，使用 Ubuntu 24.04 runner、固定 Godot 4.7 标准版和官方导出模板，先运行十套 Godot 回归、跨进程存档检查与打包元数据测试，再导出 Windows 和 Android。编辑器和模板缓存到后续运行；初次需下载约 1.3 GB 的官方模板包。
 
-项目为 GDScript，不需要 .NET 编译。Windows 可从 Linux 直接导出；Android 使用 Java 17、SDK 36 / Build Tools 36.1.0 和预编译 APK 模板，不启用 Gradle，也不需要安装 NDK 来编译引擎。`export_presets.cfg` 包含可在 Godot 中使用的两套预设。
+项目为 GDScript，不需要 .NET 编译。Windows 可从 Linux 直接导出；Android 使用 Java 17、SDK 36 / Build Tools 36.1.0 和预编译 APK 模板，不启用 Gradle，也不需要安装 NDK 来编译引擎。通过固定版本的 `setup-android` 明确初始化 SDK 与命令路径，不依赖 runner 默认 PATH。`export_presets.cfg` 包含可在 Godot 中使用的两套预设。
 
 ## 触发与下载
 
