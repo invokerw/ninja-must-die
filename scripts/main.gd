@@ -480,7 +480,7 @@ func _update_status() -> void:
 	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [
 		player.health, player.tuning.max_health, player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
 	]
-	hint_text.text = "左侧翻绳 / 跳跃 · 右侧影步 / 武器 / 忍术 · 顶部暂停" if is_instance_valid(touch_controls) and touch_controls.enabled else "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：影步 · Esc：暂停 · R：重来"
+	hint_text.text = "左侧跳跃 / 翻绳 · 右侧影步 / 武器 / 忍术 · 顶部暂停" if is_instance_valid(touch_controls) and touch_controls.enabled else "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：影步 · Esc：暂停 · R：重来"
 	var skill := player.character.active_skill
 	var remaining := combat.skill_cooldown_remaining
 	var cooldown_text := "就绪"

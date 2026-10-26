@@ -41,6 +41,7 @@ var run_input := RunInput.new()
 var previous_physics_position := Vector2.ZERO
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
+var _buffer_is_jump_only := false
 
 const ROPE_FLIP_FEEDBACK_DURATION := 0.24
 
@@ -83,8 +84,10 @@ func _physics_process(delta: float) -> void:
 	previous_physics_position = global_position
 	_update_timers(delta)
 	physics_tick.emit(delta)
-	if run_input.is_action_just_pressed("jump"):
+	var jump_only := run_input.is_action_just_pressed("jump_only") and (not on_rope or rope_side == ROPE_TOP)
+	if jump_only or run_input.is_action_just_pressed("jump"):
 		_buffer_remaining = tuning.jump_buffer
+		_buffer_is_jump_only = jump_only
 
 	if on_rope:
 		_process_rope_input()
@@ -122,6 +125,10 @@ func _process_rope_input() -> void:
 		return
 	if rope_flip_lock_remaining > 0.0:
 		return
+	if run_input.is_action_just_pressed("rope_flip"):
+		_buffer_remaining = 0.0
+		_switch_rope(-rope_side)
+		return
 	if run_input.is_action_just_pressed("drop"):
 		if rope_side == ROPE_TOP:
 			_switch_rope(ROPE_BOTTOM)
@@ -130,7 +137,8 @@ func _process_rope_input() -> void:
 	if jump_pressed:
 		_buffer_remaining = 0.0
 		if rope_side == ROPE_BOTTOM:
-			_switch_rope(ROPE_TOP)
+			if not _buffer_is_jump_only:
+				_switch_rope(ROPE_TOP)
 		else:
 			_detach_from_rope(tuning.jump_velocity)
 
@@ -149,8 +157,13 @@ func _process_air_input() -> void:
 		dash_remaining = tuning.dash_duration
 		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
 		emit_feedback(&"dash")
-	if run_input.is_action_just_pressed("jump"):
-		if _can_regrab_rope():
+	if run_input.is_action_just_pressed("rope_flip"):
+		_buffer_remaining = 0.0
+		velocity.y = maxf(velocity.y, 1000.0)
+		return
+	var jump_only := run_input.is_action_just_pressed("jump_only")
+	if jump_only or run_input.is_action_just_pressed("jump"):
+		if not jump_only and _can_regrab_rope():
 			_attach_to_rope(ROPE_TOP)
 		elif jumps_remaining > 0:
 			var jump_number := max_jump_count - jumps_remaining + 1
@@ -172,7 +185,7 @@ func _process_air_motion(delta: float) -> void:
 	# Sweep the feet across the rope so a fast fall cannot skip the landing surface.
 	if velocity.y > 0.0 and previous_y <= landing_y and global_position.y >= landing_y:
 		_attach_to_rope(ROPE_TOP)
-	elif _can_regrab_rope() and _buffer_remaining > 0.0:
+	elif _can_regrab_rope() and _buffer_remaining > 0.0 and not _buffer_is_jump_only:
 		_attach_to_rope(ROPE_TOP)
 
 func _switch_rope(target_side: int) -> void:

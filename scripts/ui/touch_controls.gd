@@ -3,7 +3,7 @@ extends Control
 
 signal pause_requested
 
-const ACTIONS: Array[StringName] = [&"jump", &"drop", &"dash", &"weapon", &"skill", &"pause"]
+const ACTIONS: Array[StringName] = [&"jump_only", &"rope_flip", &"dash", &"weapon", &"skill", &"pause"]
 static var preview_enabled := false
 
 var player: PlayerController
@@ -70,6 +70,7 @@ func _is_available(action: StringName) -> bool:
 	if not _can_play():
 		return false
 	match action:
+		&"jump_only": return not player.on_rope or player.rope_side == PlayerController.ROPE_TOP
 		&"skill": return combat.is_skill_ready()
 		&"weapon": return combat.is_weapon_ready()
 		&"dash": return player.dash_cooldown <= 0.00001
@@ -77,8 +78,8 @@ func _is_available(action: StringName) -> bool:
 
 func get_button_text(action: StringName) -> String:
 	match action:
-		&"jump": return "上翻" if player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM else "跳跃"
-		&"drop": return "下翻" if player.on_rope and player.rope_side == PlayerController.ROPE_TOP else ("保持下侧" if player.on_rope else "快速下落")
+		&"jump_only": return "跳跃"
+		&"rope_flip": return ("下翻" if player.rope_side == PlayerController.ROPE_TOP else "上翻") if player.on_rope else "快速下落"
 		&"dash": return "影步\n%.1fs" % player.dash_cooldown if player.dash_cooldown > 0.00001 else "影步\n就绪"
 		&"skill": return "%s\n%.1fs" % [player.character.active_skill.display_name, combat.skill_cooldown_remaining] if combat.skill_cooldown_remaining > 0.00001 else "%s\n就绪" % player.character.active_skill.display_name
 		&"weapon":

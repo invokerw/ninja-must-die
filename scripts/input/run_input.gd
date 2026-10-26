@@ -1,12 +1,14 @@
 class_name RunInput
 extends RefCounted
 
+const TOUCH_ONLY_ACTIONS: Array[StringName] = [&"jump_only", &"rope_flip"]
+
 # Touch belongs to one run. Releasing it must never release a held keyboard key.
 var _held: Dictionary = {}
 var _pressed_tick: Dictionary = {}
 
 func press_touch(action: StringName) -> void:
-	if _held.has(action) or not InputMap.has_action(action):
+	if _held.has(action) or (not TOUCH_ONLY_ACTIONS.has(action) and not InputMap.has_action(action)):
 		return
 	_held[action] = true
 	_pressed_tick[action] = Engine.get_physics_frames() + 1
@@ -19,8 +21,8 @@ func clear_touch() -> void:
 	_pressed_tick.clear()
 
 func is_action_pressed(action: StringName) -> bool:
-	return _held.has(action) or Input.is_action_pressed(action)
+	return _held.has(action) or (InputMap.has_action(action) and Input.is_action_pressed(action))
 
 func is_action_just_pressed(action: StringName) -> bool:
 	# Keep even a press/release between physics ticks until the next gameplay tick.
-	return int(_pressed_tick.get(action, -1)) == Engine.get_physics_frames() or Input.is_action_just_pressed(action)
+	return int(_pressed_tick.get(action, -1)) == Engine.get_physics_frames() or (InputMap.has_action(action) and Input.is_action_just_pressed(action))

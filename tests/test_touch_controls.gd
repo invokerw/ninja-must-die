@@ -12,6 +12,8 @@ func _run() -> void:
 	var scope := TestProfileScope.new("touch")
 	TouchControls.preview_enabled = true
 	await _test_movement_and_ownership()
+	await _test_jump_blocked_below()
+	await _test_dedicated_jump_and_air_drop()
 	await _test_cooldown_and_short_tap()
 	await _test_boss_combinations()
 	await _test_boss_touch_replay()
@@ -21,7 +23,7 @@ func _run() -> void:
 	TouchControls.preview_enabled = false
 	scope.close()
 	if _failures == 0:
-		print("TOUCH_PASS (real touch events, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)")
+		print("TOUCH_PASS (real touch events, dedicated jump, no jump below rope, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)")
 	quit(0 if _failures == 0 else 1)
 
 func _spawn(boss: bool = false, parent: Node = null) -> Node2D:
@@ -33,43 +35,116 @@ func _spawn(boss: bool = false, parent: Node = null) -> Node2D:
 func _test_movement_and_ownership() -> void:
 	var main := await _spawn()
 	var controls := main.touch_controls as TouchControls
-	_touch(0, controls.get_action_rect(&"drop").get_center(), true)
+	_check(controls.get_button_text(&"jump_only") == "跳跃" and controls.get_button_text(&"rope_flip") == "下翻", "Jump must have a fixed label while the flip button describes its next action")
+	_touch(0, controls.get_action_rect(&"rope_flip").get_center(), true)
 	_touch(1, controls.get_action_rect(&"skill").get_center(), true)
-	await _frames(3)
-	_check(main.player.rope_side == PlayerController.ROPE_BOTTOM and main.combat.skill_casts == 1, "Two fingers must flip and cast K together through the real gameplay tick")
-	_check(controls.get_button_text(&"jump") == "上翻" and controls.get_button_text(&"drop") == "保持下侧", "Touch movement labels must follow the real rope state")
-	_touch(2, controls.get_action_rect(&"drop").get_center(), true)
+	await _frames(20)
+	_check(main.player.on_rope and main.player.rope_side == PlayerController.ROPE_BOTTOM and main.combat.skill_casts == 1, "Two fingers must flip and cast K together, with a held flip remaining below")
+	_check(controls.get_button_text(&"jump_only") == "跳跃" and controls.get_button_text(&"rope_flip") == "上翻", "The same flip button must offer an upward flip while jump remains independent")
+	_touch(2, controls.get_action_rect(&"rope_flip").get_center(), true)
 	_touch(0, Vector2.ZERO, false)
 	await _frames(2)
-	_check(main.player.run_input.is_action_pressed(&"drop"), "Releasing one of two fingers on a button must leave the other finger held")
+	_check(main.player.run_input.is_action_pressed(&"rope_flip") and main.player.rope_side == PlayerController.ROPE_BOTTOM, "A second finger on a held flip must not toggle again or release the first action")
 	_touch(2, Vector2.ZERO, false)
-	_check(not main.player.run_input.is_action_pressed(&"drop") and main.player.run_input.is_action_pressed(&"skill"), "The last finger must release only its own action")
-	Input.action_press("drop")
-	_touch(3, controls.get_action_rect(&"drop").get_center(), true)
+	_check(not main.player.run_input.is_action_pressed(&"rope_flip") and main.player.run_input.is_action_pressed(&"skill"), "The last finger must release only its own action")
+	_touch(5, controls.get_action_rect(&"rope_flip").get_center(), true)
+	await _frames(12)
+	_check(main.player.rope_side == PlayerController.ROPE_TOP and main.player.on_rope and main.player.jumps_remaining == main.player.max_jump_count - 1, "A new press of the same flip button must return above without jumping or repeating while held")
+	_touch(5, Vector2.ZERO, false)
+	Input.action_press("dash")
+	_touch(3, controls.get_action_rect(&"dash").get_center(), true)
 	_touch(3, Vector2.ZERO, false)
-	_check(Input.is_action_pressed("drop") and main.player.run_input.is_action_pressed(&"drop"), "Releasing touch must preserve a held keyboard action")
-	_touch(4, controls.get_action_rect(&"drop").get_center(), true)
-	Input.action_release("drop")
-	_check(main.player.run_input.is_action_pressed(&"drop"), "Releasing keyboard must preserve a held touch action")
+	_check(Input.is_action_pressed("dash") and main.player.run_input.is_action_pressed(&"dash"), "Releasing touch must preserve a held keyboard action")
+	_touch(4, controls.get_action_rect(&"dash").get_center(), true)
+	Input.action_release("dash")
+	_check(main.player.run_input.is_action_pressed(&"dash"), "Releasing keyboard must preserve a held touch action")
 	var drag := InputEventScreenDrag.new()
 	drag.index = 4
 	drag.position = root.get_screen_transform() * Vector2(640, 400)
 	Input.parse_input_event(drag)
 	Input.flush_buffered_events()
-	_check(not main.player.run_input.is_action_pressed(&"drop"), "Dragging outside a button must cancel that finger without pressing another action")
+	_check(not main.player.run_input.is_action_pressed(&"dash"), "Dragging outside a button must cancel that finger without pressing another action")
 	_touch(4, Vector2.ZERO, false)
 	_touch(1, Vector2.ZERO, false, true)
 	_check(not main.player.run_input.is_action_pressed(&"skill"), "An OS-cancelled touch must release its action")
-	await _frames(10)
-	_touch(5, controls.get_action_rect(&"jump").get_center(), true)
+	main.free()
+
+func _test_jump_blocked_below() -> void:
+	var main := await _spawn()
+	var player := main.player as PlayerController
+	var controls := main.touch_controls as TouchControls
+	_short_tap(controls, 0, &"rope_flip")
 	await _frames(2)
-	_check(main.player.rope_side == PlayerController.ROPE_TOP and main.player.on_rope, "The upper button must flip back from below without consuming a jump")
-	_touch(5, Vector2.ZERO, false)
-	await _frames(8)
-	_touch(6, controls.get_action_rect(&"jump").get_center(), true)
-	await _frames(3)
-	_check(not main.player.on_rope and main.player.velocity.y < 0.0, "The same upper button must jump away when already above the rope")
-	_touch(6, Vector2.ZERO, false)
+	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM and not controls._is_available(&"jump_only"), "The jump button must be disabled below the rope, including during flip lock")
+	_touch(0, controls.get_action_rect(&"jump_only").get_center(), true)
+	await _frames(12)
+	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM and player.jumps_remaining == player.max_jump_count - 1 and not player.run_input.is_action_pressed(&"jump_only"), "Pressing or holding the disabled jump must not detach, flip or consume jumps")
+	player.run_input.press_touch(&"jump_only")
+	await _frames(2)
+	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM and player._buffer_remaining == 0.0, "Gameplay must also reject a jump arriving below the rope without buffering it")
+	player.run_input.release_touch(&"jump_only")
+	_short_tap(controls, 1, &"rope_flip")
+	await _frames(12)
+	_check(player.on_rope and player.rope_side == PlayerController.ROPE_TOP and controls._is_available(&"jump_only"), "Flipping above must restore jump availability without triggering a held or rejected jump")
+	_touch(0, Vector2.ZERO, false)
+	_short_tap(controls, 0, &"jump_only")
+	await _frames(2)
+	_check(not player.on_rope and player.velocity.y < 0.0, "After flipping above, a fresh jump tap must take off normally")
+	main.free()
+
+func _test_dedicated_jump_and_air_drop() -> void:
+	for quick_tap in [false, true]:
+		var main := await _spawn()
+		var player := main.player as PlayerController
+		var controls := main.touch_controls as TouchControls
+		_touch(0, controls.get_action_rect(&"jump_only").get_center(), true)
+		await _frames(3)
+		_check(not player.on_rope and player.velocity.y < 0.0 and player.jumps_remaining == player.max_jump_count - 1, "The dedicated jump must take off above the rope")
+		await _frames(8)
+		_check(player.jumps_remaining == player.max_jump_count - 1, "Holding jump must not consume extra air jumps")
+		_touch(0, Vector2.ZERO, false)
+		_short_tap(controls, 0, &"jump_only")
+		await _frames(2)
+		_check(not player.on_rope and player.velocity.y < 0.0 and player.jumps_remaining == player.max_jump_count - 2, "A fresh touch must consume exactly one extra air jump")
+		_check(controls.get_button_text(&"rope_flip") == "快速下落", "The same flip button must offer a fast fall while airborne")
+		if quick_tap:
+			_short_tap(controls, 1, &"rope_flip")
+		else:
+			_touch(1, controls.get_action_rect(&"rope_flip").get_center(), true)
+		await _frames(2)
+		_check(player.on_rope or player.velocity.y >= 1000.0, "Even a short airborne flip tap must immediately start a fast fall")
+		for tick in range(60):
+			if player.on_rope:
+				break
+			await _frames(1)
+		_check(player.on_rope and player.rope_side == PlayerController.ROPE_TOP and player.active, "An airborne flip must land safely above the rope")
+		await _frames(12)
+		_check(player.on_rope and player.rope_side == PlayerController.ROPE_TOP, "Holding an airborne flip through landing must not automatically flip below")
+		_touch(1, Vector2.ZERO, false)
+		_short_tap(controls, 1, &"rope_flip")
+		await _frames(2)
+		_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM, "A fresh flip tap after landing must toggle below normally")
+		main.free()
+	var early_main := await _spawn()
+	_short_tap(early_main.touch_controls, 0, &"jump_only")
+	_short_tap(early_main.touch_controls, 1, &"rope_flip")
+	await _frames(12)
+	_check(early_main.player.on_rope and early_main.player.rope_side == PlayerController.ROPE_BOTTOM, "Simultaneous jump and flip must resolve to one flip without a delayed buffered jump")
+	early_main.free()
+	var main := await _spawn()
+	var player := main.player as PlayerController
+	player.on_rope = false
+	player.position.y = player.rope_y + 10.0
+	player.velocity.y = 100.0
+	player.jumps_remaining = 1
+	_short_tap(main.touch_controls, 0, &"jump_only")
+	await _frames(2)
+	_check(not player.on_rope and player.velocity.y < 0.0 and player.jumps_remaining == 0, "The dedicated air jump must jump near the rope instead of manually regrabbing it")
+	player.position.y = player.rope_y + 10.0
+	player.velocity.y = 100.0
+	_short_tap(main.touch_controls, 0, &"jump_only")
+	await _frames(2)
+	_check(not player.on_rope and player.jumps_remaining == 0, "An exhausted touch jump must not buffer a manual regrab near the rope")
 	main.free()
 
 func _test_cooldown_and_short_tap() -> void:
@@ -102,7 +177,7 @@ func _test_boss_combinations() -> void:
 	boss.state = RopeBoss.State.RECOVERY
 	boss.remaining = 10.0
 	for index in range(3):
-		var action: StringName = [&"drop", &"weapon", &"skill"][index]
+		var action: StringName = [&"rope_flip", &"weapon", &"skill"][index]
 		_touch(index, main.touch_controls.get_action_rect(action).get_center(), true)
 	await _frames(70)
 	_check(main.player.rope_side == PlayerController.ROPE_BOTTOM and main.combat.weapon_shots == 3 and main.combat.skill_casts == 1, "Three fingers must combine a rope flip, J and K without losing inputs")
@@ -113,21 +188,21 @@ func _test_boss_combinations() -> void:
 func _test_pause_focus_and_stop() -> void:
 	var main := await _spawn()
 	var controls := main.touch_controls as TouchControls
-	_touch(0, controls.get_action_rect(&"drop").get_center(), true)
+	_touch(0, controls.get_action_rect(&"rope_flip").get_center(), true)
 	await _frames(2)
 	_touch(1, controls.get_action_rect(&"pause").get_center(), true)
 	var position: Vector2 = main.player.position
 	await _frames(10)
-	_check(paused and main.player.position == position and not main.player.run_input.is_action_pressed(&"drop"), "Touch pause must freeze gameplay and release held fingers")
+	_check(paused and main.player.position == position and not main.player.run_input.is_action_pressed(&"rope_flip"), "Touch pause must freeze gameplay and release held fingers")
 	_touch(1, Vector2.ZERO, false)
 	_touch(2, controls.get_action_rect(&"pause").get_center(), true)
 	_touch(2, Vector2.ZERO, false)
 	await _frames(2)
-	_check(not paused and not main.player.run_input.is_action_pressed(&"drop"), "Resume must not restore a stale held finger")
+	_check(not paused and not main.player.run_input.is_action_pressed(&"rope_flip"), "Resume must not restore a stale held finger")
 	_touch(0, Vector2.ZERO, false)
-	_touch(3, controls.get_action_rect(&"jump").get_center(), true)
+	_touch(3, controls.get_action_rect(&"jump_only").get_center(), true)
 	main.notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
-	_check(paused and not main.player.run_input.is_action_pressed(&"jump"), "Losing focus in touch mode must pause and clear pending inputs")
+	_check(paused and not main.player.run_input.is_action_pressed(&"jump_only"), "Losing focus in touch mode must pause and clear pending inputs")
 	main._toggle_pause()
 	_touch(4, controls.get_action_rect(&"skill").get_center(), true)
 	main.player.take_damage(main.player.health)
@@ -144,7 +219,7 @@ func _test_boss_touch_replay() -> void:
 			break
 		var safe := PlayerController.ROPE_BOTTOM if boss.attack == RopeBoss.Attack.UPPER_SWEEP else PlayerController.ROPE_TOP
 		if boss.state == RopeBoss.State.WINDUP and main.player.rope_side != safe:
-			_short_tap(main.touch_controls, 0, &"drop" if safe == PlayerController.ROPE_BOTTOM else &"jump")
+			_short_tap(main.touch_controls, 0, &"rope_flip")
 		if boss.is_vulnerable():
 			if boss.remaining > 0.9 and main.combat.is_weapon_ready():
 				_short_tap(main.touch_controls, 1, &"weapon")
@@ -174,7 +249,7 @@ func _test_layout() -> void:
 				if action != other:
 					_check(not rect.intersects(controls.get_action_rect(other)), "Touch targets must never overlap")
 		var lower_body := viewport.get_canvas_transform() * Vector2(main.player.position.x, main.player.rope_y + main.player.rope_offset + 30.0)
-		_check(controls.get_action_rect(&"drop").position.y > lower_body.y, "Touch controls must sit below both rope body positions")
+		_check(controls.get_action_rect(&"rope_flip").position.y > lower_body.y, "Touch controls must sit below both rope body positions")
 		_touch_for_viewport(viewport, 0, controls.get_action_rect(&"skill").get_center(), true)
 		await _frames(2)
 		_check(main.combat.skill_casts == 1, "Resized touch hit targets must still match their visual rectangles")
@@ -183,7 +258,7 @@ func _test_layout() -> void:
 		_check(not main.player.run_input.is_action_pressed(&"skill"), "A layout change must release fingers bound to the old screen coordinates")
 		controls.safe_area_override = Rect2(48, 24, dimensions.x - 96, dimensions.y - 72)
 		controls.sync_state()
-		_check(controls.safe_area_override.encloses(controls.get_action_rect(&"drop")) and controls.get_action_rect(&"drop").position.y > lower_body.y, "A taller bottom system inset must preserve both the safe area and the lower rope body")
+		_check(controls.safe_area_override.encloses(controls.get_action_rect(&"rope_flip")) and controls.get_action_rect(&"rope_flip").position.y > lower_body.y, "A taller bottom system inset must preserve both the safe area and the lower rope body")
 		viewport.free()
 
 func _test_menu_flow() -> void:
@@ -218,12 +293,12 @@ func _test_menu_flow() -> void:
 	_touch(0, Vector2.ZERO, false)
 	await _tap_button(main.resume_button)
 	_check(not paused, "The paused result panel must offer a touch resume button")
-	_touch(1, main.touch_controls.get_action_rect(&"drop").get_center(), true)
+	_touch(1, main.touch_controls.get_action_rect(&"rope_flip").get_center(), true)
 	main._toggle_pause()
 	await _tap_button(_find_button(main, "重试 R / Enter"))
 	await _frames(15)
 	main = current_scene
-	_check(main.touch_controls.visible and main.player.rope_side == PlayerController.ROPE_TOP and not main.player.run_input.is_action_pressed(&"drop"), "Touch retry must retain the layout and loadout while clearing all input")
+	_check(main.touch_controls.visible and main.player.rope_side == PlayerController.ROPE_TOP and not main.player.run_input.is_action_pressed(&"rope_flip"), "Touch retry must retain the layout and loadout while clearing all input")
 	_check(main.run_loadout.weapon.weapon_id == &"star_lance" and main.combat.weapon.cooldown_remaining == 0.0, "Retry must use the same loadout with fresh cooldowns")
 	main._toggle_pause()
 	await _tap_button(_find_button(main, "角色与武器"))
