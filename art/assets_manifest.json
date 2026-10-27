@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-26",
+  "generator": "OpenAI Responses native image_generation / built-in image_gen",
+  "delivery_stage": "art_direction_review",
+  "production_assets_delivered": false,
+  "assets": [
+    {
+      "path": "style_guide/style_anchor.png",
+      "role": "environment_style_reference",
+      "status": "pending_user_review",
+      "runtime_ready": false,
+      "human_approved": false,
+      "visual_reviewed_by_agent": true,
+      "width": 1672,
+      "height": 941,
+      "bytes": 2384982,
+      "sha256": "5767a640f4692abb0647999994969442f04b71ad2f45f3dffd3b1e2e16d0d250",
+      "generation_id": "ig_0fd2b4ee5a1a4e04016adec751e88887d0bc2c8f99c7dd2d8f",
+      "prompt": "prompts/style_anchor.prompt.md",
+      "actual_prompt": "prompts/style_anchor.generated.prompt.txt"
+    },
+    {
+      "path": "concepts/char_shadow_runner_design_v01.png",
+      "role": "character_design_reference",
+      "status": "pending_user_review",
+      "runtime_ready": false,
+      "human_approved": false,
+      "visual_reviewed_by_agent": true,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2515907,
+      "sha256": "e504b6de930343700c3e4b7d55118efdf48d5097aba379d8bd72865c1cf4bc0d",
+      "generation_id": "ig_0fd2b4ee5a1a4e04016adec588999c87d092632746e6b94d6c",
+      "prompt": "prompts/char_shadow_runner_design_v01.prompt.md",
+      "actual_prompt": "prompts/char_shadow_runner_design_v01.generated.prompt.txt"
+    },
+    {
+      "path": "concepts/ui_touch_combat_design_v02.png",
+      "role": "ui_design_reference",
+      "status": "pending_user_review",
+      "runtime_ready": false,
+      "human_approved": false,
+      "visual_reviewed_by_agent": true,
+      "width": 1672,
+      "height": 941,
+      "bytes": 2363335,
+      "sha256": "78c45404a5ccd631540d7b681e708635217356f6222915ec06cc0b713c0a2b5b",
+      "generation_id": "ig_0fd2b4ee5a1a4e04016adec6ca0b3c87d09c4c1c571bbd21c3",
+      "prompt": "prompts/ui_touch_combat_design_v02.prompt.md",
+      "actual_prompt": "prompts/ui_touch_combat_design_v02.generated.prompt.txt"
+    },
+    {
+      "path": "concepts/ui_touch_combat_design_v01.png",
+      "role": "ui_design_exploration",
+      "status": "superseded",
+      "runtime_ready": false,
+      "human_approved": false,
+      "visual_reviewed_by_agent": true,
+      "width": 1671,
+      "height": 941,
+      "bytes": 2340898,
+      "sha256": "df3e18526c4b75550a69e7533c57dfbdf8c09ea4a47b3593165d54fd378f408b",
+      "generation_id": "ig_0fd2b4ee5a1a4e04016adec5c16a5887d0adf130bc4292604c",
+      "prompt": "prompts/ui_touch_combat_design_v01.prompt.md",
+      "actual_prompt": "prompts/ui_touch_combat_design_v01.generated.prompt.txt",
+      "superseded_by": "concepts/ui_touch_combat_design_v02.png"
+    }
+  ],
+  "pipeline_runs": "pipeline_runs.json",
+  "candidate_packages": [
+    {
+      "path": "layered/ui_touch_v02_candidate/manifest.json",
+      "status": "preview_ready_pending_user_review",
+      "runtime_ready": false,
+      "human_approved": false,
+      "component_png_count": 10,
+      "validation": "layered/ui_touch_v02_candidate/preview_validation.json"
+    }
+  ]
+}

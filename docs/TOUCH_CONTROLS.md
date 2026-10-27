@@ -37,7 +37,13 @@
 
 移动端使用自动横屏方向和扩展画布；桌面普通模式保持原比例，触屏预览可展开宽屏画布。HUD、准备页和菜单以 1280×720 为设计基准，居中等比放入安全区域；触屏按钮分布在安全区域两侧，世界相机继续独立滚动。
 
-默认玩法按钮 96×96、间隔 16 个设计单位。读取系统安全区后调整位置和尺寸，为下侧角色碰撞身位留出空间；屏幕变化会解除旧坐标上的触点。局内段落提示移到钢索上方，避免与底部按钮重叠。所有按钮仍使用当前原型的代码占位视觉，正式按钮图片按项目美术流程另行制作。
+默认玩法按钮 96×96、间隔 16 个设计单位。读取系统安全区后调整位置和尺寸，为下侧角色碰撞身位留出空间；屏幕变化会解除旧坐标上的触点。局内段落提示移到钢索上方，避免与底部按钮重叠。默认游戏仍使用原型的代码占位视觉；下述独立场景用于评审候选按钮图片。
+
+## UI 美术候选预览
+
+打开 `scenes/art/ui_touch_preview.tscn` 按 F6，可在真实玩法中检查五个图像按钮，并通过预览入口切到首领战。图片来自 UI v02 PSD 的十张独立透明图层；按下缩放、禁用变暗、方向提示、冷却环和数值由 Godot 绘制。标题文字位于按钮图形下方，并受底部安全区约束。按钮的输入区域、状态门控和多指逻辑复用 `TouchControls`。
+
+候选渲染通过 `tests/test_ui_art_preview.gd` 复用全套触摸行为回归，并增加较大底部安全区的文字边界检查；已完成 1280×720 / 1600×720 图形检查。独立场景不记录通关成绩，正式导出暂不包含候选资源。用户视觉验收和 Android 实机仍待进行，详见 [组件说明](../art/layered/ui_touch_v02_candidate/README.md)。
 
 实现使用 [Godot 屏幕触摸事件](https://docs.godotengine.org/en/stable/classes/class_inputeventscreentouch.html) 的独立触摸索引，以及 [DisplayServer 的显示安全区域](https://docs.godotengine.org/en/stable/classes/class_displayserver.html#class-displayserver-method-get-display-safe-area)。
 

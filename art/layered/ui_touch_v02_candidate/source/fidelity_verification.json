@@ -1,0 +1,9 @@
+{
+  "status": "not_applicable",
+  "applied_layers": 0,
+  "checked_opaque_pixels": 0,
+  "pending": [],
+  "scope": "Only declared visible opaque foreground pixels at original coordinates; no claim about hidden pixels, glass alpha, text or surfaces",
+  "retry_attempted": 0,
+  "retry_budget_per_object": 0
+}

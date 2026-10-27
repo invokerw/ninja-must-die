@@ -7,3 +7,6 @@ builds/
 *.p12
 __pycache__/
 
+# Local art decomposition runs (model responses, diagnostics, code snapshots).
+/art/workbench/*
+!/art/workbench/.gdignore

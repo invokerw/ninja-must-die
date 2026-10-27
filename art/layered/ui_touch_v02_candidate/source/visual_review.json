@@ -1,0 +1,77 @@
+{
+  "status": "needs_review",
+  "reviewed_at": "2026-10-26T10:48:36Z",
+  "reviewer": "assistant_visual_inspection",
+  "runtime_ready": false,
+  "user_acceptance": "pending",
+  "summary": "转换和结构验证完成；进度条重复节点、钢索连接与重绘风格差异需修整。当前仅交付候选资源。",
+  "findings": [
+    "五个主要触摸按钮均存在，图标在底板前方；已检查的按钮裁切未见明显不透明矩形背景或邻接按钮碎片。金色边框、铆钉与材质被重绘，图标增加金属倒角、暗边和柔光，原始模型返回中已可见这些变化。",
+    "顶部进度条有明确视觉缺陷：灰色节点旁出现额外圆点，部分独立节点变窄；模型返回的横轨仍带节点，独立节点图层又覆盖其上，最终叠出重复节点和线段。不能直接用作运行时进度条。",
+    "钢索明显变细，两端固定件的位置、形状及与山壁连接的结构不同于原图；端点原尺寸对比已保存，需后续修整或重做。",
+    "角色和头像保留整体姿态与布局，但面部、衣料和明暗细节被重绘；背景云雾、植被、山体和河流纹理也有变化。"
+  ],
+  "details": [
+    {
+      "id": "controls",
+      "severity": "review",
+      "evidence": [
+        "inspection/four_stage_1.png",
+        "inspection/four_stage_2.png",
+        "inspection/four_stage_3.png",
+        "inspection/four_stage_4.png"
+      ],
+      "basis": "Original crop, actual raw model atlas crop, placed layer and final composite inspected."
+    },
+    {
+      "id": "progress_markers",
+      "severity": "needs_fix",
+      "evidence": [
+        "inspection/progress_strip_comparison.png",
+        "inspection/four_stage_5.png",
+        "inspection/four_stage_6.png"
+      ],
+      "observed": "Repeated circles in final composite; raw rail includes circles, separate marker cutouts include adjacent rail segments."
+    },
+    {
+      "id": "rope_attachments",
+      "severity": "needs_fix",
+      "evidence": [
+        "inspection/rope_left_comparison.png",
+        "inspection/rope_right_comparison.png"
+      ],
+      "observed": "Thinner rope and altered attachment geometry in final composite; no automatic correction performed."
+    },
+    {
+      "id": "redrawn_details",
+      "severity": "review",
+      "evidence": [
+        "inspection/source_preview.png",
+        "inspection/composite_preview.png",
+        "inspection/background_preview.png",
+        "inspection/four_stage_4.png",
+        "inspection/four_stage_5.png"
+      ]
+    }
+  ],
+  "artifact_readback": "inspection/artifact_readback.json",
+  "evidence": [
+    "inspection/source_preview.png",
+    "inspection/composite_preview.png",
+    "inspection/background_preview.png",
+    "inspection/four_stage_1.png",
+    "inspection/four_stage_2.png",
+    "inspection/four_stage_3.png",
+    "inspection/four_stage_4.png",
+    "inspection/four_stage_5.png",
+    "inspection/four_stage_6.png",
+    "inspection/progress_strip_comparison.png",
+    "inspection/rope_left_comparison.png",
+    "inspection/rope_right_comparison.png"
+  ],
+  "scope": "Visual inspection of the full composition and selected native control, HUD and rope crops; no claim of exhaustive pixel-level acceptance or recovery of hidden shapes.",
+  "structural_summary": "结构检查通过：实际重新读回 40 层 PSD，图层 RGBA、名称、尺寸与位置匹配导出 PNG；PSD 合成图匹配最终合成图。39 个非背景图层带透明区域。此结果不代表与原图像素一致。",
+  "text_editability_note": "数值 28 只有栅格图层，不是可编辑字体；游戏内生命、数值、进度和冷却仍应由 Godot 节点绘制。",
+  "source_fidelity_note": "保真结果为 not_applicable，检查的原图不透明像素数为 0；本任务采用模型 RGBA 直接放置与下采样，不作原图像素保真承诺。",
+  "acceptance_note": "助手视觉检查已完成，用户视觉验收仍待进行。交付为候选 PSD 与透明图层，runtime_ready=false，尚未接入游戏。"
+}

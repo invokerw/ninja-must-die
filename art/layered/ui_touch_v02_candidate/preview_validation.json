@@ -1,0 +1,101 @@
+{
+  "validated_at": "2026-10-26T11:16:35+00:00",
+  "status": "passed_for_preview",
+  "runtime_ready": false,
+  "user_acceptance": "pending",
+  "png_count": 10,
+  "png_bytes_match_source_layers": true,
+  "psd_hash_matches_parent": true,
+  "touch_suite": "tests/test_ui_art_preview.gd reuses full tests/test_touch_controls.gd suite",
+  "touch_result": "TOUCH_PASS",
+  "additional_check": "Button captions remain inside the safe area with a tall bottom inset.",
+  "boss_replay": {
+    "seconds": 36.1,
+    "hits": 0,
+    "damage": {
+      "skill": 72,
+      "weapon": 60,
+      "pickup": 48
+    }
+  },
+  "renderer": "Godot 4.7 Compatibility / OpenGL Metal / Apple M1 Pro",
+  "graphical_captures": [
+    {
+      "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/ui_candidate_1280_top.png",
+      "sha256": "4cea92f22d7352452748498ec64620bba9f5ade5b47f1373be5205742a96db5e"
+    },
+    {
+      "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/ui_candidate_1280_bottom.png",
+      "sha256": "f668eab369254b17290fea6c95fea93735767de3e9ec6615e0d7ee529b607eae"
+    },
+    {
+      "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/ui_candidate_1280_air.png",
+      "sha256": "99a6e1711dbb8ddf8658e7104f84ce264f8fd6b306ed9e92e805db52f3f28709"
+    },
+    {
+      "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/ui_candidate_1600_cooldown.png",
+      "sha256": "1760e92e35df70d4c2548266d933f81dec6e9a298d84c9d560b8d6a17ad4c508"
+    }
+  ],
+  "visual_observations": [
+    "At 96x96, five icons are recognizable and captions do not cover the main glyphs.",
+    "Below-rope jump has dimmed artwork and a disabled label; flip direction changes.",
+    "Airborne flip shows a downward double-chevron and pressed transform.",
+    "Cooldown rings and numbers are readable at 1600x720.",
+    "Native Godot progress rendering has four separately drawn checkpoints; rejected raster rail is not loaded."
+  ],
+  "limitations": [
+    "User visual acceptance and Android device validation pending.",
+    "Button artwork retains previously recorded model-redrawn material details.",
+    "Character, environment, rope and remaining HUD are still the existing prototype visuals.",
+    "No default main-scene integration; export presets exclude candidate art, scripts and scenes."
+  ],
+  "evidence": {
+    "touch_log": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/ui_candidate_touch_test.log",
+    "render_log": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/ui_candidate_render.log"
+  },
+  "visual_refinements": [
+    {
+      "revision": "status_badges_20261027",
+      "validated_at": "2026-10-27T03:21:29.380604+00:00",
+      "status": "passed_for_preview",
+      "changes": [
+        "Disabled and boss-only status text enlarged from 12 to 17 pixels at 96px button size.",
+        "Counter layout now uses the full button rectangle; status text and cooldown digits share the circle center.",
+        "Short status text uses a dark navy badge with muted gold border and warm lettering."
+      ],
+      "touch_result": "TOUCH_PASS",
+      "boss_replay": {
+        "seconds": 36.1,
+        "hits": 0
+      },
+      "graphical_captures": [
+        {
+          "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/status_badges_20261027/ui_candidate_1280_top.png",
+          "sha256": "035bfe39910d25ad1eb39024da4493b337bad342b0342a54197bb5e4ad9a27f4"
+        },
+        {
+          "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/status_badges_20261027/ui_candidate_1280_bottom.png",
+          "sha256": "4407311514b61e83abf97ac03810b6a1ad50644ff8e3f1c3b79086c004af2d9b"
+        },
+        {
+          "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/status_badges_20261027/ui_candidate_1280_air.png",
+          "sha256": "f0777b27fe17e3f0658febc4d74f5c5218048256bca2ffbd955d5b21953e5439"
+        },
+        {
+          "path": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/status_badges_20261027/ui_candidate_1600_cooldown.png",
+          "sha256": "c0b36c167c3b2046e0f79a5ae2597b83de504fa79b3b1b497f8bf5f7821888dd"
+        }
+      ],
+      "visual_observations": [
+        "Disabled jump and boss-only weapon labels are centered and readable on their badges in the 1280x720 lower-rope view.",
+        "Cooldown numbers remain centered inside the rings in the 1600x720 view."
+      ],
+      "comparison": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/status_badges_20261027/status_badges_comparison.png",
+      "evidence": {
+        "touch_log": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/status_badges_20261027/ui_candidate_touch_test.log",
+        "render_log": "art/workbench/ui_touch_combat_v02_20261026_01/inspection/status_badges_20261027/ui_candidate_render.log"
+      }
+    }
+  ]
+}

@@ -73,4 +73,6 @@ Windows PowerShell 将文件转成 Base64 并复制到剪贴板的示例：
 
 2026-10-25 已用 `gh workflow run` 完成[云端双平台构建验证](https://github.com/invokerw/ninja-must-die/actions/runs/40184806135)，源码提交为 `65ea43e`，构建 job 耗时 2 分 49 秒。回归、SDK 初始化、Windows release 导出、Android debug 导出、APK 签名校验与 artifact 上传均通过。下载产物后核对了全部 SHA-256，检查 APK 包含 ARMv7 / ARM64 库，并用云端生成的 Windows EXE 完成 120 帧无窗口启动检查，退出码为 0。
 
-此轮使用手动触发，未发布测试 tag / Release；正式 Android keystore 签名、Release 附件上传及 Android 实机安装尚未实测。
+2026-10-25 的云端验证使用手动触发，未发布测试 tag / Release。
+
+2026-10-26 用户确认已完成正式 Android keystore 签名与 Release 附件上传验证，这两项发布验证已完成。此次结论来自用户实际验证；未在本文补记未经提供的 tag、构建编号或签名信息。Android 实机操作、触感和性能验收仍单独跟踪，不能由签名与附件上传的通过替代。

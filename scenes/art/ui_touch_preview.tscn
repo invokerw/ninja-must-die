@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/main.tscn" id="1_main"]
+[ext_resource type="Script" path="res://scripts/art/ui_touch_preview.gd" id="2_preview"]
+
+[node name="UITouchPreview" instance=ExtResource("1_main")]
+script = ExtResource("2_preview")
+force_touch_controls = true
