@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-27",
+  "source": "local native image_generation_call result; original PNG bytes",
+  "images": [
+    {
+      "id": "ig_05fba3112b35c417016ae05c50992487d0a34a6cfdcd54dff3",
+      "timestamp_utc": "2026-10-27T08:11:36.457Z",
+      "status": "completed",
+      "source_line": 710,
+      "path": "ig_05fba3112b35c417016ae05c50992487d0a34a6cfdcd54dff3.png",
+      "base64_characters": 2511360,
+      "bytes": 1883520,
+      "sha256": "775cb939c876fe6dce32edd66e440f5d7d690d1e44c6d98a6cc46b14ab28651c",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: stylized-concept. Asset type: opaque far-background layer for a 2D horizontal runner. Reference image: the moonlit Chinese gorge painting just shown is style and palette reference. Generate a new wide 2048x1024 hand-painted far-distance panorama: deep blue sky in upper half, a pale crescent moon at x=300 y=180, very distant soft blue-gray karst peaks and mist ONLY in bottom third. Watercolor/gouache ink style, muted palette #111827 #34495e #6e7f8d #dde7e7. Low contrast, atmospheric, quiet and spacious. This is sky and very distant mountains only, no middle-distance cliffs, pagodas, bridges, trees or foreground rocks. The middle horizontal band y=380..800 must remain a calm misty expanse for game silhouettes and steel rope. Horizontal looping texture: left and right edges must meet smoothly at identical sky and mist heights, with no framing cliffs and no edge darkening. No characters, rope, spikes, game items, UI, text, labels or grid. Full canvas opaque PNG.",
+      "runtime_enabled": false
+    },
+    {
+      "id": "ig_05fba3112b35c417016ae05c7fadbc87d0acf7902f27141c94",
+      "timestamp_utc": "2026-10-27T08:11:51.202Z",
+      "status": "completed",
+      "source_line": 713,
+      "path": "ig_05fba3112b35c417016ae05c7fadbc87d0acf7902f27141c94.png",
+      "base64_characters": 2018280,
+      "bytes": 1513709,
+      "sha256": "02145b5dca6b53ff253d2509240cbde0dcf412a493bbab6a2a0c5533e6e75381",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGBA",
+      "has_alpha": true,
+      "revised_prompt": "Use case: stylized-concept. Asset type: separate TRANSPARENT middle-distance parallax layer for the same moonlit Chinese gorge game. Reference images: the original detailed moonlit gorge and the new quiet sky panorama above define the palette and ink/gouache style. Create one wide 2048x1024 RGBA PNG with REAL alpha transparency in all sky areas. Composition: a distant continuous blue-gray ridge with a few tiny pagodas and broken stone arches, narrow pale waterfalls, sparse pine silhouettes. The ridge is confined to the LOWER HALF, with its highest peaks near y=570 and its misty lower edge fading to alpha=0 around y=970. Upper half y=0..480 entirely transparent. Muted low-contrast blue-gray, no black silhouettes, no bright lights. Keep much of the center y=600..800 open or filled with soft transparent mist. Left and right edges meet at matching ridge height around y=750 so it can scroll horizontally; no framing cliffs. This is ONLY the middle-distance ridge layer, no sky painting, no moon, no river, no foreground. Actual transparent pixels, no checkerboard, no colored backdrop. No character, rope, hazards, items, UI, lettering or grid. Restrained painterly detail suitable behind a readable 60px character.",
+      "runtime_enabled": false
+    }
+  ]
+}

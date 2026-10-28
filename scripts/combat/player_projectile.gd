@@ -55,13 +55,9 @@ func cancel() -> void:
 func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, velocity.angle())
 	if visual_kind == "lance":
-		draw_line(Vector2(-42, 0), Vector2(12, 0), Color("d8b56a"), 4.0)
-		draw_colored_polygon(PackedVector2Array([Vector2(26, 0), Vector2(5, -9), Vector2(10, 0), Vector2(5, 9)]), Color("dde7e7"))
+		draw_texture_rect(WeaponArt.LANCE, Rect2(-40, -40, 80, 80), false)
 	elif visual_kind == "dart":
-		for index in range(3):
-			var direction := Vector2.from_angle(float(index) * TAU / 3.0)
-			draw_line(-direction * 3.0, direction * 11.0, Color("dde7e7"), 3.0)
+		draw_texture_rect(WeaponArt.SHURIKEN, Rect2(-13, -13, 26, 26), false)
 	else:
-		draw_arc(Vector2.ZERO, 17.0, -1.5, 1.5, 16, Color("d8b56a"), 5.0)
-		draw_arc(Vector2(-3, 0), 11.0, -1.3, 1.3, 12, Color("dde7e7"), 2.0)
+		draw_texture_rect(WeaponArt.CRESCENT, Rect2(-21, -21, 42, 42), false)
 	draw_line(Vector2(-16, 0), Vector2(-55, 0), Color(0.85, 0.71, 0.42, 0.3), 3.0)

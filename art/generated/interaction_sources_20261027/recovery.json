@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-27",
+  "source": "local native image_generation_call result; original PNG bytes",
+  "images": [
+    {
+      "id": "ig_05fba3112b35c417016ae05ee1b8dc87d0bb351d6e42e4e23f",
+      "timestamp_utc": "2026-10-27T08:22:03.389Z",
+      "status": "completed",
+      "source_line": 779,
+      "path": "ig_05fba3112b35c417016ae05ee1b8dc87d0bb351d6e42e4e23f.png",
+      "base64_characters": 2811748,
+      "bytes": 2108811,
+      "sha256": "f8193658cde9f1b58085d23271b7da6b41a0b3f62c3f80e41259db0c9e558e40",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: stylized-concept. Asset type: steel-rope obstacle sprite for the moonlit ink-fantasy 2D runner shown in this conversation. Create ONE isolated upward-pointing triangular steel spike, pure side-view silhouette, 1024x1024 PNG with genuine alpha transparency. Full object centered, tip at x512 y140, triangular base corners x200 y860 and x824 y860. Keep all material strictly inside this triangular silhouette. Forged dark iron, restrained red lacquer near the blade edges, narrow moonlit silver edge on upper-left, tiny bronze crescent rivet near base. Hand-painted cel shading, clear silhouette, readable at 48x56px. ONE blade only, no rope, mounting bracket, pedestal or shadow outside triangle. No scenery, ground, colored backdrop, checkerboard, smoke, UI, lettering or grid. Opaque metal with alpha=255 inside, alpha=0 outside. This triangle will be flipped vertically in game to show an obstacle on the underside of the steel rope.",
+      "runtime_enabled": false
+    },
+    {
+      "id": "ig_05fba3112b35c417016ae05f8e376487d087bb5fad0b329d0b",
+      "timestamp_utc": "2026-10-27T08:24:55.126Z",
+      "status": "completed",
+      "source_line": 801,
+      "path": "ig_05fba3112b35c417016ae05f8e376487d087bb5fad0b329d0b.png",
+      "base64_characters": 2716476,
+      "bytes": 2037355,
+      "sha256": "4373c2f7bc82894c658017fc6d984944802c88e3c2a27691985aa1e0572ebfb0",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: background-extraction. Edit target: the triangular red-and-iron spike on the checkerboard backdrop just shown. Remove the ENTIRE painted checkerboard and make it actual PNG alpha=0 transparency. Preserve the steel blade, red lacquer, bronze crescent rivet, side-view triangular silhouette and exact shape without adding anything. Fully opaque metal, genuine transparent pixels everywhere outside the metal. No checkerboard artwork, no smoke, no gradients, no background painting, no cast shadows. Deliver an RGBA PNG cutout.",
+      "runtime_enabled": false
+    }
+  ]
+}

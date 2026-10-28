@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-27",
+  "source": "local native image_generation_call result; original PNG bytes",
+  "images": [
+    {
+      "id": "ig_05fba3112b35c417016ae066c1e58c87d0978113e1e2fdab2d",
+      "timestamp_utc": "2026-10-27T08:56:18.064Z",
+      "status": "completed",
+      "source_line": 975,
+      "path": "ig_05fba3112b35c417016ae066c1e58c87d0978113e1e2fdab2d.png",
+      "base64_characters": 2841168,
+      "bytes": 2130874,
+      "sha256": "911365bc48afe06596cf58f7ee058bc6a5de8468542ae59570250699c2ef11f5",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: logo-brand. Asset type: final square application icon for the original game Shadow Runner / 影刃疾行. 1024x1024 opaque PNG, no letters or words. Use the ninja identity from this conversation: black tied-back hair, masked young male, sharp amber-brown eye, dark navy fabric mask, moon-gray short scarf, tiny bronze crescent clasp. Premium hand-painted cel-shaded portrait, 3/4 face pointing RIGHT, head and upper shoulder fill a centered circle, intense controlled expression. Pale crescent moon behind upper-left of head, simple deep midnight blue field, restrained thin bronze circular border inset around 90px from canvas edges. Strong readable silhouette, only face, hair, scarf, crescent; no extra blades or clutter. Keep all essential art inside central 800px square for platform masking; use flat dark navy corners. Consistent with the character portrait and blue-gray / bronze UI. No checkerboard, transparent pixels, text, version labels or watermark.",
+      "runtime_enabled": false
+    }
+  ]
+}

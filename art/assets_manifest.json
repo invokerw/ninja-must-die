@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "date": "2026-10-26",
+  "date": "2026-10-27",
   "generator": "OpenAI Responses native image_generation / built-in image_gen",
-  "delivery_stage": "art_direction_review",
-  "production_assets_delivered": false,
+  "delivery_stage": "production_art_first_pass_pending_review",
+  "production_assets_delivered": true,
   "assets": [
     {
       "path": "style_guide/style_anchor.png",
@@ -77,5 +77,25 @@
       "component_png_count": 10,
       "validation": "layered/ui_touch_v02_candidate/preview_validation.json"
     }
-  ]
+  ],
+  "runtime_integration": {
+    "date": "2026-10-27",
+    "status": "production_art_first_pass_pending_review",
+    "manifest": "generated/manifest.json",
+    "textures": 32,
+    "full_p1_completed": false,
+    "new_generation_delivered": true,
+    "new_generation_recovered": true,
+    "recovered_generation_count": 5,
+    "recovery_report": "generated/recovered_20261027/recovery.json",
+    "character_frames": 20,
+    "character_actions": 8,
+    "independent_background_layers": 3,
+    "new_batch_prompt": "prompts/p1_player_environment_20261027.md",
+    "validation": "validation/p2_combat_20261027/validation.json",
+    "combat_textures": 10,
+    "application_icon": true
+  },
+  "production_art_complete": false,
+  "production_art_first_pass_integrated": true
 }

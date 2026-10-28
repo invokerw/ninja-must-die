@@ -1,6 +1,7 @@
 class_name CrystalPickup
 extends Area2D
 
+const ART := preload("res://art/generated/collectibles/shadow_crystal.png")
 var _collected := false
 
 func _ready() -> void:
@@ -21,6 +22,5 @@ func _on_body_entered(body: Node2D) -> void:
 	queue_free()
 
 func _draw() -> void:
-	draw_colored_polygon(PackedVector2Array([
-		Vector2(0, -13), Vector2(10, 0), Vector2(0, 13), Vector2(-10, 0)
-	]), Color("d8b56a"))
+	# Preserve the existing 18px pickup radius and center on the attached body.
+	draw_texture_rect(ART, Rect2(-14, -20, 28, 40), false)

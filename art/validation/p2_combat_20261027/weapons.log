@@ -1,0 +1,11 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+2026-10-27 19:53:29.521 Godot[76806:72281110] XType: Using static font registry.
+WEAPON_REPLAY crescent_wheel J=true K=true balls=true: 36.10s, damage { &"skill": 72, &"weapon": 60, &"pickup": 48 }
+WEAPON_REPLAY star_lance J=true K=true balls=true: 35.95s, damage { &"skill": 72, &"weapon": 64, &"pickup": 44 }
+WEAPON_REPLAY crescent_wheel J=true K=false balls=false: 115.80s, damage { &"skill": 0, &"weapon": 180, &"pickup": 0 }
+WEAPON_REPLAY crescent_wheel J=false K=true balls=false: 95.62s, damage { &"skill": 180, &"weapon": 0, &"pickup": 0 }
+WEAPON_REPLAY crescent_wheel J=true K=false balls=true: 63.25s, damage { &"skill": 0, &"weapon": 96, &"pickup": 84 }
+WEAPONS_PASS (character equipment, save/reload, setup/retry, 2 weapons, real flight/impact, pickups, pause/cancel, 3 kill sources, loadout replays)

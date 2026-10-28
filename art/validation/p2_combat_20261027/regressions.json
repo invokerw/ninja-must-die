@@ -1,0 +1,86 @@
+[
+  {
+    "suite": "rope_landing",
+    "exit_code": 0,
+    "markers": [
+      "ROPE_LANDING_PASS (8 scenarios)"
+    ]
+  },
+  {
+    "suite": "rope_pickups",
+    "exit_code": 0,
+    "markers": [
+      "ROPE_PICKUPS_PASS (26 top, 24 bottom; correct and opposite sides)"
+    ]
+  },
+  {
+    "suite": "level_route",
+    "exit_code": 0,
+    "markers": [
+      "LEVEL_ROUTE_PASS (data validation, 4 practice runs, 2 boss clears, pause/reload, lower finish)"
+    ]
+  },
+  {
+    "suite": "combat",
+    "exit_code": 0,
+    "markers": [
+      "COMBAT_PASS (character data, cooldown, same-tick immunity, range/damage, 2/3 jumps, pause/stop, encounters, results)"
+    ]
+  },
+  {
+    "suite": "projectiles",
+    "exit_code": 0,
+    "markers": [
+      "PROJECTILES_PASS (screen anchor, fixed direction, parallel volleys/gaps, full flight, single contact, protection, swept hits, pause/reload/finish)"
+    ]
+  },
+  {
+    "suite": "boss",
+    "exit_code": 0,
+    "markers": [
+      "BOSS_PASS (entry, 3 readable attacks, half-health enrage, double volley, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)"
+    ]
+  },
+  {
+    "suite": "feedback",
+    "exit_code": 0,
+    "markers": [
+      "FEEDBACK_PASS (PCM assets, action cues, readable warnings, particles/voice bounds, render-only impact, independent toggles, pause/result/reload)"
+    ]
+  },
+  {
+    "suite": "weapons",
+    "exit_code": 0,
+    "markers": [
+      "WEAPONS_PASS (character equipment, save/reload, setup/retry, 2 weapons, real flight/impact, pickups, pause/cancel, 3 kill sources, loadout replays)"
+    ]
+  },
+  {
+    "suite": "save",
+    "exit_code": 0,
+    "markers": [
+      "SAVE_PASS (independent records/modes, legacy fields, validated settings, backup recovery, failed-save retry, real completion/death/exit, preparation UI)"
+    ]
+  },
+  {
+    "suite": "touch_controls",
+    "exit_code": 0,
+    "markers": [
+      "TOUCH_PASS (real touch events, dedicated jump, no jump below rope, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+    ]
+  },
+  {
+    "suite": "ui_art_preview",
+    "exit_code": 0,
+    "markers": [
+      "TOUCH_PASS (real touch events, dedicated jump, no jump below rope, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+    ]
+  },
+  {
+    "suite": "player_art",
+    "exit_code": 0,
+    "markers": [
+      "PLAYER_ART_PASS (8 run frames, 8 actions, rope anchors, real boss core states, pause, stop, collision invariance)"
+    ]
+  }
+]

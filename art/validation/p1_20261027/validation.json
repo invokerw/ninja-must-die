@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-27",
+  "stage": "p1_partial_runtime_integration",
+  "full_art_complete": false,
+  "human_acceptance": "pending",
+  "asset_integrity": {
+    "count": 17,
+    "result": "ART_ASSETS_PASS (17 hashes, alpha, both panorama joins)"
+  },
+  "regressions": [
+    {
+      "suite": "rope_landing",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.54
+    },
+    {
+      "suite": "rope_pickups",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.41
+    },
+    {
+      "suite": "level_route",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 11.8
+    },
+    {
+      "suite": "combat",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.02
+    },
+    {
+      "suite": "projectiles",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.75
+    },
+    {
+      "suite": "boss",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 16.55
+    },
+    {
+      "suite": "feedback",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.9
+    },
+    {
+      "suite": "weapons",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 10.7
+    },
+    {
+      "suite": "save",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.93
+    },
+    {
+      "suite": "touch_controls",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 2.96
+    },
+    {
+      "suite": "persistence_write",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "suite": "persistence_read",
+      "passed": true,
+      "exit_code": 0
+    }
+  ],
+  "candidate_ui": "TOUCH_PASS",
+  "exported_pack": {
+    "platform_preset": "Windows Desktop",
+    "result": "EXPORTED_ART_PASS",
+    "pack_sha256": "d4fc5f3f3911432e3f563e9fb628b29a05e0d1806a79aafa0d34de7c9a010c10",
+    "isolated_working_directory": true,
+    "source_and_candidate_directories_excluded": true,
+    "json_manifests_excluded": true,
+    "note": "Resource-pack validation only; no new Android device or native executable acceptance."
+  },
+  "captures": [
+    {
+      "path": "game_1280_air.png",
+      "sha256": "aba75a1f8c7cf243c2ce9fe2f26b562c9452bd17fd362da2e069e58d1e8ce00e"
+    },
+    {
+      "path": "game_1280_boss.png",
+      "sha256": "286b373b10b2d83c82cc4fe674acae4838edfe2fd0b25780508dbeee18258e2a"
+    },
+    {
+      "path": "game_1280_bottom.png",
+      "sha256": "4f203c6e7ed44ca9812abd0b1355e021a34adcfde4b8551fd20eed16a8cf4bfe"
+    },
+    {
+      "path": "game_1280_setup.png",
+      "sha256": "6f341ee0189e76ba496c212ef0b79e758f799ef6e812e869f5bfbdb2ab64e713"
+    },
+    {
+      "path": "game_1280_top.png",
+      "sha256": "663082acd774bb08d03b477786c30039f622ecc2477858d4b5cf336794ed784d"
+    },
+    {
+      "path": "game_1600_cooldown.png",
+      "sha256": "5f5b24dbc016dec3e481e3150379fc2cd7a2c30739e05ef2d417a0a53d119a5a"
+    }
+  ],
+  "visual_observations": [
+    "Viewed 1280x720 upper/lower rope, air and setup, plus boss and 1600x720 cooldown captures.",
+    "Adjusted portrait/text spacing and nine-patch insets after graphical review.",
+    "Button disable and cooldown are readable; input behavior uses existing TouchControls.",
+    "Player, hazards, weapons and boss remain prototype geometry.",
+    "Background is a mirrored adaptation of one painting; independent parallax layers are unfinished."
+  ],
+  "environment_notes": [
+    "Headless macOS reports a system CA certificate warning.",
+    "Editor import/export reports sandbox-denied writes to global editor settings; pack creation and isolated runtime checks passed."
+  ],
+  "new_generation": "two built-in requests returned no image or accessible artifact",
+  "final_touch_and_candidate_rerun": "passed after final theme changes"
+}

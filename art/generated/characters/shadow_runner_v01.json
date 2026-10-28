@@ -1,0 +1,660 @@
+{
+  "stage": "runtime_pending_visual_acceptance",
+  "frame_size": [
+    256,
+    256
+  ],
+  "draw_scale": 0.3333333333333333,
+  "anchor": [
+    144,
+    126
+  ],
+  "canvas": [
+    1280,
+    1024
+  ],
+  "sha256": "9d3882f4adbefba1f2577566a294ea27d12cb6eadc21ae078550ed0ff1bb803c",
+  "processing": "Connected native-alpha subjects (>100 core; 2px edge expansion), retain original alpha inside each subject; Lanczos resize, fixed frame placement. No synthetic limb motion, mirrored poses or inverted hanging.",
+  "frames": [
+    {
+      "animation": "run",
+      "frame": 0,
+      "region": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        28,
+        103,
+        406,
+        479
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        354,
+        103
+      ],
+      "destination_pivot": [
+        177,
+        55.03999999999999
+      ],
+      "alpha_bbox": [
+        27,
+        55,
+        201,
+        228
+      ]
+    },
+    {
+      "animation": "run",
+      "frame": 1,
+      "region": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        411,
+        100,
+        746,
+        482
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        713,
+        100
+      ],
+      "destination_pivot": [
+        177,
+        52.28
+      ],
+      "alpha_bbox": [
+        38,
+        52,
+        192,
+        228
+      ]
+    },
+    {
+      "animation": "run",
+      "frame": 2,
+      "region": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        782,
+        96,
+        1109,
+        488
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        1076,
+        96
+      ],
+      "destination_pivot": [
+        177,
+        47.67999999999998
+      ],
+      "alpha_bbox": [
+        42,
+        48,
+        192,
+        228
+      ]
+    },
+    {
+      "animation": "run",
+      "frame": 3,
+      "region": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        1160,
+        97,
+        1499,
+        452
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        1467,
+        97
+      ],
+      "destination_pivot": [
+        177,
+        44.69999999999999
+      ],
+      "alpha_bbox": [
+        36,
+        45,
+        192,
+        208
+      ]
+    },
+    {
+      "animation": "run",
+      "frame": 4,
+      "region": [
+        1024,
+        0,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        32,
+        568,
+        431,
+        950
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        368,
+        568
+      ],
+      "destination_pivot": [
+        177,
+        52.28
+      ],
+      "alpha_bbox": [
+        22,
+        52,
+        206,
+        228
+      ]
+    },
+    {
+      "animation": "run",
+      "frame": 5,
+      "region": [
+        0,
+        256,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        421,
+        567,
+        743,
+        953
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        716,
+        567
+      ],
+      "destination_pivot": [
+        177,
+        50.44
+      ],
+      "alpha_bbox": [
+        41,
+        50,
+        189,
+        228
+      ]
+    },
+    {
+      "animation": "run",
+      "frame": 6,
+      "region": [
+        256,
+        256,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        780,
+        560,
+        1106,
+        954
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        1077,
+        560
+      ],
+      "destination_pivot": [
+        177,
+        46.75999999999999
+      ],
+      "alpha_bbox": [
+        40,
+        47,
+        190,
+        228
+      ]
+    },
+    {
+      "animation": "run",
+      "frame": 7,
+      "region": [
+        512,
+        256,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05abd897887d086aafe5305a2e6d3",
+      "source_bbox": [
+        1155,
+        560,
+        1498,
+        929
+      ],
+      "scale": 0.46,
+      "source_pivot": [
+        1466,
+        560
+      ],
+      "destination_pivot": [
+        177,
+        38.25999999999999
+      ],
+      "alpha_bbox": [
+        34,
+        38,
+        192,
+        208
+      ]
+    },
+    {
+      "animation": "hang",
+      "frame": 0,
+      "region": [
+        768,
+        256,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        16,
+        528,
+        213,
+        777
+      ],
+      "scale": 0.8,
+      "source_pivot": [
+        136,
+        531
+      ],
+      "destination_pivot": [
+        144,
+        24
+      ],
+      "alpha_bbox": [
+        48,
+        22,
+        206,
+        221
+      ]
+    },
+    {
+      "animation": "hang",
+      "frame": 1,
+      "region": [
+        1024,
+        256,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        242,
+        528,
+        451,
+        784
+      ],
+      "scale": 0.8,
+      "source_pivot": [
+        384,
+        531
+      ],
+      "destination_pivot": [
+        144,
+        24
+      ],
+      "alpha_bbox": [
+        30,
+        22,
+        197,
+        227
+      ]
+    },
+    {
+      "animation": "hang",
+      "frame": 2,
+      "region": [
+        0,
+        512,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        499,
+        528,
+        706,
+        789
+      ],
+      "scale": 0.8,
+      "source_pivot": [
+        637,
+        531
+      ],
+      "destination_pivot": [
+        144,
+        24
+      ],
+      "alpha_bbox": [
+        34,
+        22,
+        200,
+        231
+      ]
+    },
+    {
+      "animation": "hang",
+      "frame": 3,
+      "region": [
+        256,
+        512,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        750,
+        528,
+        954,
+        786
+      ],
+      "scale": 0.8,
+      "source_pivot": [
+        895,
+        531
+      ],
+      "destination_pivot": [
+        144,
+        24
+      ],
+      "alpha_bbox": [
+        28,
+        22,
+        191,
+        228
+      ]
+    },
+    {
+      "animation": "jump",
+      "frame": 0,
+      "region": [
+        512,
+        512,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        1016,
+        544,
+        1237,
+        728
+      ],
+      "scale": 0.82,
+      "source_pivot": [
+        1198,
+        544
+      ],
+      "destination_pivot": [
+        177,
+        48
+      ],
+      "alpha_bbox": [
+        28,
+        48,
+        209,
+        199
+      ]
+    },
+    {
+      "animation": "fall",
+      "frame": 0,
+      "region": [
+        768,
+        512,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        1280,
+        549,
+        1506,
+        782
+      ],
+      "scale": 0.82,
+      "source_pivot": [
+        1479,
+        549
+      ],
+      "destination_pivot": [
+        177,
+        48
+      ],
+      "alpha_bbox": [
+        14,
+        48,
+        199,
+        239
+      ]
+    },
+    {
+      "animation": "flip",
+      "frame": 0,
+      "region": [
+        1024,
+        512,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        25,
+        786,
+        248,
+        989
+      ],
+      "scale": 0.8,
+      "source_pivot": [
+        136.5,
+        887.5
+      ],
+      "destination_pivot": [
+        138,
+        126
+      ],
+      "alpha_bbox": [
+        49,
+        45,
+        227,
+        207
+      ]
+    },
+    {
+      "animation": "flip",
+      "frame": 1,
+      "region": [
+        0,
+        768,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        264,
+        789,
+        500,
+        990
+      ],
+      "scale": 0.8,
+      "source_pivot": [
+        382.0,
+        889.5
+      ],
+      "destination_pivot": [
+        138,
+        126
+      ],
+      "alpha_bbox": [
+        44,
+        46,
+        233,
+        207
+      ]
+    },
+    {
+      "animation": "dash",
+      "frame": 0,
+      "region": [
+        256,
+        768,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        508,
+        815,
+        761,
+        994
+      ],
+      "scale": 0.78,
+      "source_pivot": [
+        685,
+        885
+      ],
+      "destination_pivot": [
+        148,
+        126
+      ],
+      "alpha_bbox": [
+        10,
+        71,
+        207,
+        211
+      ]
+    },
+    {
+      "animation": "dash",
+      "frame": 1,
+      "region": [
+        512,
+        768,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        766,
+        815,
+        1005,
+        993
+      ],
+      "scale": 0.78,
+      "source_pivot": [
+        936,
+        885
+      ],
+      "destination_pivot": [
+        148,
+        126
+      ],
+      "alpha_bbox": [
+        15,
+        71,
+        201,
+        210
+      ]
+    },
+    {
+      "animation": "hurt",
+      "frame": 0,
+      "region": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        1040,
+        772,
+        1243,
+        996
+      ],
+      "scale": 0.82,
+      "source_pivot": [
+        1164,
+        890
+      ],
+      "destination_pivot": [
+        144,
+        126
+      ],
+      "alpha_bbox": [
+        42,
+        29,
+        208,
+        213
+      ]
+    },
+    {
+      "animation": "death",
+      "frame": 0,
+      "region": [
+        1024,
+        768,
+        256,
+        256
+      ],
+      "source_id": "ig_05fba3112b35c417016ae05a33c6a087d0a2349fe6ea44edc8",
+      "source_bbox": [
+        1253,
+        892,
+        1520,
+        980
+      ],
+      "scale": 0.8,
+      "source_pivot": [
+        1420,
+        977
+      ],
+      "destination_pivot": [
+        144,
+        228
+      ],
+      "alpha_bbox": [
+        10,
+        160,
+        224,
+        230
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "stage": "runtime_pending_visual_acceptance",
+  "assets": [
+    {
+      "path": "generated/combat/boss_armored_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae064208f6087d08f0126f82c7920b5",
+      "source_bbox": [
+        12,
+        16,
+        756,
+        487
+      ],
+      "sha256": "404414e24ddb00967be9b655b3fb50a44e6354f5721d4f70016f1a5881633d5e",
+      "width": 768,
+      "height": 512,
+      "alpha_bbox": [
+        35,
+        48,
+        733,
+        491
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/boss_weak_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae064208f6087d08f0126f82c7920b5",
+      "source_bbox": [
+        780,
+        16,
+        1524,
+        487
+      ],
+      "sha256": "5c5595109555a9b5b5aba088d6cfebb2f1fd4f3b632ca9191256ec3bab59fe7c",
+      "width": 768,
+      "height": 512,
+      "alpha_bbox": [
+        35,
+        48,
+        731,
+        491
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/boss_enraged_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae064208f6087d08f0126f82c7920b5",
+      "source_bbox": [
+        7,
+        525,
+        760,
+        998
+      ],
+      "sha256": "0041cb2ad37041a7ac54bb7244bcb27ea697e1350cc4b0a968a971e9c45beaa2",
+      "width": 768,
+      "height": 512,
+      "alpha_bbox": [
+        30,
+        49,
+        738,
+        493
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/boss_defeated_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae064208f6087d08f0126f82c7920b5",
+      "source_bbox": [
+        789,
+        540,
+        1508,
+        986
+      ],
+      "sha256": "e45eb5f3a8dc242f553521acecfb8608b707ce9884a0be06a9e4a5ee2eb471f4",
+      "width": 768,
+      "height": 512,
+      "alpha_bbox": [
+        43,
+        55,
+        717,
+        474
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/crescent_wheel_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61",
+      "source_bbox": [
+        96,
+        116,
+        435,
+        477
+      ],
+      "sha256": "04f7ec298a9da04432ff158e8b971ef1510ad51501b22a311ae0f6287c3f44b6",
+      "width": 256,
+      "height": 256,
+      "alpha_bbox": [
+        15,
+        8,
+        240,
+        248
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/star_lance_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61",
+      "source_bbox": [
+        501,
+        237,
+        1067,
+        418
+      ],
+      "sha256": "44b9ef7679f3548395407b6e36ef22cfec571cb0b2d7815cbb3ea80f51c43ce2",
+      "width": 256,
+      "height": 256,
+      "alpha_bbox": [
+        8,
+        89,
+        246,
+        166
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/shuriken_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61",
+      "source_bbox": [
+        1090,
+        102,
+        1469,
+        460
+      ],
+      "sha256": "4b575a72c30cd7924b0ac7899260a80e660a680aea2664c5f16174e3af6d132f",
+      "width": 256,
+      "height": 256,
+      "alpha_bbox": [
+        8,
+        14,
+        248,
+        241
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/sentry_up_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61",
+      "source_bbox": [
+        34,
+        619,
+        535,
+        851
+      ],
+      "sha256": "8afe8ce2d8f5e96ac324a70b57fb0ab66144db4b2a35651d18adf8ad446a7420",
+      "width": 256,
+      "height": 256,
+      "alpha_bbox": [
+        8,
+        73,
+        248,
+        183
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/sentry_down_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61",
+      "source_bbox": [
+        546,
+        617,
+        1010,
+        852
+      ],
+      "sha256": "faa6e68512b7a65f9e947201234b02a785faa60c88573da40b310c7ae9bc3eff",
+      "width": 256,
+      "height": 256,
+      "alpha_bbox": [
+        8,
+        68,
+        248,
+        189
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    },
+    {
+      "path": "generated/combat/enemy_dart_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61",
+      "source_bbox": [
+        1051,
+        666,
+        1487,
+        816
+      ],
+      "sha256": "45509bf4ba195d6444bb55382c37c5ea6a4dafcc40dc6c56989dbd5867d3c9d9",
+      "width": 256,
+      "height": 256,
+      "alpha_bbox": [
+        9,
+        86,
+        248,
+        169
+      ],
+      "runtime_enabled": true,
+      "human_approved": false,
+      "pixel_transform": "RGB source; connected exterior neutral matte (min RGB>140, channel spread<45), keep enclosed highlights; 1px outline erosion, isolate connected subject, Lanczos fit with 8px margins. Not native generated alpha."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "path": "generated/obstacles/steel_spike_v01.png",
+  "source_id": "ig_05fba3112b35c417016ae05ee1b8dc87d0bb351d6e42e4e23f",
+  "source_sha256": "f8193658cde9f1b58085d23271b7da6b41a0b3f62c3f80e41259db0c9e558e40",
+  "sha256": "40bc2b184fe3adcb691824a38081ae1154669cd72425b3026c153c3c2f062c36",
+  "width": 256,
+  "height": 256,
+  "pixel_transform": "Native RGB artwork; explicit triangle alpha mask at source vertices (628,88),(249,1147),(1005,1147), crop (247,86,1007,1149), Lanczos to 256 square, supersampled collision-outline mask. Not native generated alpha.",
+  "runtime_enabled": true,
+  "human_approved": false
+}

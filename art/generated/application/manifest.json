@@ -1,0 +1,25 @@
+{
+  "stage": "runtime_pending_visual_acceptance",
+  "assets": [
+    {
+      "path": "generated/application/app_icon_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae066c1e58c87d0978113e1e2fdab2d",
+      "width": 1024,
+      "height": 1024,
+      "sha256": "806c71cf0dc8d84e390d1af0d19b80bfb654c79f57196716f10e44d3587911f6",
+      "pixel_transform": "Lanczos resize retained opaque 1254px square portrait to 1024px application icon",
+      "runtime_enabled": true,
+      "human_approved": false
+    },
+    {
+      "path": "generated/environments/fog_ridge_foreground_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae068e66a2487d09a2f80c0541a49c6",
+      "width": 1582,
+      "height": 887,
+      "sha256": "2e7b2de995f23e6d48d80d128928ca68e638e7649f1fe544789259cac7c95def",
+      "pixel_transform": "RGB exterior-neutral matte, 1px outline erosion; vertically compress foreground 50% and bottom-align below route; 192px premultiplied cosine wrap seam",
+      "runtime_enabled": true,
+      "human_approved": false
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 class_name RopeBoss
 extends Area2D
 
+const ART_ARMORED := preload("res://art/generated/combat/boss_armored_v01.png")
+const ART_WEAK := preload("res://art/generated/combat/boss_weak_v01.png")
+const ART_ENRAGED := preload("res://art/generated/combat/boss_enraged_v01.png")
+const ART_DEFEATED := preload("res://art/generated/combat/boss_defeated_v01.png")
+
 signal death_started
 signal defeated
 signal attack_started
@@ -249,18 +254,19 @@ func _draw() -> void:
 				draw_line(marker + Vector2(8, -8), marker + Vector2(-8, 0), Color(tint, 0.4 + charge * 0.5), 3.0)
 				draw_line(marker + Vector2(-8, 0), marker + Vector2(8, 8), Color(tint, 0.4 + charge * 0.5), 3.0)
 	var fade := clampf(remaining / data.death_seconds, 0.0, 1.0) if state == State.DEFEATED else 1.0
-	var tint := Color("dde7e7") if _hit_flash > 0.0 else Color("f08b68" if enraged else "b24b4b")
+	var tint := Color(1.6, 1.6, 1.8) if _hit_flash > 0.0 else (Color(1.2, 0.85, 0.75) if enraged and not is_vulnerable() else Color.WHITE)
 	tint.a = fade
 	if enraged:
 		var pulse := 0.5 + 0.5 * sin(_phase * 6.0)
 		draw_arc(Vector2.ZERO, 76.0 + pulse * 6.0, 0.0, TAU, 48, Color(0.94, 0.55, 0.41, (0.35 + pulse * 0.25) * fade), 3.0)
-	var wing := sin(_phase * 4.0) * 8.0
-	draw_colored_polygon(PackedVector2Array([Vector2(-128, -34 + wing), Vector2(-48, -22), Vector2(0, -70), Vector2(48, -22), Vector2(128, -34 + wing), Vector2(74, 32), Vector2(0, 64), Vector2(-74, 32)]), tint)
-	draw_colored_polygon(PackedVector2Array([Vector2(-40, -30), Vector2(0, -52), Vector2(40, -30), Vector2(34, 34), Vector2(0, 50), Vector2(-34, 34)]), Color(Color("233142"), fade))
-	var core := Color("f0c36d") if is_vulnerable() else Color("91a1ad")
-	core.a = fade
-	draw_circle(Vector2.ZERO, 18.0 if is_vulnerable() else 12.0, core)
-	draw_arc(Vector2.ZERO, 34.0 + sin(_phase * 8.0) * 3.0, 0.0, TAU, 40, core, 3.0)
-	if not is_vulnerable() and alive:
-		draw_line(Vector2(-22, -30), Vector2(22, 30), core, 5.0)
-		draw_line(Vector2(22, -30), Vector2(-22, 30), core, 5.0)
+	var texture := get_art_texture()
+	draw_texture_rect(texture, Rect2(-128.0, -230.0 / 3.0, 256.0, 512.0 / 3.0), false, tint)
+	if is_vulnerable():
+		draw_arc(Vector2.ZERO, 26.0 + sin(_phase * 8.0) * 2.0, 0.0, TAU, 40, Color(0.94, 0.76, 0.43, fade * 0.7), 2.0)
+
+func get_art_texture() -> Texture2D:
+	if state == State.DEFEATED:
+		return ART_DEFEATED
+	if is_vulnerable():
+		return ART_ENRAGED if enraged else ART_WEAK
+	return ART_ARMORED

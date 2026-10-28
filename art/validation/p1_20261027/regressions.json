@@ -1,0 +1,72 @@
+[
+  {
+    "suite": "rope_landing",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 0.54
+  },
+  {
+    "suite": "rope_pickups",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 1.41
+  },
+  {
+    "suite": "level_route",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 11.8
+  },
+  {
+    "suite": "combat",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 1.02
+  },
+  {
+    "suite": "projectiles",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 0.75
+  },
+  {
+    "suite": "boss",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 16.55
+  },
+  {
+    "suite": "feedback",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 1.9
+  },
+  {
+    "suite": "weapons",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 10.7
+  },
+  {
+    "suite": "save",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 0.93
+  },
+  {
+    "suite": "touch_controls",
+    "passed": true,
+    "exit_code": 0,
+    "seconds": 2.96
+  },
+  {
+    "suite": "persistence_write",
+    "passed": true,
+    "exit_code": 0
+  },
+  {
+    "suite": "persistence_read",
+    "passed": true,
+    "exit_code": 0
+  }
+]

@@ -1,0 +1,332 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+
+2026-10-27 16:39:05.635 Godot[57731:71447934] XType: Using static font registry.
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+ERROR: System.Net.Sockets.SocketException (13): Permission denied
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at System.Net.Sockets.TcpListener.Start(Int32 backlog)
+   at GodotTools.Ides.MessagingServer..ctor(String editorExecutablePath, String projectMetadataDir, ILogger logger) in /root/godot/modules/mono/editor/GodotTools/GodotTools/Ides/MessagingServer.cs:line 124
+   at GodotTools.Ides.GodotIdeManager.GetRunningOrNewServer() in /root/godot/modules/mono/editor/GodotTools/GodotTools/Ides/GodotIdeManager.cs:line 24
+   at GodotTools.Ides.GodotIdeManager._Ready() in /root/godot/modules/mono/editor/GodotTools/GodotTools/Ides/GodotIdeManager.cs:line 34
+   at Godot.Node.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret) in /root/godot/modules/mono/glue/GodotSharp/GodotSharp/Generated/GodotObjects/Node.cs:line 2660
+   at GodotTools.Ides.GodotIdeManager.InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret) in /root/godot/modules/mono/editor/GodotTools/GodotTools/Godot.SourceGenerators/Godot.SourceGenerators.ScriptMethodsGenerator/GodotTools.Ides.GodotIdeManager_ScriptMethods.generated.cs:line 90
+   at Godot.Bridge.CSharpInstanceBridge.Call(IntPtr godotObjectGCHandle, godot_string_name* method, godot_variant** args, Int32 argCount, godot_variant_call_error* refCallError, godot_variant* ret) in /root/godot/modules/mono/glue/GodotSharp/GodotSharp/Core/Bridge/CSharpInstanceBridge.cs:line 24
+   at: void Godot.NativeInterop.ExceptionUtils.LogException(System.Exception) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Core/NativeInterop/ExceptionUtils.cs:113)
+   C# backtrace (most recent call first):
+       [0] void Godot.GD.PushError(string) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Core/GD.cs:366)
+       [1] void Godot.NativeInterop.ExceptionUtils.LogException(System.Exception) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Core/NativeInterop/ExceptionUtils.cs:113)
+       [2] Godot.NativeInterop.godot_bool Godot.Bridge.CSharpInstanceBridge.Call(nint, Godot.NativeInterop.godot_string_name*, Godot.NativeInterop.godot_variant**, int, Godot.NativeInterop.godot_variant_call_error*, Godot.NativeInterop.godot_variant*) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Core/Bridge/CSharpInstanceBridge.cs:24)
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (39 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | shadow_runner_v01.png[39m[0m
+[   2% ] [90m[1m_update_scan_actions[22m | shadow_crystal.png[39m[0m
+[   5% ] [90m[1m_update_scan_actions[22m | fog_ridge_middle_v01.png[39m[0m
+[   7% ] [90m[1m_update_scan_actions[22m | fog_ridge_panorama.png[39m[0m
+[  10% ] [90m[1m_update_scan_actions[22m | fog_ridge_sky_v01.png[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | steel_spike_v01.png[39m[0m
+[  15% ] [90m[1m_update_scan_actions[22m | dash_icon.png[39m[0m
+[  17% ] [90m[1m_update_scan_actions[22m | dash_plate.png[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | jump_only_icon.png[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | jump_only_plate.png[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | panel.png[39m[0m
+[  27% ] [90m[1m_update_scan_actions[22m | pause_icon.png[39m[0m
+[  30% ] [90m[1m_update_scan_actions[22m | pause_plate.png[39m[0m
+[  32% ] [90m[1m_update_scan_actions[22m | portrait.png[39m[0m
+[  35% ] [90m[1m_update_scan_actions[22m | rope_flip_icon.png[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | rope_flip_plate.png[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | settings_icon.png[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | skill_icon.png[39m[0m
+[  45% ] [90m[1m_update_scan_actions[22m | skill_plate.png[39m[0m
+[  47% ] [90m[1m_update_scan_actions[22m | weapon_icon.png[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | weapon_plate.png[39m[0m
+[  52% ] [90m[1m_update_scan_actions[22m | frames.png[39m[0m
+[  55% ] [90m[1m_update_scan_actions[22m | game_1280_boss.png[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | game_1280_dash.png[39m[0m
+[  60% ] [90m[1m_update_scan_actions[22m | game_1280_death.png[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | game_1280_flip.png[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | game_1280_hurt.png[39m[0m
+[  67% ] [90m[1m_update_scan_actions[22m | game_1280_setup.png[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | game_1280_wrap.png[39m[0m
+[  72% ] [90m[1m_update_scan_actions[22m | game_1600_cooldown.png[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | middle_wrap.png[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | run_00.png[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | run_01.png[39m[0m
+[  82% ] [90m[1m_update_scan_actions[22m | run_02.png[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | run_03.png[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | run_04.png[39m[0m
+[  90% ] [90m[1m_update_scan_actions[22m | run_05.png[39m[0m
+[  92% ] [90m[1m_update_scan_actions[22m | run_06.png[39m[0m
+[  95% ] [90m[1m_update_scan_actions[22m | run_07.png[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (17 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   5% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  11% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  16% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  22% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  33% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  44% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  61% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  66% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  77% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  83% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  88% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | run_07.png[39m[0m
+[   5% ] [90m[1mreimport[22m | run_06.png[39m[0m
+[  11% ] [90m[1mreimport[22m | run_05.png[39m[0m
+[  16% ] [90m[1mreimport[22m | run_04.png[39m[0m
+[  22% ] [90m[1mreimport[22m | run_03.png[39m[0m
+[  27% ] [90m[1mreimport[22m | run_02.png[39m[0m
+[  33% ] [90m[1mreimport[22m | run_01.png[39m[0m
+[  38% ] [90m[1mreimport[22m | run_00.png[39m[0m
+[  44% ] [90m[1mreimport[22m | middle_wrap.png[39m[0m
+[  50% ] [90m[1mreimport[22m | game_1600_cooldown.png[39m[0m
+[  55% ] [90m[1mreimport[22m | game_1280_wrap.png[39m[0m
+[  61% ] [90m[1mreimport[22m | game_1280_setup.png[39m[0m
+[  66% ] [90m[1mreimport[22m | game_1280_hurt.png[39m[0m
+[  72% ] [90m[1mreimport[22m | game_1280_flip.png[39m[0m
+[  77% ] [90m[1mreimport[22m | game_1280_dash.png[39m[0m
+[  83% ] [90m[1mreimport[22m | game_1280_boss.png[39m[0m
+[  88% ] [90m[1mreimport[22m | fog_ridge_middle_v01.png[39m[0m
+[  94% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (17 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1msavepack[22m | Started Packing (102 steps)[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/weapon_art.gdc[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/weapon_preview.gdc[39m[0m
+[   2% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/touch_control_skin.gdc[39m[0m
+[   3% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/rope_sentry.gdc[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shadow_runner_v01.png-d9d1d7f5f2019e2c20b391dbcaba68ad.ctex[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://art/generated/characters/shadow_runner_v01.png.import[39m[0m
+[   5% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shadow_crystal.png-d13f3accfcecd2a2a1fa62e006b8dfbb.ctex[39m[0m
+[   5% ] [90m[1msavepack[22m | Storing File: res://art/generated/collectibles/shadow_crystal.png.import[39m[0m
+[   6% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/fog_ridge_middle_v01.png-295a15e0cc21e0a62d390b0061100890.ctex[39m[0m
+[   6% ] [90m[1msavepack[22m | Storing File: res://art/generated/environments/fog_ridge_middle_v01.png.import[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/run_result.gdc[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/fog_ridge_sky_v01.png-5b31a876757ce64931deab9ae92ffa2f.ctex[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://art/generated/environments/fog_ridge_sky_v01.png.import[39m[0m
+[   9% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/painted_player_visual.gdc[39m[0m
+[  10% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/combat_attack.gdc[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/steel_spike_v01.png-78e447199570871a969141eb52dae805.ctex[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://art/generated/obstacles/steel_spike_v01.png.import[39m[0m
+[  12% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/dash_icon.png-41b3601ad36fde90482609270340dc15.ctex[39m[0m
+[  12% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/dash_icon.png.import[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/dash_plate.png-b4d02b3e31baa474cc5811d7791748cd.ctex[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/dash_plate.png.import[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/jump_only_icon.png-1611abf424ecde1b8d635313b5b39450.ctex[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/jump_only_icon.png.import[39m[0m
+[  15% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/jump_only_plate.png-04b5a309ea776c1fb028e8a191ca4d9b.ctex[39m[0m
+[  15% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/jump_only_plate.png.import[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/panel.png-224cc9101116b16208c5a83419acaa67.ctex[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/panel.png.import[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/pause_icon.png-1d14c3db057a6a71acdb86524c714b66.ctex[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/pause_icon.png.import[39m[0m
+[  18% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/pause_plate.png-a01c1bb0a7d5aae25d102cc77ec7d4c7.ctex[39m[0m
+[  18% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/pause_plate.png.import[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/portrait.png-0f5838192c1e938f5f91c3d173b2de56.ctex[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/portrait.png.import[39m[0m
+[  20% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rope_flip_icon.png-b01adc5133a63c424646e1867e255d4a.ctex[39m[0m
+[  20% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/rope_flip_icon.png.import[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rope_flip_plate.png-d6f5caf37e292bd4ddaecc30df7a8e16.ctex[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/rope_flip_plate.png.import[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/settings_icon.png-90add0dba3e3ba76166c942875c721e5.ctex[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/settings_icon.png.import[39m[0m
+[  23% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/skill_icon.png-62d20dbdfe46f25e245364bcfa9911a6.ctex[39m[0m
+[  23% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/skill_icon.png.import[39m[0m
+[  24% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/skill_plate.png-c99392f457e6046243f2f9b1c27be941.ctex[39m[0m
+[  24% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/skill_plate.png.import[39m[0m
+[  25% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/enemy_projectile.gdc[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/weapon_icon.png-96fbc41ba6c8acdbd116ad6b9ce553fb.ctex[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/weapon_icon.png.import[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/weapon_plate.png-40ea678a548e040d287989b8d8f188af.ctex[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://art/generated/ui/weapon_plate.png.import[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/run_loadout.gdc[39m[0m
+[  28% ] [90m[1msavepack[22m | Storing File: res://scripts/hazard.gdc[39m[0m
+[  29% ] [90m[1msavepack[22m | Storing File: res://scripts/finish.gdc[39m[0m
+[  30% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/character_data.gdc[39m[0m
+[  31% ] [90m[1msavepack[22m | Storing File: res://scripts/player_tuning.gdc[39m[0m
+[  32% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/boss_shuriken_pickup.gdc[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://scripts/player.gdc[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://scripts/main.gdc[39m[0m
+[  34% ] [90m[1msavepack[22m | Storing File: res://scripts/pickup.gdc[39m[0m
+[  35% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/character_loadout.gdc[39m[0m
+[  36% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/player_projectile.gdc[39m[0m
+[  37% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/player_profile.gdc[39m[0m
+[  38% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/passive_data.gdc[39m[0m
+[  39% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/touch_controls.gdc[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://scripts/persistence/profile_store.gdc[39m[0m
+[  41% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/painted_hud.gdc[39m[0m
+[  42% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_level_data.gdc[39m[0m
+[  43% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/character_setup.gdc[39m[0m
+[  44% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/painted_theme.gdc[39m[0m
+[  45% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/painted_touch_controls.gdc[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/run_navigation.gdc[39m[0m
+[  47% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_hazard_data.gdc[39m[0m
+[  48% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/feedback_settings_panel.gdc[39m[0m
+[  49% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/touch_art_layout.gdc[39m[0m
+[  50% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/progress_rail.gdc[39m[0m
+[  50% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/screen_layout.gdc[39m[0m
+[  51% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_segment_data.gdc[39m[0m
+[  52% ] [90m[1msavepack[22m | Storing File: res://scripts/level/painted_backdrop.gdc[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://scripts/progress/run_history.gdc[39m[0m
+[  54% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/screen_shooter.gdc[39m[0m
+[  55% ] [90m[1msavepack[22m | Storing File: res://scripts/feedback/feedback_settings.gdc[39m[0m
+[  56% ] [90m[1msavepack[22m | Storing File: res://scripts/input/run_input.gdc[39m[0m
+[  57% ] [90m[1msavepack[22m | Storing File: res://scripts/feedback/run_feedback.gdc[39m[0m
+[  58% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_pickup_data.gdc[39m[0m
+[  59% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_level_controller.gdc[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://scripts/level/boss_encounter_data.gdc[39m[0m
+[  61% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_enemy_data.gdc[39m[0m
+[  62% ] [90m[1msavepack[22m | Storing File: res://art/assets_manifest.json[39m[0m
+[  63% ] [90m[1msavepack[22m | Storing File: res://art/pipeline_runs.json[39m[0m
+[  64% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/air_jump.wav-1eea306d5149366eaf1458d8b8657552.sample[39m[0m
+[  64% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/air_jump.wav.import[39m[0m
+[  65% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/boss_enter.wav-a207b0f4de79b4bc99017d732e4c41fe.sample[39m[0m
+[  65% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/boss_enter.wav.import[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/boss_kill.wav-c70ca8fcf386bff93cd4961af22da194.sample[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/boss_kill.wav.import[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/clear.wav-f82c175d782263a34744e105b89591b5.sample[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/clear.wav.import[39m[0m
+[  67% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/dash.wav-a1074fc8fb9ba33141e3602f382b76df.sample[39m[0m
+[  67% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/dash.wav.import[39m[0m
+[  68% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/fail.wav-9a9bb667c31e29c182254ac287753ffb.sample[39m[0m
+[  68% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/fail.wav.import[39m[0m
+[  69% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/flip.wav-c63a9ca6c1ea853d7fb3b1a62964da96.sample[39m[0m
+[  69% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/flip.wav.import[39m[0m
+[  70% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/guard.wav-700a6fe6e43b10b6b15ab91269c869d3.sample[39m[0m
+[  70% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/guard.wav.import[39m[0m
+[  71% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/hit.wav-c4e45b57fbe9fe41b04c129f1f721831.sample[39m[0m
+[  71% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/hit.wav.import[39m[0m
+[  72% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/jump.wav-ca4ccb66e678679518a9b9888fc39709.sample[39m[0m
+[  72% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/jump.wav.import[39m[0m
+[  73% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/kill.wav-703f5032b1c1a297f843374256c5c05f.sample[39m[0m
+[  73% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/kill.wav.import[39m[0m
+[  74% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/land.wav-15cfbf2105511473b2cc9fdd7898f3d1.sample[39m[0m
+[  74% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/land.wav.import[39m[0m
+[  74% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/pickup.wav-8f1df0dbaf980a99488429b0935e3f87.sample[39m[0m
+[  74% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/pickup.wav.import[39m[0m
+[  75% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/ready.wav-012735e6a8265cb5db81ac8a5cec6e8f.sample[39m[0m
+[  75% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/ready.wav.import[39m[0m
+[  76% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/skill.wav-3d5b000c09526c827fae4354326f66cc.sample[39m[0m
+[  76% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/skill.wav.import[39m[0m
+[  77% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/strike.wav-a747754c2574f608e11f127c2f83eaf8.sample[39m[0m
+[  77% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/strike.wav.import[39m[0m
+[  78% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sweep.wav-a7165638206b14c5e027533e851baf98.sample[39m[0m
+[  78% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/sweep.wav.import[39m[0m
+[  79% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/volley.wav-e3267199f4273e63ae7d6922bf42fa17.sample[39m[0m
+[  79% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/volley.wav.import[39m[0m
+[  80% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/warning_bottom.wav-6ebcc17fb098fe78b18bb28f9eded954.sample[39m[0m
+[  80% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/warning_bottom.wav.import[39m[0m
+[  81% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/warning_top.wav-dfe301c79718957554c5762197874e11.sample[39m[0m
+[  81% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/warning_top.wav.import[39m[0m
+[  82% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/weakpoint.wav-682a6776ec8c36144d6b73ddb748f706.sample[39m[0m
+[  82% ] [90m[1msavepack[22m | Storing File: res://audio/sfx/weakpoint.wav.import[39m[0m
+[  83% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-09fd683d3a6dc156b71c21665f62d324-shadow_runner.res[39m[0m
+[  84% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-d5e4d2f84fb9f7f015b0ddf08630eda9-bridge_kite.res[39m[0m
+[  85% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-376693ad517cb490cff94e9b28873bfa-fog_ridge_60s.res[39m[0m
+[  86% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-41f4b32ff5caf02ea42ef2a90a4a8e6d-crescent_wheel.res[39m[0m
+[  87% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-b6e6698155c87bab0b20b613fc16e098-star_lance.res[39m[0m
+[  88% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-b6acd1719e9ee8559f2d9eff4f927e3e-control_tuning.res[39m[0m
+[  89% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/runner_combat.gdc[39m[0m
+[  90% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/rope_boss.gdc[39m[0m
+[  91% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-0f39f772332a90a6251026cbe5ca147f-character_setup.scn[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-051d7226440f4d8f996b368be12f72c3-boss_practice.scn[39m[0m
+[  93% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-3ad5c15c4f3250da0cc7c1af1770d85f-main.scn[39m[0m
+[  94% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-3b4da1fca03c9e997d526c7802c35f76-practice.scn[39m[0m
+[  95% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/weapons/weapon_runtime.gdc[39m[0m
+[  96% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/weapons/weapon_data.gdc[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/weapons/weapon_skill_data.gdc[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/active_skill_data.gdc[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/weapon_art.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/weapon_preview.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/touch_control_skin.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/rope_sentry.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/run_result.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/painted_player_visual.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/combat_attack.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/enemy_projectile.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/run_loadout.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/hazard.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/finish.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/character_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/player_tuning.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/boss_shuriken_pickup.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/player.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/main.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/pickup.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/character_loadout.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/player_projectile.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/player_profile.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/passive_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/touch_controls.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/persistence/profile_store.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/painted_hud.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_level_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/character_setup.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/painted_theme.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/painted_touch_controls.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/run_navigation.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_hazard_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/feedback_settings_panel.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/touch_art_layout.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/progress_rail.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ui/screen_layout.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_segment_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/painted_backdrop.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/progress/run_history.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/screen_shooter.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/feedback/feedback_settings.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/input/run_input.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/feedback/run_feedback.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_pickup_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_level_controller.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/boss_encounter_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/level/rope_enemy_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://data/characters/shadow_runner.tres.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://data/enemies/bridge_kite.tres.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://data/levels/fog_ridge_60s.tres.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://data/weapons/crescent_wheel.tres.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://data/weapons/star_lance.tres.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://data/control_tuning.tres.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/runner_combat.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/combat/rope_boss.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scenes/ui/character_setup.tscn.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scenes/boss_practice.tscn.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scenes/main.tscn.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scenes/practice.tscn.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/weapons/weapon_runtime.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/weapons/weapon_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/weapons/weapon_skill_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/characters/active_skill_data.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://.godot/global_script_class_cache.cfg[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://.godot/uid_cache.bin[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://project.binary[39m[0m
+[92m[ DONE ][39m [1msavepack[22m
+[0m
+ERROR: Cannot save file '/Users/admin/Library/Application Support/Godot/editor_settings-4.7.tres'.
+   at: save (scene/resources/resource_format_text.cpp:1768)
+ERROR: Error saving editor settings to /Users/admin/Library/Application Support/Godot/editor_settings-4.7.tres
+   at: save (editor/settings/editor_settings.cpp:1525)
+ERROR: EditorSettings not instantiated yet when getting setting "export/android/shutdown_adb_on_exit".
+   at: _EDITOR_GET (editor/settings/editor_settings.cpp:1656)

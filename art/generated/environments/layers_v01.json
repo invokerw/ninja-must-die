@@ -1,0 +1,27 @@
+{
+  "stage": "runtime_pending_visual_acceptance",
+  "layers": [
+    {
+      "path": "generated/environments/fog_ridge_sky_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae05c50992487d0a34a6cfdcd54dff3",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGB",
+      "sha256": "775cb939c876fe6dce32edd66e440f5d7d690d1e44c6d98a6cc46b14ab28651c",
+      "pixel_transform": "original opaque PNG; fixed sky with bounded camera drift, no repeating moon",
+      "runtime_enabled": true,
+      "human_approved": false
+    },
+    {
+      "path": "generated/environments/fog_ridge_middle_v01.png",
+      "source_id": "ig_05fba3112b35c417016ae05c7fadbc87d0acf7902f27141c94",
+      "width": 1582,
+      "height": 887,
+      "mode": "RGBA",
+      "sha256": "198603086c400435b8d37107c299616d855662dca23cfae95ef1fea3e25030ee",
+      "pixel_transform": "zero alpha<=2 native noise; 192px cosine wrap overlap in premultiplied RGBA; matching endpoint pixels; no mirroring",
+      "runtime_enabled": true,
+      "human_approved": false
+    }
+  ]
+}

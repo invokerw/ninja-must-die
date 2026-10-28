@@ -1,0 +1,6 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+2026-10-27 16:41:58.438 Godot[65682:71460752] XType: Using static font registry.
+PLAYER_ART_PASS (8 run frames, 8 actions, rope anchors, pause, stop, collision invariance)

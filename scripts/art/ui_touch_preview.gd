@@ -6,6 +6,7 @@ var candidate_rail: Control
 
 func _ready() -> void:
 	super._ready()
+	painted_progress.hide()
 	# This scene is a review surface; completing it must not write a ranked run.
 	_completion_recorded = true
 	candidate_rail = CandidateRail.new()

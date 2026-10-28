@@ -14,7 +14,7 @@
 /Applications/Godot_mono.app/Contents/MacOS/Godot --path . res://scenes/art/ui_touch_preview.tscn
 ```
 
-预览场景不会记录通关成绩。准备页和默认主场景仍使用原有 UI；Windows / Android 导出配置排除了本候选包、预览场景与脚本。它们在单独验收后再决定如何正式接入。
+预览场景不会记录通关成绩。2026-10-27 选用组件已复制到 `art/generated/ui/` 并接入默认主场景；准备页复用头像与面板外观。本候选包、预览场景与脚本继续排除出 Windows / Android 导出，用户视觉验收仍待进行。运行时副本及其验证见 `art/generated/README.md`。
 
 ## 图层选择
 

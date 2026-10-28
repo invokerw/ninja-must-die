@@ -1,6 +1,8 @@
 class_name Hazard
 extends Area2D
 
+const SPIKE := preload("res://art/generated/obstacles/steel_spike_v01.png")
+
 @export var hazard_size := Vector2(48.0, 56.0)
 @export_enum("top", "bottom") var cable_side := "top"
 @export var warning_distance := 420.0
@@ -44,10 +46,9 @@ func _physics_process(_delta: float) -> void:
 
 func _draw() -> void:
 	var direction := -1.0 if cable_side == "top" else 1.0
-	draw_colored_polygon(PackedVector2Array([
-		Vector2(-hazard_size.x * 0.5, 0), Vector2(0, hazard_size.y * direction),
-		Vector2(hazard_size.x * 0.5, 0)
-	]), Color("b24b4b"))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 1.0 if cable_side == "top" else -1.0))
+	draw_texture_rect(SPIKE, Rect2(-hazard_size.x * 0.5, -hazard_size.y, hazard_size.x, hazard_size.y), false)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	draw_line(Vector2(-hazard_size.x * 0.5, 0), Vector2(hazard_size.x * 0.5, 0), Color("d8b56a"), 3.0)
 	if _warning_active:
 		var pulse := 0.5 + 0.5 * sin(_warning_phase * 9.0)

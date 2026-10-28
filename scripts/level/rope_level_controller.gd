@@ -18,6 +18,7 @@ var source_root: CanvasLayer
 var boss: RopeBoss
 var _player: PlayerController
 var _background_end := 0.0
+var _braid_section := -1
 
 func build(player: PlayerController) -> bool:
 	if data == null:
@@ -30,6 +31,11 @@ func build(player: PlayerController) -> bool:
 		push_error("\n".join(errors))
 		return false
 	_player = player
+	var backdrop_layer := CanvasLayer.new()
+	backdrop_layer.name = "PaintedBackdrop"
+	backdrop_layer.layer = -10
+	add_child(backdrop_layer)
+	backdrop_layer.add_child(PaintedBackdrop.new())
 	projectile_root = Node2D.new()
 	projectile_root.name = "Projectiles"
 	add_child(projectile_root)
@@ -99,6 +105,10 @@ func build(player: PlayerController) -> bool:
 func _process(_delta: float) -> void:
 	if is_instance_valid(_player) and _player.active:
 		_update_segment()
+		var section := floori(_player.global_position.x / 512.0)
+		if section != _braid_section:
+			_braid_section = section
+			queue_redraw()
 		if is_instance_valid(boss) and _player.global_position.x + 1800.0 > _background_end:
 			_background_end = _player.global_position.x + 4000.0
 			queue_redraw()
@@ -143,20 +153,16 @@ func _update_segment() -> void:
 func _draw() -> void:
 	if data == null:
 		return
-	# Control placeholders; final image assets follow the shared imagegen art direction.
 	var end_x := maxf(_background_end, data.get_finish_x() + 1000.0)
-	draw_rect(Rect2(-500.0, -400.0, end_x + 500.0, 1500.0), Color("111827"))
-	draw_circle(Vector2(1800.0, 150.0), 78.0, Color("dde7e7"))
-	draw_circle(Vector2(1770.0, 130.0), 78.0, Color("111827"))
-	for index in range(ceili(end_x / 1000.0) + 1):
-		var x := float(index * 1000 - 200)
-		var hill_height := float(150 + (index % 3) * 55)
-		draw_colored_polygon(PackedVector2Array([
-			Vector2(x, 680.0), Vector2(x + 260.0, 680.0 - hill_height),
-			Vector2(x + 560.0, 680.0)
-		]), Color("233142"))
-	draw_line(Vector2(-100.0, data.rope_y), Vector2(end_x, data.rope_y), Color("d8b56a"), 6.0)
-	draw_line(Vector2(-100.0, data.rope_y + 7.0), Vector2(end_x, data.rope_y + 7.0), Color(0.22, 0.29, 0.36, 0.65), 2.0)
+	draw_line(Vector2(-100.0, data.rope_y + 1.0), Vector2(end_x, data.rope_y + 1.0), Color("101923"), 9.0)
+	draw_line(Vector2(-100.0, data.rope_y), Vector2(end_x, data.rope_y), Color("647582"), 6.0)
+	draw_line(Vector2(-100.0, data.rope_y - 2.0), Vector2(end_x, data.rope_y - 2.0), Color("b8bec1"), 1.5)
+	# Bound fine detail to the camera neighborhood even during a long boss chase.
+	var braid_start := maxi(-100, _braid_section * 512 - 1024)
+	var braid_end := mini(ceili(end_x), _braid_section * 512 + 3072)
+	for braid_x in range(braid_start, braid_end, 12):
+		draw_line(Vector2(braid_x, data.rope_y + 2.0), Vector2(braid_x + 6.0, data.rope_y - 2.0), Color("2e3a47"), 1.5, true)
+		draw_line(Vector2(braid_x + 6.0, data.rope_y + 2.0), Vector2(braid_x + 12.0, data.rope_y - 2.0), Color("a7a18b"), 1.0, true)
 	for x in range(0, ceili(end_x), 600):
 		draw_line(Vector2(x, data.rope_y - 24.0), Vector2(x, data.rope_y + 24.0), Color("34495e"), 3.0)
 	var boundary := data.start_x

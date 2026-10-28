@@ -1,0 +1,91 @@
+{
+  "stage": "superseded_by_full_first_pass",
+  "final_report": "../p2_combat_20261027/validation.json",
+  "screenshots": [
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_air.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss_armored.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss_defeated.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss_weak.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_bottom.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_dash.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_death.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_flip.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_hurt.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_jump.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_sentry.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_setup.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_skill.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_top.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_wrap.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1600_cooldown.png",
+      "width": 1600,
+      "height": 720
+    }
+  ]
+}

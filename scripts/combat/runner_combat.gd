@@ -238,13 +238,22 @@ func _set_feedback(message: String) -> void:
 	_feedback_remaining = 1.2
 
 func _draw() -> void:
-	# Temporary geometry follows the prototype's shared moonlight/gold palette.
 	if _skill_pending:
-		draw_arc(Vector2.ZERO, 48.0, 0.0, TAU, 32, Color("d8b56a"), 4.0)
+		draw_arc(Vector2.ZERO, 42.0, -PI * 0.8, PI * 0.65, 40, Color("d8b56a"), 2.0)
+		draw_arc(Vector2.ZERO, 48.0, PI * 0.2, PI * 1.4, 40, Color(0.87, 0.91, 0.91, 0.7), 1.0)
 	if skill_flash_remaining > 0.0:
 		var alpha := skill_flash_remaining / 0.30
 		var origin := to_local(_strike_origin)
 		var reach := player.character.active_skill.forward_range
-		draw_line(origin, origin + Vector2(reach, 0.0), Color(0.85, 0.71, 0.42, alpha * 0.4), 72.0)
-		draw_line(origin, origin + Vector2(reach, 0.0), Color(0.87, 0.91, 0.91, alpha), 5.0)
-		draw_arc(origin + Vector2(180.0, 0.0), 100.0, -1.35, 1.35, 32, Color(0.85, 0.71, 0.42, alpha), 9.0)
+		# Tapered gold wake and a moon-white edge preserve the authored strike reach.
+		draw_colored_polygon(PackedVector2Array([origin + Vector2(0, -4), origin + Vector2(reach * 0.55, -22), origin + Vector2(reach, 0), origin + Vector2(reach * 0.55, 22), origin + Vector2(0, 4)]), Color(0.85, 0.71, 0.42, alpha * 0.16))
+		draw_line(origin, origin + Vector2(reach, 0.0), Color(0.87, 0.91, 0.91, alpha), 2.0, true)
+		var crescent := PackedVector2Array()
+		var center := origin + Vector2(reach * 0.55, 0)
+		for index in range(25):
+			var angle := -1.25 + float(index) / 24.0 * 2.5
+			crescent.append(center + Vector2(cos(angle) * 80.0, sin(angle) * 58.0))
+		for index in range(24, -1, -1):
+			var angle := -1.25 + float(index) / 24.0 * 2.5
+			crescent.append(center + Vector2(cos(angle) * 70.0, sin(angle) * 58.0))
+		draw_colored_polygon(crescent, Color(0.87, 0.91, 0.91, alpha))

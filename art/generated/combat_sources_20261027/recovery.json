@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-27",
+  "source": "local native image_generation_call result; original PNG bytes",
+  "images": [
+    {
+      "id": "ig_05fba3112b35c417016ae064208f6087d08f0126f82c7920b5",
+      "timestamp_utc": "2026-10-27T08:45:50.556Z",
+      "status": "completed",
+      "source_line": 946,
+      "path": "ig_05fba3112b35c417016ae064208f6087d08f0126f82c7920b5.png",
+      "base64_characters": 4393812,
+      "bytes": 3295357,
+      "sha256": "f395546255317fb24e144e15a0f28186574625e0feb108a77b28edd27d570c46",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: stylized-concept. Asset type: 2D game boss sprite atlas for Shadow Runner, matching the painted navy, cinnabar and aged-gold style of the game screenshots just shown. Create a 1536x1024 PNG with genuinely transparent background. EXACT 2 columns x 2 rows, four separate sprites centered in generous cells. Same mechanical kite guardian in every cell, pure FRONT VIEW with bilateral spread wings, wing span about 600px, body height around320px, no perspective. Body center at each cell center. A Chinese bronze-and-cinnabar mechanical bird/kite called Broken Bridge Guardian: armored hexagonal dark-iron central body, angular layered red lacquer wings, bronze feather ribs, small sharp avian head above torso, hanging articulated tail plates. Core is a clear circular opening at torso center. Wings are decorative; compact central torso reads as the hit target. Top-left: armored state, circular core covered by crossed steel shutter plates, cold small blue light. Top-right: recovery / exposed weak point, same silhouette and scale, shutters opened aside to show a bright warm-gold core. Bottom-left: enraged exposed-core state, brighter cinnabar wing inlays and warm orange cracks, same circular gold weak point and same proportions. Bottom-right: defeated state, broken drooping wing tips and extinguished dark core, torso still centered. Hand-painted cel shading, sharp silhouette, clean readable forms at a 256px game wing span. Do not draw huge aura, smoke, particles, floor or shadows. Empty pixels outside each creature MUST be actual alpha=0, not painted checkerboard, black, white or gray background. All four characters entirely inside their own 768x512 cells with at least 50px margins. No labels, letters, grid, UI, scenery, ropes or additional birds.",
+      "runtime_enabled": false
+    },
+    {
+      "id": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61",
+      "timestamp_utc": "2026-10-27T08:47:21.182Z",
+      "status": "completed",
+      "source_line": 947,
+      "path": "ig_05fba3112b35c417016ae0646f4e2887d09cf58a7d4c2a6f61.png",
+      "base64_characters": 3737452,
+      "bytes": 2803087,
+      "sha256": "089d3cce17e25b3816b2f55ce677e821890482ea10ca6954e0304133b1a60fc5",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: stylized-concept. Asset type: six separate game object sprites for the moonlit Chinese fantasy runner shown above. One 1536x1024 RGBA PNG, actual transparent background. Exactly 3 columns x 2 rows of 512x512 cells, each object fully inside its cell with 70px margins. The same dark iron, aged bronze, moon-white steel and restrained cinnabar palette, hand-painted cel shading and sharp silhouettes readable at small game sizes. Top-left: one crescent throwing ring, thick open C-shaped moon-white steel blade with aged bronze inner rim, blade opening to RIGHT, centered, circle diameter320px. Top-middle: one long star-tipped spear pointing RIGHT, horizontal, length360px, slender bronze shaft, sharp silver star-shaped head at right, short navy ribbon below shaft. Top-right: one three-point throwing star, three curved moon-white blades 120 degrees apart, small bronze center, diameter280px. Bottom-left: small FRONT-VIEW hovering mechanical kite sentry, red lacquer angular wings spread horizontally, dark iron round central body with narrow warm-gold eye slit, tiny bronze feather ribs, wing span350px, body height160px. Bottom-middle: the SAME sentry design with wing tips lowered slightly, same torso center and size; NOT a different enemy. Bottom-right: one hostile dart missile pointing LEFT, compact red-lacquer steel needle head and tiny bronze ring, no smoke or fire, length300px. No concept labels, text, grid lines, scenery, shadows, ground or backgrounds. Each object isolated with genuine alpha=0 between objects. Keep complete objects separated. No painted checkerboard, no colored backdrop, no white paper. The objects will be cropped individually and used in the actual game.",
+      "runtime_enabled": false
+    },
+    {
+      "id": "ig_05fba3112b35c417016ae064cb33bc87d0a4b039995527f573",
+      "timestamp_utc": "2026-10-27T08:47:50.734Z",
+      "status": "completed",
+      "source_line": 950,
+      "path": "ig_05fba3112b35c417016ae064cb33bc87d0a4b039995527f573.png",
+      "base64_characters": 3655324,
+      "bytes": 2741491,
+      "sha256": "75afed8e80b4aa919f578938216834cba448d09a7bc78c895ec4b33516244399",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: background-extraction. Edit target: the six-object weapon and sentry sheet just shown (crescent ring, horizontal spear, three-bladed star, two red sentries, hostile missile). Remove ONLY the gray/white painted checkerboard and replace with genuine zero-alpha PNG transparency, including the open crescent and gaps around the spear ribbon and between feathers. Preserve every object, identity, pose, color, scale and position, and keep the same 1536x1024 canvas. No new backdrop. White metal highlights stay opaque. Return RGBA PNG, fully opaque subject pixels and transparent background. The next consumer reads the PNG alpha channel; visually painting a checkerboard does not work.",
+      "runtime_enabled": false
+    }
+  ]
+}

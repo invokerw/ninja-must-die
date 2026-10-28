@@ -1,0 +1,219 @@
+{
+  "date": "2026-10-27",
+  "stage": "production_art_first_pass_pending_review",
+  "runtime_textures": 32,
+  "retained_texture_records": 33,
+  "character_frames": 20,
+  "character_actions": 8,
+  "background_layers": 3,
+  "combat_textures": 10,
+  "native_generation_calls_this_iteration": 11,
+  "cli_fallback_used": false,
+  "user_visual_acceptance": "pending",
+  "android_device_validation": "not_performed",
+  "checks": [
+    {
+      "check": "assets",
+      "exit_code": 0,
+      "summary": "ART_ASSETS_PASS (33 hashes, 20 bounded character frames, 10 combat sprites, alpha, ridge/foreground wraps, icon)"
+    },
+    {
+      "check": "ci_metadata",
+      "exit_code": 0,
+      "summary": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.007s\n\nOK"
+    }
+  ],
+  "regressions": [
+    {
+      "suite": "rope_landing",
+      "exit_code": 0,
+      "markers": [
+        "ROPE_LANDING_PASS (8 scenarios)"
+      ]
+    },
+    {
+      "suite": "rope_pickups",
+      "exit_code": 0,
+      "markers": [
+        "ROPE_PICKUPS_PASS (26 top, 24 bottom; correct and opposite sides)"
+      ]
+    },
+    {
+      "suite": "level_route",
+      "exit_code": 0,
+      "markers": [
+        "LEVEL_ROUTE_PASS (data validation, 4 practice runs, 2 boss clears, pause/reload, lower finish)"
+      ]
+    },
+    {
+      "suite": "combat",
+      "exit_code": 0,
+      "markers": [
+        "COMBAT_PASS (character data, cooldown, same-tick immunity, range/damage, 2/3 jumps, pause/stop, encounters, results)"
+      ]
+    },
+    {
+      "suite": "projectiles",
+      "exit_code": 0,
+      "markers": [
+        "PROJECTILES_PASS (screen anchor, fixed direction, parallel volleys/gaps, full flight, single contact, protection, swept hits, pause/reload/finish)"
+      ]
+    },
+    {
+      "suite": "boss",
+      "exit_code": 0,
+      "markers": [
+        "BOSS_PASS (entry, 3 readable attacks, half-health enrage, double volley, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)"
+      ]
+    },
+    {
+      "suite": "feedback",
+      "exit_code": 0,
+      "markers": [
+        "FEEDBACK_PASS (PCM assets, action cues, readable warnings, particles/voice bounds, render-only impact, independent toggles, pause/result/reload)"
+      ]
+    },
+    {
+      "suite": "weapons",
+      "exit_code": 0,
+      "markers": [
+        "WEAPONS_PASS (character equipment, save/reload, setup/retry, 2 weapons, real flight/impact, pickups, pause/cancel, 3 kill sources, loadout replays)"
+      ]
+    },
+    {
+      "suite": "save",
+      "exit_code": 0,
+      "markers": [
+        "SAVE_PASS (independent records/modes, legacy fields, validated settings, backup recovery, failed-save retry, real completion/death/exit, preparation UI)"
+      ]
+    },
+    {
+      "suite": "touch_controls",
+      "exit_code": 0,
+      "markers": [
+        "TOUCH_PASS (real touch events, dedicated jump, no jump below rope, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ]
+    },
+    {
+      "suite": "ui_art_preview",
+      "exit_code": 0,
+      "markers": [
+        "TOUCH_PASS (real touch events, dedicated jump, no jump below rope, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ]
+    },
+    {
+      "suite": "player_art",
+      "exit_code": 0,
+      "markers": [
+        "PLAYER_ART_PASS (8 run frames, 8 actions, rope anchors, real boss core states, pause, stop, collision invariance)"
+      ]
+    }
+  ],
+  "export_pack": {
+    "path": "builds/production-art-check.pck",
+    "bytes": 7561220,
+    "sha256": "a0b6c61d2de4031f805607b774a025d30a902504f87f3dbf776b97f0ee210543",
+    "standalone_probe_pass": true
+  },
+  "screenshots": [
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_air.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss_armored.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss_defeated.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_boss_weak.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_bottom.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_dash.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_death.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_flip.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_hurt.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_jump.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_sentry.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_setup.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_skill.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_top.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1280_wrap.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "art/validation/p1_player_20261027/game_1600_cooldown.png",
+      "width": 1600,
+      "height": 720
+    }
+  ],
+  "visual_review": {
+    "character": "No white/checkerboard matte visible; hands/feet aligned to rope; frame margins retained",
+    "background": "Independent sky/middle/foreground; loops pixel-matched; foreground below route",
+    "boss": "Closed armor and gold weak core reviewed in actual renderer; enrage does not open protected core",
+    "combat": "RGB exterior matte, weapons/sentries/dart visible; no painted sheet background visible",
+    "notes": [
+      "Collision shapes and attack timing unchanged.",
+      "Final motion polish and user visual acceptance remain pending."
+    ]
+  },
+  "environment_messages": [
+    "macOS headless CA certificate lookup warning persists.",
+    "Sandboxed Mono editor IDE socket and editor-settings writes are denied; resource import/export exits zero, no GDScript parse errors, standalone PCK runtime passes."
+  ]
+}

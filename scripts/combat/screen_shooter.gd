@@ -112,8 +112,7 @@ func cancel() -> void:
 
 func _draw() -> void:
 	# A floating source, independent of the rope; positive edge offset puts it offscreen.
-	draw_colored_polygon(PackedVector2Array([Vector2(-24, 0), Vector2(0, -18), Vector2(26, 0), Vector2(0, 18)]), Color("b24b4b"))
-	draw_circle(Vector2.ZERO, 8.0, Color("d8b56a"))
+	draw_texture_rect(RopeSentry.WINGS_UP, Rect2(-32, -32, 64, 64), false)
 	if attack_state != AttackState.WINDUP or not is_instance_valid(_player):
 		return
 	var charge := 1.0 - windup_remaining / windup_seconds

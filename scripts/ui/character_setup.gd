@@ -21,12 +21,17 @@ func _ready() -> void:
 	if profile == null:
 		profile = PlayerProfile.current()
 	character = load("res://data/characters/shadow_runner.tres") as CharacterData
-	_panel(Rect2(0, 0, 1280, 720), Color("111827"))
+	var backdrop := CanvasLayer.new()
+	backdrop.layer = -10
+	add_child(backdrop)
+	backdrop.add_child(PaintedBackdrop.new())
+	_panel(Rect2(0, 0, 1280, 720), Color("111827", 0.50))
 	_label("角色与武器", Rect2(44, 30, 1100, 48), 34, Color("d8b56a"))
 	_label("选择出战装备，踏入雾岭断桥。", Rect2(44, 88, 1100, 30), 20)
 	_panel(Rect2(44, 142, 400, 348), Color("192536"))
 	_panel(Rect2(470, 142, 766, 348), Color("192536"))
 	_label("影刃", Rect2(72, 168, 330, 42), 30, Color("d8b56a"))
+	PaintedTheme.portrait(self, Rect2(322, 158, 96, 96))
 	_label("K  月蚀斩\n12 秒冷却 · 释放后保护 2 秒\n\n被动  踏影\n基础二段跳提升为三段跳", Rect2(72, 226, 330, 190), 21)
 	_label("主武器槽 × 1\n武器技能独立使用 J", Rect2(72, 414, 330, 65), 20, Color("91a1ad"))
 	var weapons := profile.list_weapons(character)
@@ -158,6 +163,8 @@ func _panel(rect: Rect2, color: Color) -> void:
 	panel.color = color
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(panel)
+	if rect.size.x < 1280:
+		PaintedTheme.decorate_panel(panel)
 
 func _button(text: String, rect: Rect2, callback: Callable) -> Button:
 	var button := Button.new()
@@ -166,12 +173,7 @@ func _button(text: String, rect: Rect2, callback: Callable) -> Button:
 	button.size = rect.size
 	button.focus_mode = Control.FOCUS_NONE
 	button.add_theme_font_size_override("font_size", 22)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color("233142")
-	style.border_color = Color("d8b56a")
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(5)
-	button.add_theme_stylebox_override("normal", style)
+	PaintedTheme.style_button(button)
 	button.pressed.connect(callback)
 	add_child(button)
 	return button

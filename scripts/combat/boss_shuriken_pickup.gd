@@ -47,7 +47,6 @@ func cancel() -> void:
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, 20.0, Color(0.85, 0.71, 0.42, 0.12))
 	draw_arc(Vector2.ZERO, 18.0, 0.0, TAU, 24, Color("d8b56a"), 2.0)
-	for index in range(3):
-		var direction := Vector2.from_angle(_phase * 2.0 + float(index) * TAU / 3.0)
-		var side := direction.orthogonal()
-		draw_colored_polygon(PackedVector2Array([direction * 13.0, side * 4.0, -direction * 3.0]), Color("dde7e7"))
+	draw_set_transform(Vector2.ZERO, _phase * 2.0)
+	draw_texture_rect(WeaponArt.SHURIKEN, Rect2(-16, -16, 32, 32), false)
+	draw_set_transform(Vector2.ZERO)

@@ -247,7 +247,12 @@ func _draw() -> void:
 		var tint: Color = particle.color
 		tint.a = float(particle.remaining) / float(particle.lifetime)
 		var local_position := to_local(particle.position)
-		draw_line(local_position, local_position - Vector2(particle.velocity) * 0.025, tint, float(particle.radius))
+		var trail := Vector2(particle.velocity) * 0.025
+		var width := float(particle.radius) * 0.55
+		var normal := trail.normalized().orthogonal() * width
+		draw_colored_polygon(PackedVector2Array([local_position + normal, local_position - trail, local_position - normal, local_position + trail * 0.25]), tint)
+		if tint.r > 0.7 and tint.g > 0.5:
+			draw_line(local_position - normal * 1.4, local_position + normal * 1.4, Color(0.92, 0.95, 1.0, tint.a * 0.7), 1.0, true)
 
 func _exit_tree() -> void:
 	for voice in voices:

@@ -1,6 +1,9 @@
 class_name RopeSentry
 extends Area2D
 
+const WINGS_UP := preload("res://art/generated/combat/sentry_up_v01.png")
+const WINGS_DOWN := preload("res://art/generated/combat/sentry_down_v01.png")
+
 @export_enum("top", "bottom") var cable_side := "top"
 @export var max_health := 1
 @export var warning_distance := 420.0
@@ -63,12 +66,10 @@ func take_hit(amount: int) -> bool:
 	return true
 
 func _draw() -> void:
-	# Temporary sentry silhouette, using the shared ink-night/cinnabar/gold palette.
 	var rise := sin(_phase * 4.0) * 2.0
 	draw_set_transform(Vector2(0.0, rise))
-	draw_colored_polygon(PackedVector2Array([Vector2(-30, -14), Vector2(-12, -8), Vector2(0, -22), Vector2(12, -8), Vector2(30, -14), Vector2(18, 14), Vector2(0, 22), Vector2(-18, 14)]), Color("b24b4b"))
-	draw_circle(Vector2.ZERO, 13.0, Color("233142"))
-	draw_line(Vector2(-8, 0), Vector2(8, 0), Color("d8b56a"), 5.0)
+	var texture := WINGS_UP if int(_phase * 5.0) % 2 == 0 else WINGS_DOWN
+	draw_texture_rect(texture, Rect2(-36, -36, 72, 72), false)
 	draw_set_transform(Vector2.ZERO)
 	if _warning_active and alive:
 		var pulse := 0.6 + 0.4 * sin(_phase * 8.0)

@@ -48,10 +48,10 @@ jobs:
       - name: Verify export metadata handling
         run: python3 -m unittest discover -s tests -p 'test_ci_export.py'
 
-      - name: Run all ten regression suites and persistence checks
+      - name: Run gameplay and player art regression suites and persistence checks
         run: |
           mkdir -p builds/logs
-          for suite in rope_landing rope_pickups level_route combat projectiles boss feedback weapons save touch_controls; do
+          for suite in rope_landing rope_pickups level_route combat projectiles boss feedback weapons save touch_controls player_art; do
             godot --headless --path . --fixed-fps 60 \
               --log-file "builds/logs/$suite.log" --script "res://tests/test_$suite.gd"
           done

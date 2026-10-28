@@ -75,6 +75,9 @@ func _ready() -> void:
 	health = tuning.max_health
 	_snap_to_rope()
 	previous_physics_position = global_position
+	var visual := PaintedPlayerVisual.new()
+	visual.name = "PaintedVisual"
+	add_child(visual)
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
@@ -275,23 +278,9 @@ func get_rope_side_name() -> String:
 	return "钢索上" if rope_side == ROPE_TOP else "钢索下"
 
 func _draw() -> void:
-	# Temporary geometry is only a control marker; final art follows the imagegen style guide.
-	var tint := Color("dde7e7")
-	if state == State.DASH:
-		tint = Color("d8b56a")
-	elif immunity_remaining > 0.0 and skill_immunity_remaining <= 0.0:
-		tint.a = 0.45 if fmod(immunity_remaining, 0.16) < 0.08 else 1.0
 	var feedback_ratio := clampf(rope_flip_feedback_remaining / ROPE_FLIP_FEEDBACK_DURATION, 0.0, 1.0)
-	var squash := lerpf(1.0, 0.68, sin((1.0 - feedback_ratio) * PI))
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, squash))
-	draw_style_box(_body_style(tint), Rect2(-18, -30, 36, 60))
-	var direction := -1.0 if rope_side == ROPE_BOTTOM else 1.0
-	draw_line(Vector2(-9, 17.0 * direction), Vector2(13, 17.0 * direction), Color("111827"), 3)
-	if run_loadout != null:
-		WeaponArt.draw_icon(self, run_loadout.weapon.weapon_id, Vector2(-24, -9), 13.0)
 	if state == State.DASH:
 		draw_line(Vector2(-24, 0), Vector2(-90, 0), Color(0.85, 0.71, 0.42, 0.45), 7)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if skill_immunity_remaining > 0.0:
 		var closing := clampf(skill_immunity_remaining / 0.35, 0.0, 1.0)
 		var glow := Color(0.85, 0.71, 0.42, 0.85 * closing)
@@ -303,9 +292,3 @@ func _draw() -> void:
 		var feedback_color := Color(0.85, 0.71, 0.42, feedback_alpha)
 		draw_arc(Vector2(0, feedback_direction * 4.0), 38.0 + (1.0 - feedback_ratio) * 10.0, 0.1, PI - 0.1, 18, feedback_color, 4.0)
 		draw_line(Vector2(-26, feedback_direction * 25.0), Vector2(26, feedback_direction * 25.0), feedback_color, 3.0)
-
-func _body_style(tint: Color) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = tint
-	style.set_corner_radius_all(12)
-	return style

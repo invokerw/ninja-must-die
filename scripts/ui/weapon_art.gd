@@ -1,10 +1,10 @@
 class_name WeaponArt
 extends RefCounted
 
+const CRESCENT := preload("res://art/generated/combat/crescent_wheel_v01.png")
+const LANCE := preload("res://art/generated/combat/star_lance_v01.png")
+const SHURIKEN := preload("res://art/generated/combat/shuriken_v01.png")
+
 static func draw_icon(canvas: CanvasItem, id: StringName, center: Vector2, radius: float) -> void:
-	if id == &"star_lance":
-		canvas.draw_line(center + Vector2(-radius, radius), center + Vector2(radius * 0.6, -radius * 0.6), Color("d8b56a"), maxf(radius * 0.18, 1.0))
-		canvas.draw_colored_polygon(PackedVector2Array([center + Vector2(radius, -radius), center + Vector2(radius * 0.8, 0), center, center + Vector2(0, -radius * 0.8)]), Color("dde7e7"))
-	else:
-		canvas.draw_arc(center, radius, -1.8, 1.8, 24, Color("d8b56a"), maxf(radius * 0.22, 1.0))
-		canvas.draw_arc(center + Vector2(-radius * 0.2, 0), radius * 0.64, -1.6, 1.6, 20, Color("dde7e7"), maxf(radius * 0.13, 1.0))
+	var texture := LANCE if id == &"star_lance" else CRESCENT
+	canvas.draw_texture_rect(texture, Rect2(center - Vector2.ONE * radius, Vector2.ONE * radius * 2.0), false)

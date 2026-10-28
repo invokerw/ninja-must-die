@@ -49,6 +49,7 @@ var touch_controls: TouchControls
 var resume_button: Button
 var _feedback_was_paused := false
 var _feedback_paused_run := false
+var painted_progress: ProgressRail
 
 func _enter_tree() -> void:
 	add_to_group("run_sessions")
@@ -69,6 +70,7 @@ func _ready() -> void:
 		_show_result("角色配置无效", "请检查角色主动和被动资源，详细原因见调试输出。")
 		return
 	_setup_equipment_controls()
+	painted_progress = PaintedHUD.install(self)
 	_setup_touch_controls()
 	level.segment_changed.connect(_on_segment_changed)
 	level.finish_reached.connect(_on_finish_reached)
@@ -153,7 +155,7 @@ func _ensure_input_map() -> void:
 	_add_key_action("touch_preview", [KEY_F3])
 
 func _setup_touch_controls() -> void:
-	touch_controls = TouchControls.new()
+	touch_controls = PaintedTouchControls.new()
 	touch_controls.name = "TouchControls"
 	touch_controls.player = player
 	touch_controls.combat = combat
@@ -193,6 +195,7 @@ func _setup_feedback_controls() -> void:
 	button.size = Vector2(100.0, 32.0)
 	button.focus_mode = Control.FOCUS_NONE
 	$UI/HUD.add_child(button)
+	PaintedTheme.style_button(button)
 	var panel := FeedbackSettingsPanel.new()
 	panel.profile = PlayerProfile.current()
 	panel.feedback = feedback
@@ -361,6 +364,7 @@ func _setup_equipment_controls() -> void:
 	panel.color = Color(0.067, 0.094, 0.149, 0.94)
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$UI/HUD.add_child(panel)
+	PaintedTheme.decorate_panel(panel)
 	var icon := WeaponPreview.new()
 	icon.weapon = run_loadout.weapon
 	icon.icon_only = true
@@ -453,6 +457,7 @@ func _hud_button(parent: Node, text: String, rect: Rect2, callback: Callable) ->
 	button.size = rect.size
 	button.focus_mode = Control.FOCUS_NONE
 	button.add_theme_font_size_override("font_size", 18)
+	PaintedTheme.style_button(button)
 	parent.add_child(button)
 	button.pressed.connect(callback)
 	return button
@@ -475,6 +480,8 @@ func _update_status() -> void:
 		if is_instance_valid(level.boss):
 			progress += (1.0 if start_at_boss else 0.25) * (1.0 - float(level.boss.health) / float(level.boss.data.max_health))
 	progress_fill.size.x = progress_fill.get_parent().size.x * progress
+	if is_instance_valid(painted_progress):
+		painted_progress.progress = progress
 	var progress_title := "首领练习" if start_at_boss else ("关卡进度" if level.boss_data != null else "终点进度")
 	progress_label.text = "%s  %d%%" % [progress_title, roundi(progress * 100.0)]
 	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [

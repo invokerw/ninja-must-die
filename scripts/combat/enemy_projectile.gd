@@ -1,6 +1,8 @@
 class_name EnemyProjectile
 extends Node2D
 
+const DART := preload("res://art/generated/combat/enemy_dart_v01.png")
+
 const RADIUS := 8.0
 
 var target: PlayerController
@@ -61,8 +63,6 @@ func cancel() -> void:
 	_expire()
 
 func _draw() -> void:
-	# Prototype art: a bright core and a short cinnabar trail distinguish live shots.
 	draw_set_transform(Vector2.ZERO, velocity.angle() - PI)
 	draw_line(Vector2(5, 0), Vector2(32, 0), Color(0.70, 0.29, 0.29, 0.55), 6.0)
-	draw_circle(Vector2.ZERO, RADIUS, Color("b24b4b"))
-	draw_circle(Vector2(-2, 0), 4.0, Color("f0c36d"))
+	draw_texture_rect(DART, Rect2(-16, -16, 32, 32), false)

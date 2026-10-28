@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "stage": "runtime_integration",
+  "runtime_ready": true,
+  "preview_ready": true,
+  "user_visual_acceptance": "pending",
+  "source_design": "art/concepts/ui_touch_combat_design_v02.png",
+  "source_sha256": "78c45404a5ccd631540d7b681e708635217356f6222915ec06cc0b713c0a2b5b",
+  "source_run": "art/workbench/ui_touch_combat_v02_20261026_01",
+  "psd": "source/layers.psd",
+  "psd_sha256": "06fadaff3c4a4287f009de0752cb9a47911037fe70d15345ee8d748be643c3ca",
+  "actions": {
+    "jump_only": {
+      "plate": {
+        "path": "jump_only_plate.png",
+        "source_layer_id": "loop_03_roi_4_left_control_backplate",
+        "source_layer_path": "loop_03/cutouts/batch_02/layers/002_roi_4_left_control_backplate.png",
+        "bbox": [
+          43,
+          743,
+          172,
+          171
+        ],
+        "width": 172,
+        "height": 171,
+        "sha256": "29191e65f8c8606d39548bc0a84ba1adbe568b7596e7269144809d90332ebc58",
+        "pixel_transform": "none; byte-identical copy"
+      },
+      "icon": {
+        "path": "jump_only_icon.png",
+        "source_layer_id": "loop_02_roi_4_jump_icon",
+        "source_layer_path": "loop_02/cutouts/batch_01/layers/004_roi_4_jump_icon.png",
+        "bbox": [
+          71,
+          775,
+          102,
+          108
+        ],
+        "width": 102,
+        "height": 108,
+        "sha256": "f60651e407f533f5d6c3996f9c6feb3b67e95bcf50df4218f4185416358f02e3",
+        "pixel_transform": "none; byte-identical copy"
+      }
+    },
+    "rope_flip": {
+      "plate": {
+        "path": "rope_flip_plate.png",
+        "source_layer_id": "loop_03_roi_4_right_control_backplate",
+        "source_layer_path": "loop_03/cutouts/batch_02/layers/003_roi_4_right_control_backplate.png",
+        "bbox": [
+          225,
+          743,
+          169,
+          170
+        ],
+        "width": 169,
+        "height": 170,
+        "sha256": "e3996f7a46b215d1daabd3c61dc64b7bfabc5a829d22ca4996f799fec1d84010",
+        "pixel_transform": "none; byte-identical copy"
+      },
+      "icon": {
+        "path": "rope_flip_icon.png",
+        "source_layer_id": "loop_02_roi_4_vertical_icon",
+        "source_layer_path": "loop_02/cutouts/batch_01/layers/002_roi_4_vertical_icon.png",
+        "bbox": [
+          245,
+          771,
+          128,
+          116
+        ],
+        "width": 128,
+        "height": 116,
+        "sha256": "c056c3119f7ddefc31618c7b29a0b56a0de7d131f489dabcf020375125c6ba82",
+        "pixel_transform": "none; byte-identical copy"
+      }
+    },
+    "dash": {
+      "plate": {
+        "path": "dash_plate.png",
+        "source_layer_id": "loop_03_roi_6_sprint_backplate",
+        "source_layer_path": "loop_03/cutouts/batch_02/layers/004_roi_6_sprint_backplate.png",
+        "bbox": [
+          1142,
+          745,
+          164,
+          168
+        ],
+        "width": 164,
+        "height": 168,
+        "sha256": "f242220bc482d921b6241f317c53516dccb764f9b264f57778adc9ea8426d98a",
+        "pixel_transform": "none; byte-identical copy"
+      },
+      "icon": {
+        "path": "dash_icon.png",
+        "source_layer_id": "loop_02_roi_6_sprint_icon",
+        "source_layer_path": "loop_02/cutouts/batch_01/layers/006_roi_6_sprint_icon.png",
+        "bbox": [
+          1163,
+          787,
+          114,
+          83
+        ],
+        "width": 114,
+        "height": 83,
+        "sha256": "d51adffc7d7375dfd4f892d7ddcc30d04c430b34cc9d7487bdb61bb621029ac6",
+        "pixel_transform": "none; byte-identical copy"
+      }
+    },
+    "weapon": {
+      "plate": {
+        "path": "weapon_plate.png",
+        "source_layer_id": "loop_03_roi_6_swirl_backplate",
+        "source_layer_path": "loop_03/cutouts/batch_02/layers/005_roi_6_swirl_backplate.png",
+        "bbox": [
+          1306,
+          742,
+          159,
+          170
+        ],
+        "width": 159,
+        "height": 170,
+        "sha256": "2bce6243251ad089b72b343da70f8574438a8c1f9ef736de8290b59cd4b35318",
+        "pixel_transform": "none; byte-identical copy"
+      },
+      "icon": {
+        "path": "weapon_icon.png",
+        "source_layer_id": "loop_02_roi_6_swirl_icon",
+        "source_layer_path": "loop_02/cutouts/batch_01/layers/005_roi_6_swirl_icon.png",
+        "bbox": [
+          1332,
+          779,
+          100,
+          99
+        ],
+        "width": 100,
+        "height": 99,
+        "sha256": "c7e44006888683b565aebf24d814f45d5720b680c85e7cec1d1575fd8e8776ae",
+        "pixel_transform": "none; byte-identical copy"
+      }
+    },
+    "skill": {
+      "plate": {
+        "path": "skill_plate.png",
+        "source_layer_id": "loop_03_roi_6_slash_backplate",
+        "source_layer_path": "loop_03/cutouts/batch_02/layers/001_roi_6_slash_backplate.png",
+        "bbox": [
+          1465,
+          734,
+          180,
+          182
+        ],
+        "width": 180,
+        "height": 182,
+        "sha256": "b5cd2231bb6c8b04b3749914cdec1d8e27b8893aca37511e43770cabddacb89b",
+        "pixel_transform": "none; byte-identical copy"
+      },
+      "icon": {
+        "path": "skill_icon.png",
+        "source_layer_id": "loop_02_roi_6_slash_icon",
+        "source_layer_path": "loop_02/cutouts/batch_01/layers/001_roi_6_slash_icon.png",
+        "bbox": [
+          1491,
+          764,
+          124,
+          120
+        ],
+        "width": 124,
+        "height": 120,
+        "sha256": "227553cfc20c9a7a21739a6eb9516c67d36c3645f63360615bd9e2705f635bc9",
+        "pixel_transform": "none; byte-identical copy"
+      }
+    }
+  },
+  "state_rendering": "Godot tint, pressed transform, cooldown arc and live labels; source PNGs unchanged",
+  "alternate_weapon": "star_lance uses the existing WeaponArt vector icon until matching raster art is made",
+  "excluded": {
+    "progress_rail_and_markers": "Duplicated nodes; preview uses a single native Godot progress rail with four fixed markers.",
+    "tightrope_and_attachments": "Visual geometry differs from design; retain current gameplay rope.",
+    "background_and_character": "Not part of this UI component package.",
+    "raster_text": "Runtime text is rendered by Godot labels."
+  },
+  "known_differences": [
+    "Model-redrawn button rims, rivets, bevels and glow remain in the candidate textures."
+  ],
+  "validation": "../validation/p1_20261027/validation.json"
+}

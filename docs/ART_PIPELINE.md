@@ -140,3 +140,19 @@ PSD_OUT="$PWD/art/workbench/ui_touch_combat_v02_$(date +%Y%m%d_%H%M%S)"
 ### 文字检测完成
 
 2026-10-26 上海时间 15:16，自动续跑第 2 轮取得剩余 `roi_2` 的有效响应，文字检测达到 **7/7**，随后进入文字图层提取及无文字底图补全。这是历史中间里程碑；最终 PSD 已于 18:36 完成，见本页的候选验收记录。
+
+## 2026-10-27 部分资源接入
+
+选用已有模型 RGBA 图层，复制出独立运行时 UI、头像、面板与影晶；不重新启动 PSD 拆层，不修改原始 PSD，也不改写历史视觉验收结论。背景使用已保存的风格锚点下采样，并附加水平镜像形成循环全景；两个连接处像素连续，但地貌存在镜像对称，不代替独立场景图层生产。
+
+来源 SHA-256、尺寸、透明边界与变换操作见 `art/generated/manifest.json`。原候选包、workbench、提示词、概念图及验证截图不进入正式导出；运行时使用 `art/generated/` 和 `scripts/ui/`，触屏布局以 GDScript 数据随包交付，不依赖来源 JSON。
+
+本轮 5 次内置图片生成的原始结果均为 completed，PNG 已从会话记录恢复至 `art/generated/recovered_20261027/`。此前观察到界面空输出和默认目录无文件，误判为生成失败；详见该目录的 `diagnosis.md`。角色图无透明通道，尚未接入。原始请求保存在 `art/prompts/p1_generation_attempts_20261027.md`。没有使用 CLI/API 回退。当前仅为 P1 部分交付；角色、独立场景图层、钢索 / 机关及后续 P2/P3 仍待完成。检查、截图和重建说明见 [运行时资源](../art/generated/README.md)。
+
+## 2026-10-27 角色与独立场景补充
+
+已接入 20 帧角色、独立天空 / 循环中景和尖刺。原始输出分别保存在 `art/generated/*_sources_20261027/`，通过 `.gdignore` 及导出过滤与运行时隔离。三份 `build_*_art.py` 脚本负责统一帧原点、保留 / 清理 Alpha、循环接缝和三角遮罩，`export_production_art.py` 可一并重建。处理与原始提示词见 `art/prompts/p1_player_environment_20261027.md`，当前计划见 [美术进度](ART_PROGRESS.md)。早期“角色未接入 / 无独立图层”的记录为本次补充前状态。
+
+## 2026-10-27 首版覆盖默认流程
+
+随后接入首领四状态、哨兵、武器 / 弹体、低位近景、程序月弧 / 碎屑效果和应用图标，当前共 32 张运行时纹理。`build_combat_art.py` 与 `build_finishing_art.py` 同样纳入统一重建；RGB 遮罩处理和未选用变体明确记录。完整结果见 `art/validation/p2_combat_20261027/validation.json`；用户视觉验收和 Android 实机仍待进行。

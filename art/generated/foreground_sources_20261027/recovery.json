@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-27",
+  "source": "local native image_generation_call result; original PNG bytes",
+  "images": [
+    {
+      "id": "ig_05fba3112b35c417016ae068e66a2487d09a2f80c0541a49c6",
+      "timestamp_utc": "2026-10-27T09:05:38.936Z",
+      "status": "completed",
+      "source_line": 1008,
+      "path": "ig_05fba3112b35c417016ae068e66a2487d09a2f80c0541a49c6.png",
+      "base64_characters": 3332024,
+      "bytes": 2499016,
+      "sha256": "83d8177f6677e0f40bb391de815421a6df0165b0f48153a80bbf633b808198da",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGB",
+      "has_alpha": false,
+      "revised_prompt": "Use case: stylized-concept. Asset type: thin foreground parallax silhouette strip for Shadow Runner. Create a 2048x1024 RGBA PNG with genuinely transparent pixels. A sparse continuous dark ink-blue rocky ledge and a few small wind-bent pine branches ONLY in the bottom 140px of the image. Everything above y=870 must be entirely empty/transparent. No tall trees, no large cliffs, no moon or sky. All silhouette objects connect to the bottom edge; subtle blue-gray painted highlights on rock and needles, matching the moonlit Chinese ink landscape reference in this conversation. Keep the central area exceptionally sparse. Left and right edges meet at the same low rock height, suitable for horizontal looping. Actual transparent alpha background; if representing a matte during generation use clean pure white, never checkerboard. No characters, rope, hazards, items, buildings, lettering, frames, UI or shadows. This layer scrolls in front of distant mountains but stays below all game action.",
+      "runtime_enabled": false
+    }
+  ]
+}
