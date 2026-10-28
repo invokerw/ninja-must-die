@@ -39,8 +39,18 @@ func _run() -> void:
 	_check(visual.select_animation() == &"jump", "Ascent must use jumping")
 	player.velocity.y = 100.0
 	_check(visual.select_animation() == &"fall", "Descent must use falling")
+	player.on_rope = false
+	visual._process(0.01)
+	player.on_rope = true
+	visual._process(0.001)
+	_check(visual.animation == &"land", "Regrabbing the rope must show a short landing pose")
+	visual.landing_remaining = 0.0
 	player.rope_flip_feedback_remaining = 0.2
 	_check(visual.select_animation() == &"flip", "Accepted flip feedback must select transition")
+	player.rope_flip_feedback_side = PlayerController.ROPE_TOP
+	visual.animation = &"flip"
+	visual.animation_time = 0.0
+	_check(visual.get_frame_index() == 15, "Reverse flip must play the transition back toward the top rope")
 	player.rope_flip_feedback_remaining = 0.0
 	player.damage_count += 1
 	visual._process(0.01)
