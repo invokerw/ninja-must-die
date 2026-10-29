@@ -291,6 +291,7 @@ mouse_filter = 2
 
 [node name="ResultDimmer" type="ColorRect" parent="UI/HUD"]
 visible = false
+z_index = 100
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -298,17 +299,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.02, 0.03, 0.05, 0.70)
-mouse_filter = 2
+mouse_filter = 0
 
 [node name="ResultOverlay" type="ColorRect" parent="UI/HUD"]
 visible = false
+z_index = 110
 layout_mode = 0
 offset_left = 360.0
 offset_top = 200.0
 offset_right = 920.0
 offset_bottom = 520.0
 color = Color(0.0666667, 0.0941176, 0.14902, 0.96)
-mouse_filter = 2
+mouse_filter = 0
 
 [node name="ResultTitle" type="Label" parent="UI/HUD/ResultOverlay"]
 layout_mode = 0

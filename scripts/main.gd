@@ -34,6 +34,7 @@ var _elapsed_time := 0.0
 var _finished := false
 var run_result: RunResult
 var feedback_menu: PanelContainer
+var feedback_button: Button
 var _feedback_checks: Dictionary = {}
 var run_loadout: RunLoadout
 var weapon_text: Label
@@ -47,6 +48,7 @@ var save_status: Label
 var save_retry: Button
 var touch_controls: TouchControls
 var resume_button: Button
+var character_details_button: Button
 var _feedback_was_paused := false
 var _feedback_paused_run := false
 var painted_progress: ProgressRail
@@ -63,6 +65,7 @@ func _enter_tree() -> void:
 	$Player.character = run_loadout.character
 
 func _ready() -> void:
+	PaintedTheme.apply_font($UI/HUD)
 	_ensure_input_map()
 	feedback.bind_player(player)
 	_setup_feedback_controls()
@@ -131,6 +134,7 @@ func _toggle_pause() -> void:
 	if character_details.visible:
 		_toggle_character_details()
 		return
+	_raise_modal_layers()
 	get_tree().paused = not get_tree().paused
 	result_dimmer.visible = get_tree().paused
 	result_overlay.visible = get_tree().paused
@@ -189,24 +193,26 @@ func _notification(what: int) -> void:
 			_toggle_pause()
 
 func _setup_feedback_controls() -> void:
-	var button := Button.new()
-	button.text = "设置 F2"
-	button.position = Vector2(1136.0, 114.0)
-	button.size = Vector2(100.0, 32.0)
-	button.focus_mode = Control.FOCUS_NONE
-	$UI/HUD.add_child(button)
-	PaintedTheme.style_button(button)
+	feedback_button = Button.new()
+	feedback_button.text = "设置 F2"
+	feedback_button.position = Vector2(1136.0, 114.0)
+	feedback_button.size = Vector2(100.0, 32.0)
+	feedback_button.z_index = 140
+	feedback_button.focus_mode = Control.FOCUS_NONE
+	$UI/HUD.add_child(feedback_button)
+	PaintedTheme.style_button(feedback_button)
 	var panel := FeedbackSettingsPanel.new()
 	panel.profile = PlayerProfile.current()
 	panel.feedback = feedback
 	feedback_menu = panel
-	feedback_menu.z_index = 10
+	feedback_menu.z_index = 130
+	feedback_menu.mouse_filter = Control.MOUSE_FILTER_STOP
 	feedback_menu.position = Vector2(900.0, 404.0)
 	feedback_menu.hide()
 	$UI/HUD.add_child(feedback_menu)
 	feedback_menu.visibility_changed.connect(_on_feedback_visibility_changed)
 	_feedback_checks = panel.checks
-	button.pressed.connect(func() -> void:
+	feedback_button.pressed.connect(func() -> void:
 		feedback_menu.visible = not feedback_menu.visible
 		_sync_touch_controls()
 	)
@@ -215,15 +221,23 @@ func _setup_feedback_controls() -> void:
 func _on_feedback_visibility_changed() -> void:
 	if _transitioning or not is_inside_tree():
 		return
-	if feedback_menu.visible and is_instance_valid(touch_controls) and touch_controls.enabled:
+	if feedback_menu.visible:
 		_feedback_was_paused = get_tree().paused
-		_feedback_paused_run = true
-		get_tree().paused = true
-		result_dimmer.show()
-		result_overlay.hide()
+		_feedback_paused_run = _feedback_was_paused or (is_instance_valid(touch_controls) and touch_controls.enabled)
+		if _feedback_paused_run:
+			_raise_modal_layers()
+			feedback_menu.move_to_front()
+			if is_instance_valid(feedback_button):
+				feedback_button.move_to_front()
+			if is_instance_valid(character_details_button):
+				character_details_button.move_to_front()
+			get_tree().paused = true
+			result_dimmer.show()
+			result_overlay.hide()
 	elif not feedback_menu.visible and _feedback_paused_run:
 		_feedback_paused_run = false
 		get_tree().paused = _feedback_was_paused or _finished or character_details.visible
+		_raise_modal_layers()
 		result_dimmer.visible = get_tree().paused
 		result_overlay.visible = get_tree().paused and not character_details.visible
 	_sync_touch_controls()
@@ -315,6 +329,7 @@ func _show_result(title: String, body: String) -> void:
 		player.stop()
 	result_title.text = title
 	result_body.text = body
+	_raise_modal_layers()
 	result_dimmer.visible = true
 	result_overlay.visible = true
 	get_tree().paused = true
@@ -337,7 +352,8 @@ func _return_to_setup() -> void:
 		_transitioning = false
 
 func _setup_equipment_controls() -> void:
-	_hud_button($UI/HUD, "角色 / 武器 C", Rect2(880, 114, 230, 32), _toggle_character_details)
+	character_details_button = _hud_button($UI/HUD, "角色 / 武器 C", Rect2(880, 114, 230, 32), _toggle_character_details)
+	character_details_button.z_index = 140
 	# Keep the full HUD above the boss volley's highest lane (y=396).
 	$UI/HUD/CharacterPanel.size.y = 72.0
 	character_text.position.y = 2.0
@@ -390,6 +406,8 @@ func _setup_equipment_controls() -> void:
 	character_details = PanelContainer.new()
 	character_details.position = Vector2(320, 160)
 	character_details.size = Vector2(640, 400)
+	character_details.z_index = 120
+	character_details.mouse_filter = Control.MOUSE_FILTER_STOP
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color("111827")
 	style.border_color = Color("d8b56a")
@@ -398,6 +416,7 @@ func _setup_equipment_controls() -> void:
 	$UI/HUD.add_child(character_details)
 	var content := Control.new()
 	content.custom_minimum_size = Vector2(636, 396)
+	content.mouse_filter = Control.MOUSE_FILTER_STOP
 	character_details.add_child(content)
 	var title := _hud_label(content, Rect2(32, 24, 570, 42), 28)
 	title.text = "%s · 本局装备" % player.character.display_name
@@ -448,7 +467,12 @@ func _toggle_character_details() -> void:
 		result_dimmer.show()
 		result_overlay.hide()
 		character_details.show()
+		character_details.move_to_front()
 	_sync_touch_controls()
+
+func _raise_modal_layers() -> void:
+	result_dimmer.move_to_front()
+	result_overlay.move_to_front()
 
 func _hud_button(parent: Node, text: String, rect: Rect2, callback: Callable) -> Button:
 	var button := Button.new()

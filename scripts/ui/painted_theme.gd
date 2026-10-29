@@ -3,6 +3,15 @@ extends RefCounted
 
 const PANEL := preload("res://art/generated/ui/panel.png")
 const PORTRAIT := preload("res://art/generated/ui/portrait.png")
+const FONT := preload("res://fonts/NotoSansCJKsc-Regular.otf")
+
+static func ui_theme() -> Theme:
+	var theme := Theme.new()
+	theme.default_font = FONT
+	return theme
+
+static func apply_font(control: Control) -> void:
+	control.theme = ui_theme()
 
 static func panel_style(tint: Color = Color.WHITE) -> StyleBoxTexture:
 	var style := StyleBoxTexture.new()

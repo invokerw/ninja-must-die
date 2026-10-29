@@ -22,6 +22,7 @@ static func is_requested() -> bool:
 	return preview_enabled or OS.has_feature("mobile") or DisplayServer.is_touchscreen_available() or OS.get_cmdline_user_args().has("--touch-controls")
 
 func _ready() -> void:
+	theme = PaintedTheme.ui_theme()
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for entry in [["normal", "192536", "d8b56a"], ["pressed", "34495e", "f0c36d"], ["disabled", "111827", "526372"]]:

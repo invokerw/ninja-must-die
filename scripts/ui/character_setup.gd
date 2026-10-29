@@ -18,6 +18,7 @@ var _launching := false
 var _equipment_save_pending := false
 
 func _ready() -> void:
+	PaintedTheme.apply_font(self)
 	if profile == null:
 		profile = PlayerProfile.current()
 	character = load("res://data/characters/shadow_runner.tres") as CharacterData
