@@ -144,6 +144,8 @@ HUD 增加动态武器图标 / 名称 / J 冷却与角色详情入口，结算�
 
 ## 文档
 
+- [下一阶段整体设计基线：角色、神话史诗、关卡地图、三星、成长与商店](docs/OVERALL_DESIGN.md)（2026-10-30，方向已确认，尚未实现）
+- [下一阶段实现拆分：角色身法、第二关、地图、星级、发奖、商店与存档](docs/IMPLEMENTATION_PLAN.md)（2026-10-30，开发任务拆分）
 - [游戏设计文档](docs/GAME_DESIGN.md)
 - [正式美术设计与制作顺序](docs/ART_DIRECTION.md)
 - [角色主动技能与被动能力设计](docs/CHARACTER_SKILL_DESIGN.md)
