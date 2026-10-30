@@ -103,7 +103,7 @@ func _layout() -> void:
 	for index in range(3):
 		_rects[ACTIONS[index + 2]] = Rect2(_safe.end.x - 24.0 * factor - float(3 - index) * side - float(2 - index) * gap, y, side, side)
 	var frame := ScreenLayout.fit_frame(_safe)
-	_rects[&"pause"] = Rect2(frame.position + Vector2(744, 24) * factor, Vector2(108, 52) * factor)
+	_rects[&"pause"] = Rect2(frame.position + Vector2(1172, 8) * factor, Vector2(96, 96) * factor)
 	for action in _labels:
 		var label := _labels[action] as Label
 		label.position = _rects[action].position

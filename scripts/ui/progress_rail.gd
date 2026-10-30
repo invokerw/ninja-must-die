@@ -15,13 +15,13 @@ func _ready() -> void:
 func _draw() -> void:
 	var start := Vector2(7, size.y * 0.5)
 	var end := Vector2(size.x - 7, start.y)
-	draw_line(start, end, Color("111827"), 6.0, true)
+	draw_line(start + Vector2(0, 1), end + Vector2(0, 1), Color("111827", 0.7), 3.0, true)
 	draw_line(start, end, Color("6e7f8d"), 2.0, true)
 	if progress > 0:
 		draw_line(start, start.lerp(end, progress), Color("d8b56a"), 2.0, true)
 	# Each checkpoint is drawn once; no extracted rail bitmap carries hidden nodes.
 	for checkpoint: float in MARKERS:
 		var center := start.lerp(end, checkpoint)
-		draw_circle(center, 6.0, Color("111827"))
-		draw_circle(center, 4.5, Color("d8b56a") if progress >= checkpoint else Color("6e7f8d"))
-		draw_circle(center, 2.5, Color("f4d791") if progress >= checkpoint else Color("34495e"))
+		draw_circle(center, 4.5, Color("111827"))
+		draw_circle(center, 3.5, Color("d8b56a") if progress >= checkpoint else Color("6e7f8d"))
+		draw_circle(center, 1.8, Color("f4d791") if progress >= checkpoint else Color("243346"))

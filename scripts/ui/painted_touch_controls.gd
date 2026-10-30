@@ -2,12 +2,10 @@ class_name PaintedTouchControls
 extends TouchControls
 
 var skin := TouchControlSkin.new()
-const PAUSE_PLATE := preload("res://art/generated/ui/pause_plate.png")
 const PAUSE_ICON := preload("res://art/generated/ui/pause_icon.png")
 var _counters: Dictionary = {}
 var _status_kinds: Dictionary = {}
 var _status_styles: Dictionary = {}
-var _pause_style := PaintedTheme.panel_style()
 
 func _ready() -> void:
 	_setup_status_styles()
@@ -45,10 +43,6 @@ func _setup_status_styles() -> void:
 
 func _layout() -> void:
 	super._layout()
-	if _labels.has(&"pause"):
-		var pause_rect := get_action_rect(&"pause")
-		_labels[&"pause"].position.x += pause_rect.size.y
-		_labels[&"pause"].size.x -= pause_rect.size.y
 	for action in _counters:
 		var rect := get_action_rect(action)
 		var caption: Label = _labels[action]
@@ -80,6 +74,8 @@ func visual_state(action: StringName) -> Dictionary:
 
 func sync_state() -> void:
 	super.sync_state()
+	if _labels.has(&"pause"):
+		_labels[&"pause"].hide()
 	for action in _counters:
 		var label: Label = _labels[action]
 		var counter: Label = _counters[action]
@@ -112,10 +108,10 @@ func _draw() -> void:
 			continue
 		if action == &"pause":
 			var rect := get_action_rect(action)
-			draw_style_box(_pause_style, rect)
-			var plate := Rect2(rect.position, Vector2.ONE * rect.size.y)
-			draw_texture_rect(PAUSE_PLATE, plate, false)
-			draw_texture_rect(PAUSE_ICON, Rect2(plate.position + plate.size * 0.28, plate.size * 0.44), false)
+			var center := rect.get_center()
+			var radius := rect.size.x * 0.22
+			draw_arc(center, radius, -PI * 0.48, PI * 1.47, 56, Color("d8b56a"), 1.2, true)
+			draw_texture_rect(PAUSE_ICON, Rect2(center - rect.size * 0.13, rect.size * 0.26), false)
 		else:
 			skin.draw_button(self, action, get_action_rect(action), visual_state(action))
 		var status: StringName = _status_kinds.get(action, &"")

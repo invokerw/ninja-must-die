@@ -7,6 +7,10 @@ extends Node2D
 @onready var combat: RunnerCombat = $Player/Combat
 @onready var level: RopeLevelController = $Level
 @onready var status_text: Label = $UI/HUD/StatusText
+@onready var health_text: Label = $UI/HUD/HealthCard/HealthText
+@onready var health_fill: ColorRect = $UI/HUD/HealthCard/HealthBack/HealthFill
+@onready var crystal_text: Label = $UI/HUD/CrystalCard/CrystalText
+@onready var time_text: Label = $UI/HUD/TimeCard/TimeText
 @onready var hint_text: Label = $UI/HUD/HintText
 @onready var result_overlay: ColorRect = $UI/HUD/ResultOverlay
 @onready var result_dimmer: ColorRect = $UI/HUD/ResultDimmer
@@ -508,6 +512,11 @@ func _update_status() -> void:
 		painted_progress.progress = progress
 	var progress_title := "首领练习" if start_at_boss else ("关卡进度" if level.boss_data != null else "终点进度")
 	progress_label.text = "%s  %d%%" % [progress_title, roundi(progress * 100.0)]
+	health_text.text = "%d / %d" % [player.health, player.tuning.max_health]
+	health_fill.size.x = health_fill.get_parent().size.x * clampf(float(player.health) / float(player.tuning.max_health), 0.0, 1.0)
+	health_fill.color = Color("f07868") if player.health > 1 else Color("e04f5f")
+	crystal_text.text = "%d / %d" % [player.crystals, level.pickup_positions.size()]
+	time_text.text = "%.1fs" % _elapsed_time
 	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [
 		player.health, player.tuning.max_health, player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
 	]

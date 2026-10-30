@@ -69,6 +69,118 @@ offset_bottom = 110.0
 color = Color(0.0666667, 0.0941176, 0.14902, 0.86)
 mouse_filter = 2
 
+[node name="HealthCard" type="ColorRect" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 30.0
+offset_right = 324.0
+offset_bottom = 92.0
+color = Color(0.0666667, 0.0941176, 0.14902, 0.9)
+mouse_filter = 2
+
+[node name="HealthTitle" type="Label" parent="UI/HUD/HealthCard"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 7.0
+offset_right = 90.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
+theme_override_font_sizes/font_size = 15
+text = "生命"
+mouse_filter = 2
+
+[node name="HealthText" type="Label" parent="UI/HUD/HealthCard"]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 5.0
+offset_right = 174.0
+offset_bottom = 29.0
+theme_override_colors/font_color = Color(0.866667, 0.905882, 0.905882, 1)
+theme_override_font_sizes/font_size = 19
+text = "3 / 3"
+horizontal_alignment = 2
+mouse_filter = 2
+
+[node name="HealthBack" type="ColorRect" parent="UI/HUD/HealthCard"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 39.0
+offset_right = 174.0
+offset_bottom = 47.0
+color = Color(0.133333, 0.180392, 0.227451, 0.95)
+mouse_filter = 2
+
+[node name="HealthFill" type="ColorRect" parent="UI/HUD/HealthCard/HealthBack"]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 8.0
+color = Color(0.941176, 0.482353, 0.407843, 1)
+mouse_filter = 2
+
+[node name="CrystalCard" type="ColorRect" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 338.0
+offset_top = 30.0
+offset_right = 492.0
+offset_bottom = 92.0
+color = Color(0.0666667, 0.0941176, 0.14902, 0.9)
+mouse_filter = 2
+
+[node name="CrystalTitle" type="Label" parent="UI/HUD/CrystalCard"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 7.0
+offset_right = 78.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
+theme_override_font_sizes/font_size = 15
+text = "影晶"
+mouse_filter = 2
+
+[node name="CrystalText" type="Label" parent="UI/HUD/CrystalCard"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 5.0
+offset_right = 140.0
+offset_bottom = 29.0
+theme_override_colors/font_color = Color(0.866667, 0.905882, 0.905882, 1)
+theme_override_font_sizes/font_size = 19
+text = "0 / 50"
+horizontal_alignment = 2
+mouse_filter = 2
+
+[node name="TimeCard" type="ColorRect" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 506.0
+offset_top = 30.0
+offset_right = 680.0
+offset_bottom = 92.0
+color = Color(0.0666667, 0.0941176, 0.14902, 0.9)
+mouse_filter = 2
+
+[node name="TimeTitle" type="Label" parent="UI/HUD/TimeCard"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 7.0
+offset_right = 78.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(0.847059, 0.709804, 0.415686, 1)
+theme_override_font_sizes/font_size = 15
+text = "时间"
+mouse_filter = 2
+
+[node name="TimeText" type="Label" parent="UI/HUD/TimeCard"]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 5.0
+offset_right = 160.0
+offset_bottom = 29.0
+theme_override_colors/font_color = Color(0.866667, 0.905882, 0.905882, 1)
+theme_override_font_sizes/font_size = 19
+text = "0.0s"
+horizontal_alignment = 2
+mouse_filter = 2
+
 [node name="StatusText" type="Label" parent="UI/HUD"]
 layout_mode = 0
 offset_left = 44.0
