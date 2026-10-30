@@ -8,6 +8,7 @@ func _initialize() -> void:
 func _run() -> void:
 	var scope := TestProfileScope.new("player-art")
 	var scene := load("res://scenes/main.tscn").instantiate() as Node2D
+	scene.greybox_character = CharacterRegistry.get_character(&"thunder_guard")
 	root.add_child(scene)
 	var player: PlayerController = scene.get_node("Player")
 	player.set_physics_process(false)
@@ -29,11 +30,11 @@ func _run() -> void:
 	_check(observed.size() == 8, "Real run animation must visit all eight frames")
 	player.rope_side = PlayerController.ROPE_BOTTOM
 	_check(visual.select_animation() == &"hang", "Lower rope must use hands-up hanging")
-	player.dash_remaining = 0.3
+	player.mobility.try_start({"on_rope": true})
 	_check(visual.select_animation() == &"hang", "Under-rope dash must keep hands on the rope")
 	player.rope_side = PlayerController.ROPE_TOP
 	_check(visual.select_animation() == &"dash", "Upper dash must select dash poses")
-	player.dash_remaining = 0.0
+	player.mobility.active_remaining = 0.0
 	player.on_rope = false
 	player.velocity.y = -100.0
 	_check(visual.select_animation() == &"jump", "Ascent must use jumping")

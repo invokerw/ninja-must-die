@@ -15,7 +15,7 @@ signal feedback_requested(cue: StringName, position: Vector2)
 const ROPE_TOP := 1
 const ROPE_BOTTOM := -1
 
-enum State { ROPE_TOP, ROPE_BOTTOM, JUMP, FALL, DASH, STOPPED }
+enum State { ROPE_TOP, ROPE_BOTTOM, JUMP, FALL, MOBILITY, STOPPED }
 
 var state: State = State.STOPPED
 var health: int
@@ -26,8 +26,11 @@ var on_rope := true
 var rope_side := ROPE_TOP
 var rope_y := 520.0
 var rope_offset := 34.0
-var dash_remaining := 0.0
-var dash_cooldown := 0.0
+# Transitional read aliases for tools and scripts using the previous vocabulary.
+var dash_remaining: float:
+	get: return mobility.active_remaining if mobility != null and mobility.is_bursting() else 0.0
+var dash_cooldown: float:
+	get: return mobility.cooldown_remaining if mobility != null else 0.0
 var immunity_remaining := 0.0
 var skill_immunity_remaining := 0.0
 var rope_flip_lock_remaining := 0.0
@@ -38,10 +41,16 @@ var max_jump_count := 2
 var configuration_errors := PackedStringArray()
 var run_loadout: RunLoadout
 var run_input := RunInput.new()
+var mobility: MobilityRuntime
 var previous_physics_position := Vector2.ZERO
 var _coyote_remaining := 0.0
 var _buffer_remaining := 0.0
 var _buffer_is_jump_only := false
+var _jump_consumed := false
+var _fast_falling := false
+var _queued_rope_side := 0
+var _queued_fast_fall := false
+var _motion_sweep: ShapeCast2D
 
 const ROPE_FLIP_FEEDBACK_DURATION := 0.24
 
@@ -58,6 +67,9 @@ func _ready() -> void:
 	if run_loadout == null:
 		run_loadout = PlayerProfile.current().resolve(character)
 	character = run_loadout.character
+	var mobility_data := character.get_mobility_data()
+	if mobility_data != null:
+		mobility = MobilityRuntime.new(mobility_data)
 	configuration_errors = character.get_validation_errors(tuning.base_max_jump_count)
 	configuration_errors.append_array(run_loadout.weapon.get_validation_errors())
 	if not run_loadout.weapon.allows(character.character_id):
@@ -65,13 +77,21 @@ func _ready() -> void:
 	if not configuration_errors.is_empty():
 		push_error("\n".join(configuration_errors))
 		return
-	max_jump_count = character.get_max_jump_count(tuning.base_max_jump_count)
+	max_jump_count = tuning.base_max_jump_count
 	jumps_remaining = max_jump_count - 1
 	# Establish input protection before any hazard/sentry contact tick.
 	process_physics_priority = -100
 	collision_layer = 2
 	collision_mask = 0
 	add_to_group("player")
+	_motion_sweep = ShapeCast2D.new()
+	_motion_sweep.shape = ($CollisionShape2D as CollisionShape2D).shape
+	_motion_sweep.enabled = false
+	_motion_sweep.collide_with_areas = true
+	_motion_sweep.collide_with_bodies = false
+	_motion_sweep.collision_mask = 4 | 16 | 32
+	_motion_sweep.max_results = 64
+	add_child(_motion_sweep)
 	health = tuning.max_health
 	_snap_to_rope()
 	previous_physics_position = global_position
@@ -85,33 +105,43 @@ func _physics_process(delta: float) -> void:
 		return
 
 	previous_physics_position = global_position
+	_jump_consumed = false
 	_update_timers(delta)
 	physics_tick.emit(delta)
-	var jump_only := run_input.is_action_just_pressed("jump_only") and (not on_rope or rope_side == ROPE_TOP)
+	var jump_only := run_input.is_action_just_pressed("jump_only")
 	if jump_only or run_input.is_action_just_pressed("jump"):
 		_buffer_remaining = tuning.jump_buffer
 		_buffer_is_jump_only = jump_only
 
 	if on_rope:
 		_process_rope_input()
-		if on_rope:
-			_process_rope_motion(delta)
-		else:
-			_process_air_motion(delta)
 	else:
 		_process_air_input()
-		if on_rope:
-			_process_rope_motion(delta)
-		else:
-			_process_air_motion(delta)
+
+	# Resolve basic input first. A second jump and a third-jump press in the
+	# same frame consume only the basic jump; burst can follow a takeoff.
+	if run_input.is_action_just_pressed("mobility"):
+		if mobility.try_start(_mobility_context()):
+			velocity.y = mobility.consume_vertical_impulse(velocity.y)
+			emit_feedback(mobility.feedback_cue())
+	mobility.update_hold(run_input.is_action_pressed("mobility"), _mobility_context(), delta)
+	# Movement below uses the effects accepted during this tick.
+	var sweep_from := global_position
+	var burst_motion := mobility.is_bursting()
+	if on_rope:
+		_process_rope_motion(delta)
+	else:
+		_process_air_motion(delta)
+	if burst_motion:
+		_sweep_burst_contacts(sweep_from)
 
 	if global_position.y > 900.0:
 		fail("从钢索坠落")
 	queue_redraw()
 
 func _update_timers(delta: float) -> void:
-	dash_remaining = maxf(dash_remaining - delta, 0.0)
-	dash_cooldown = maxf(dash_cooldown - delta, 0.0)
+	if mobility != null:
+		mobility.tick(delta)
 	immunity_remaining = maxf(immunity_remaining - delta, 0.0)
 	skill_immunity_remaining = maxf(skill_immunity_remaining - delta, 0.0)
 	rope_flip_lock_remaining = maxf(rope_flip_lock_remaining - delta, 0.0)
@@ -120,11 +150,21 @@ func _update_timers(delta: float) -> void:
 	_buffer_remaining = maxf(_buffer_remaining - delta, 0.0)
 
 func _process_rope_input() -> void:
-	if run_input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
-		dash_remaining = tuning.dash_duration
-		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
-		state = State.DASH
-		emit_feedback(&"dash")
+	if mobility.is_bursting():
+		if run_input.is_action_just_pressed("rope_flip"):
+			_queued_rope_side = -rope_side
+			return
+		elif run_input.is_action_just_pressed("drop"):
+			_queued_rope_side = ROPE_BOTTOM
+			return
+		if _queued_rope_side != 0:
+			return
+	if _queued_rope_side != 0:
+		var target := _queued_rope_side
+		_queued_rope_side = 0
+		_buffer_remaining = 0.0
+		if target != rope_side:
+			_switch_rope(target)
 		return
 	if rope_flip_lock_remaining > 0.0:
 		return
@@ -140,28 +180,33 @@ func _process_rope_input() -> void:
 	if jump_pressed:
 		_buffer_remaining = 0.0
 		if rope_side == ROPE_BOTTOM:
-			if not _buffer_is_jump_only:
-				_switch_rope(ROPE_TOP)
+			_switch_rope(ROPE_TOP)
 		else:
 			_detach_from_rope(tuning.jump_velocity)
 
 func _process_rope_motion(delta: float) -> void:
-	var speed := tuning.dash_speed if dash_remaining > 0.0 else tuning.run_speed
+	var speed := get_forward_speed()
 	velocity = Vector2(speed, 0.0)
 	global_position.y = rope_y - float(rope_side) * rope_offset
 	move_and_slide()
-	if dash_remaining > 0.0:
-		state = State.DASH
+	if mobility.is_active():
+		state = State.MOBILITY
 	else:
 		state = State.ROPE_TOP if rope_side == ROPE_TOP else State.ROPE_BOTTOM
 
 func _process_air_input() -> void:
-	if run_input.is_action_just_pressed("dash") and dash_cooldown <= 0.0:
-		dash_remaining = tuning.dash_duration
-		dash_cooldown = tuning.dash_duration + tuning.dash_recovery
-		emit_feedback(&"dash")
-	if run_input.is_action_just_pressed("rope_flip"):
+	var fast_fall_requested := run_input.is_action_just_pressed("rope_flip") or run_input.is_action_pressed("drop")
+	if fast_fall_requested:
 		_buffer_remaining = 0.0
+		mobility.release()
+		if mobility.is_bursting():
+			_queued_fast_fall = true
+		else:
+			_fast_falling = true
+	if _queued_fast_fall and not mobility.is_bursting():
+		_fast_falling = true
+		_queued_fast_fall = false
+	if _fast_falling:
 		velocity.y = maxf(velocity.y, 1000.0)
 		return
 	var jump_only := run_input.is_action_just_pressed("jump_only")
@@ -169,21 +214,20 @@ func _process_air_input() -> void:
 		if not jump_only and _can_regrab_rope():
 			_attach_to_rope(ROPE_TOP)
 		elif jumps_remaining > 0:
-			var jump_number := max_jump_count - jumps_remaining + 1
-			velocity.y = tuning.double_jump_velocity if jump_number == 2 else tuning.third_jump_velocity
+			velocity.y = tuning.double_jump_velocity
 			jumps_remaining -= 1
+			_jump_consumed = true
 			_buffer_remaining = 0.0
 			emit_feedback(&"air_jump")
-	if run_input.is_action_pressed("drop"):
-		velocity.y = maxf(velocity.y, 1000.0)
 
 func _process_air_motion(delta: float) -> void:
-	var speed := tuning.dash_speed if dash_remaining > 0.0 else tuning.run_speed
+	var speed := get_forward_speed()
 	velocity.x = speed
 	velocity.y += tuning.gravity * delta
+	velocity.y = mobility.vertical_speed(velocity.y)
 	var previous_y := global_position.y
 	move_and_slide()
-	state = State.DASH if dash_remaining > 0.0 else (State.JUMP if velocity.y < 0.0 else State.FALL)
+	state = State.MOBILITY if mobility.is_active() else (State.JUMP if velocity.y < 0.0 else State.FALL)
 	var landing_y := rope_y - rope_offset
 	# Sweep the feet across the rope so a fast fall cannot skip the landing surface.
 	if velocity.y > 0.0 and previous_y <= landing_y and global_position.y >= landing_y:
@@ -204,6 +248,8 @@ func _switch_rope(target_side: int) -> void:
 
 func _detach_from_rope(initial_vertical_velocity: float) -> void:
 	on_rope = false
+	_jump_consumed = true
+	mobility.on_rope_detach()
 	_coyote_remaining = tuning.coyote_time
 	_buffer_remaining = 0.0
 	jumps_remaining = max_jump_count - 1
@@ -216,6 +262,11 @@ func _attach_to_rope(target_side: int) -> void:
 	on_rope = true
 	_buffer_remaining = 0.0
 	jumps_remaining = max_jump_count - 1
+	_fast_falling = false
+	_queued_fast_fall = false
+	if mobility != null:
+		mobility.reset_on_rope_attach()
+	run_input.cancel_action(&"mobility")
 	velocity = Vector2.ZERO
 	_snap_to_rope()
 	rope_side_changed.emit(rope_side)
@@ -236,7 +287,7 @@ func collect_crystal() -> void:
 	emit_feedback(&"pickup")
 
 func is_invulnerable() -> bool:
-	return skill_immunity_remaining > 0.00001 or immunity_remaining > 0.00001 or dash_remaining > 0.00001
+	return skill_immunity_remaining > 0.00001 or immunity_remaining > 0.00001 or (mobility != null and mobility.invulnerability_remaining > 0.00001)
 
 func take_damage(amount: int = 1) -> void:
 	if not active:
@@ -244,6 +295,8 @@ func take_damage(amount: int = 1) -> void:
 	if is_invulnerable():
 		emit_feedback(&"guard")
 		return
+	mobility.release()
+	run_input.cancel_action(&"mobility")
 	damage_count += 1
 	health = maxi(health - amount, 0)
 	immunity_remaining = tuning.hurt_immunity
@@ -263,8 +316,40 @@ func stop() -> void:
 	state = State.STOPPED
 	velocity = Vector2.ZERO
 	skill_immunity_remaining = 0.0
+	clear_run_input()
+	if mobility != null:
+		mobility.reset()
+	_queued_rope_side = 0
+	_queued_fast_fall = false
+	_fast_falling = false
 	stopped.emit()
 	queue_redraw()
+
+func _sweep_burst_contacts(from: Vector2) -> void:
+	# Static Area2D overlap events may observe only the two endpoints. Sweep
+	# the real body capsule through the complete short burst, including pickups.
+	var shape_transform := ($CollisionShape2D as CollisionShape2D).transform
+	_motion_sweep.global_transform = Transform2D(0.0, from) * shape_transform
+	_motion_sweep.target_position = _motion_sweep.to_local(global_position + shape_transform.origin)
+	# A shape cast stops at its nearest time of impact. Exclude each visited
+	# object and repeat from the same origin so every object on the path counts.
+	var visited := {}
+	for pass_index in range(64):
+		_motion_sweep.force_shapecast_update()
+		if _motion_sweep.get_collision_count() == 0 or not active:
+			break
+		var target := _motion_sweep.get_collider(0) as CollisionObject2D
+		if target == null or visited.has(target.get_instance_id()):
+			break
+		visited[target.get_instance_id()] = true
+		_motion_sweep.add_exception(target)
+		if target is CrystalPickup:
+			target._on_body_entered(self)
+		elif target is Hazard or (target is RopeSentry and target.alive):
+			take_damage()
+	_motion_sweep.clear_exceptions()
+	# Restore the helper's local pose for the next body movement.
+	_motion_sweep.transform = Transform2D.IDENTITY
 
 func get_state_name() -> String:
 	return State.keys()[state]
@@ -277,9 +362,37 @@ func get_rope_side_name() -> String:
 		return "空中"
 	return "钢索上" if rope_side == ROPE_TOP else "钢索下"
 
+func _mobility_context() -> Dictionary:
+	return {"on_rope": on_rope, "velocity_y": velocity.y, "jumps_remaining": jumps_remaining,
+		"jump_consumed": _jump_consumed, "fast_fall": _fast_falling or _queued_fast_fall}
+
+func get_forward_speed() -> float:
+	return mobility.horizontal_speed(tuning.run_speed) if mobility != null else tuning.run_speed
+
+func is_mobility_bursting() -> bool:
+	return mobility != null and mobility.is_bursting()
+
+func is_mobility_ready() -> bool:
+	return mobility != null and active and mobility.can_use(_mobility_context())
+
+func get_mobility_text() -> String:
+	return "身法" if mobility == null else "%s\n%s" % [mobility.data.display_name, mobility.remaining_text(_mobility_context())]
+
+func clear_run_input() -> void:
+	run_input.clear_all()
+	_buffer_remaining = 0.0
+	_queued_rope_side = 0
+	_queued_fast_fall = false
+	if mobility != null:
+		mobility.release()
+
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT, NOTIFICATION_APPLICATION_PAUSED]:
+		clear_run_input()
+
 func _draw() -> void:
 	var feedback_ratio := clampf(rope_flip_feedback_remaining / ROPE_FLIP_FEEDBACK_DURATION, 0.0, 1.0)
-	if state == State.DASH:
+	if is_mobility_bursting():
 		draw_line(Vector2(-24, 0), Vector2(-90, 0), Color(0.85, 0.71, 0.42, 0.45), 7)
 	if skill_immunity_remaining > 0.0:
 		var closing := clampf(skill_immunity_remaining / 0.35, 0.0, 1.0)

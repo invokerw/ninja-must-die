@@ -41,8 +41,9 @@ func _render() -> void:
 			if spec[1] == "jump":
 				main.player.velocity.y = -200.0
 			if spec[1] == "dash":
-				main.player.dash_remaining = 0.2
-				main.player.state = PlayerController.State.DASH
+				main.player.mobility = MobilityRuntime.new(preload("res://data/characters/mobility/burst.tres"))
+				main.player.mobility.try_start({"on_rope": true})
+				main.player.state = PlayerController.State.MOBILITY
 			if spec[1] == "flip":
 				main.player.rope_flip_feedback_remaining = 0.2
 			if spec[1] == "hurt":
@@ -58,7 +59,8 @@ func _render() -> void:
 				main.combat.skill_flash_remaining = 0.3
 				main.combat._strike_origin = main.player.global_position
 			if spec[1] == "cooldown":
-				main.player.dash_cooldown = 0.3
+				main.player.mobility = MobilityRuntime.new(preload("res://data/characters/mobility/burst.tres"))
+				main.player.mobility.cooldown_remaining = 0.3
 				main.combat.skill_cooldown_remaining = 7.2
 				main.combat.weapon.cooldown_remaining = 3.5
 			if str(spec[1]).begins_with("boss"):

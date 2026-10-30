@@ -103,11 +103,11 @@ func _test_setup_and_retry() -> void:
 	_check(main.run_loadout.weapon.weapon_id == &"star_lance" and main.player.run_loadout == main.run_loadout, "Launch must pass the selected weapon to the actual character")
 	_check(main.weapon_text.text.contains("贯星矛") and main.combat.weapon.data.skill.cooldown_seconds == 8.0, "Weapon HUD and runtime must read the equipped data")
 	_check(not PlayerProfile.current().try_equip(CHARACTER, &"crescent_wheel"), "The role module must reject live equipment changes")
-	main._toggle_character_details()
 	var position: Vector2 = main.player.position
+	main._toggle_pause()
 	await _frames(10)
-	_check(paused and main.player.position == position and not PlayerProfile.current().try_equip(CHARACTER, &"crescent_wheel"), "Character inspection must pause and remain read-only")
-	main._toggle_character_details()
+	_check(paused and main.player.position == position and main.result_title.text.contains("技能说明") and main.result_body.text.contains("贯星矛") and not PlayerProfile.current().try_equip(CHARACTER, &"crescent_wheel"), "Pause must freeze the run and show the equipped weapon details")
+	main._toggle_pause()
 	# Even an external profile edit must not change the current run or its retry.
 	PlayerProfile.current().character_loadouts["shadow_runner"] = {"weapon_id": "crescent_wheel"}
 	main._restart_run()

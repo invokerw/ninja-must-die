@@ -61,7 +61,7 @@ PSD_OUT="$PWD/art/workbench/ui_touch_combat_v02_$(date +%Y%m%d_%H%M%S)"
 | `art/layered/<设计版本>/` | 整理后的 PSD、候选图层与导出清单 | UI v02 已整理 10 张候选 PNG 与完整 PSD，供独立 Godot 预览 |
 | `art/generated/ui/` 等 | 完成制作并按游戏规格整理的资源 | 接入前单独验收；当前尚未生成 |
 
-首个拆层样本采用 `ui_touch_combat_design_v02.png`。重点检查左侧跳跃和翻绳两个独立按钮、右侧影步 / 武器 / 忍术三个按钮，以及顶部 HUD。下侧跳跃禁用、空中翻绳键快速下落等状态由运行时代码控制，不能从一张静态设计稿推定已经制作齐全。
+首个拆层样本采用 `ui_touch_combat_design_v02.png`。重点检查左侧翻绳按钮、右侧跳跃 / 影步 / 武器 / 忍术四个按钮，以及顶部 HUD。下侧跳跃回到上侧、空中翻绳键快速下落等状态由运行时代码控制，不能从一张静态设计稿推定已经制作齐全。
 
 本次已核对 `run_result.json`、`verification.json`、`fidelity_verification.json`，并将实际 PSD 读回结果及助手视觉检查记录保存在 `inspection/`。原始 `workbench` 证据保留；后续整理的 UI 组件和完整 PSD 位于 `art/layered/ui_touch_v02_candidate/`，仅用于独立美术预览，未启用到默认游戏或正式导出。
 
@@ -69,7 +69,7 @@ PSD_OUT="$PWD/art/workbench/ui_touch_combat_v02_$(date +%Y%m%d_%H%M%S)"
 
 用户要求继续下一步后，选择五个操作按钮的底板和图标，逐字节导出 10 张 PNG。`tools/art/export_ui_candidate.py` 验证原始 PSD 和每张源图的哈希，保留 native 尺寸、透明通道和图层坐标；[组件清单](../art/layered/ui_touch_v02_candidate/manifest.json) 记录一对一来源。没有新模型请求、像素修复或对原任务 manifest 的改写。
 
-`scenes/art/ui_touch_preview.tscn` 和 `ui_touch_boss_preview.tscn` 是独立的 Godot 候选预览，复用 `TouchControls` 的输入、生命周期和安全区布局；新增脚本只负责候选皮肤、动态文字 / 冷却与预览入口。下侧跳跃真实禁用，翻绳键按当前状态显示方向提示；冷却由实际玩法计时驱动。贯星矛继续使用既有矢量图形，避免把弦月轮图标误用于另一把武器。进度线与四个节点由单个 Godot 控件绘制，原 PSD 中的问题图层不参与预览。
+`scenes/art/ui_touch_preview.tscn` 和 `ui_touch_boss_preview.tscn` 是独立的 Godot 候选预览，复用 `TouchControls` 的输入、生命周期和安全区布局；新增脚本只负责候选皮肤、动态文字 / 冷却与预览入口。下侧跳跃回到上侧，翻绳键按当前状态显示方向提示；冷却由实际玩法计时驱动。贯星矛继续使用既有矢量图形，避免把弦月轮图标误用于另一把武器。进度线与四个节点由单个 Godot 控件绘制，原 PSD 中的问题图层不参与预览。
 
 验证包括复用全套触摸回归、36.10 秒无伤首领回放、新增底部安全区文字边界检查，以及 1280×720 / 1600×720 图形渲染。可在 Godot 打开预览场景按 F6；macOS 命令与状态边界见 [组件说明](../art/layered/ui_touch_v02_candidate/README.md)。截图和原尺寸控件对比加入同一 `result.html`，验证摘要在 [preview_validation.json](../art/layered/ui_touch_v02_candidate/preview_validation.json)。
 

@@ -58,12 +58,13 @@ func _layout() -> void:
 		counter.size = rect.size
 
 func visual_state(action: StringName) -> Dictionary:
+	action = _canonical_action(action)
 	var remaining := 0.0
 	var duration := 1.0
 	match action:
-		&"dash":
+		&"mobility":
 			remaining = player.dash_cooldown
-			duration = player.tuning.dash_duration + player.tuning.dash_recovery
+			duration = maxf(player.mobility.data.cooldown_seconds, 0.01)
 		&"weapon":
 			remaining = combat.weapon.cooldown_remaining
 			duration = combat.weapon.data.skill.cooldown_seconds
@@ -84,10 +85,12 @@ func sync_state() -> void:
 			continue
 		var state := visual_state(action)
 		match action:
-			&"dash": label.text = "影步"
+			&"mobility": label.text = player.mobility.data.display_name
 			&"weapon": label.text = combat.weapon.data.display_name
 			&"skill": label.text = player.character.active_skill.display_name
 		counter.text = ""
+		if action == &"mobility" and player.mobility.data.input_mode == MobilityData.InputMode.HOLD and not player.on_rope:
+			counter.text = "%.1f" % player.mobility.air_time_remaining
 		_status_kinds[action] = &""
 		if state["remaining"] > 0.00001:
 			counter.text = "%.1f" % maxf(0.1, state["remaining"])
@@ -95,6 +98,9 @@ func sync_state() -> void:
 			if action == &"weapon":
 				counter.text = "首领战"
 				_status_kinds[action] = &"boss"
+			elif action == &"mobility":
+				counter.text = player.mobility.remaining_text(player._mobility_context()).replace("先二段跳", "先用完\n二段跳").replace("下落可用", "下落\n可用")
+				_status_kinds[action] = &"disabled"
 			else:
 				counter.text = "禁用"
 				_status_kinds[action] = &"disabled"

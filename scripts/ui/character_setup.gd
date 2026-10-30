@@ -33,7 +33,7 @@ func _ready() -> void:
 	_panel(Rect2(470, 142, 766, 348), Color("192536"))
 	_label("影刃", Rect2(72, 168, 330, 42), 30, Color("d8b56a"))
 	PaintedTheme.portrait(self, Rect2(322, 158, 96, 96))
-	_label("K  月蚀斩\n12 秒冷却 · 释放后保护 2 秒\n\n被动  踏影\n基础二段跳提升为三段跳", Rect2(72, 226, 330, 190), 21)
+	_label("K  月蚀斩\n12 秒冷却 · 释放后保护 2 秒\n\nShift  踏影\n跳、跳、身法：追加第三跳", Rect2(72, 226, 330, 190), 21)
 	_label("主武器槽 × 1\n武器技能独立使用 J", Rect2(72, 414, 330, 65), 20, Color("91a1ad"))
 	var weapons := profile.list_weapons(character)
 	for index in range(weapons.size()):

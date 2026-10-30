@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="CharacterData" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="CharacterData" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/character_data.gd" id="1_character"]
 [ext_resource type="Script" path="res://scripts/characters/active_skill_data.gd" id="2_skill"]
 [ext_resource type="Script" path="res://scripts/characters/passive_data.gd" id="3_passive"]
+[ext_resource type="Resource" path="res://data/characters/mobility/third_jump.tres" id="4_mobility"]
 
 [sub_resource type="Resource" id="ActiveSkill_moon_slash"]
 script = ExtResource("2_skill")
@@ -26,7 +27,10 @@ extra_air_jumps = 1
 script = ExtResource("1_character")
 character_id = &"shadow_runner"
 display_name = "影刃"
-description = "月蚀破敌，踏影凌空。主动提供短时保护，被动增加一次空中跳跃。"
+description = "月蚀破敌，踏影凌空。忍术提供短时保护，二段跳后点按身法发动踏影。"
 active_skill = SubResource("ActiveSkill_moon_slash")
 passive = SubResource("Passive_triple_jump")
+mobility = ExtResource("4_mobility")
+unlock_id = &"starter"
+story_name = "影刃"
 default_weapon_id = &"crescent_wheel"

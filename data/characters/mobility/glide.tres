@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="MobilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/mobility_data.gd" id="1_mobility"]
+
+[resource]
+script = ExtResource("1_mobility")
+mobility_id = &"glide"
+display_name = "御风"
+description = "下降时按住，减缓下落，累计 1.2 秒。"
+input_mode = 1
+cooldown_seconds = 0.0
+air_use_limit = 1
+invulnerability_seconds = 0.0
+parameters = {"air_duration": 1.2, "fall_speed": 120.0}

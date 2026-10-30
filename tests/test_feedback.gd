@@ -37,6 +37,7 @@ func _test_assets() -> void:
 
 func _test_real_actions() -> void:
 	var main := PRACTICE.instantiate()
+	main.greybox_character = CharacterRegistry.get_character(&"thunder_guard")
 	root.add_child(main)
 	var events: Array[StringName] = []
 	main.feedback.cue_played.connect(func(cue: StringName) -> void: events.append(cue))
@@ -61,7 +62,7 @@ func _test_real_actions() -> void:
 	main.player.take_damage()
 	_check(events.has(&"guard") and main.player.damage_count == 0, "Protected contact must produce guard feedback without hurt feedback")
 	main.player.skill_immunity_remaining = 0.0
-	main.player.dash_remaining = 0.0
+	main.player.mobility.invulnerability_remaining = 0.0
 	main.player.take_damage()
 	_check(events.has(&"hit") and main.player.damage_count == 1, "A real hit must produce damage feedback")
 	main.combat.skill_cooldown_remaining = 0.01

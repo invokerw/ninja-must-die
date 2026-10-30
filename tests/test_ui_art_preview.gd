@@ -6,8 +6,9 @@ func _initialize() -> void:
 	print("UI_ART_PREVIEW: reusing the full touch behavior suite with candidate rendering")
 	super._initialize()
 
-func _spawn(boss: bool = false, parent: Node = null) -> Node2D:
+func _spawn(boss: bool = false, parent: Node = null, character_id: StringName = &"shadow_runner") -> Node2D:
 	var main: Node2D = CANDIDATE.instantiate()
+	main.greybox_character = CharacterRegistry.get_character(character_id)
 	main.start_at_boss = boss
 	if not boss:
 		main.get_node("Level").boss_data = null
@@ -25,7 +26,7 @@ func _test_layout() -> void:
 	var controls: TouchControls = main.touch_controls
 	controls.safe_area_override = Rect2(60, 24, 1160, 648)
 	controls.sync_state()
-	for action in [&"jump_only", &"rope_flip", &"dash", &"weapon", &"skill"]:
+	for action in [&"jump_only", &"rope_flip", &"mobility", &"weapon", &"skill"]:
 		var caption: Label = controls._labels[action]
 		_check(controls.safe_area_override.encloses(Rect2(caption.position, caption.size)), "Candidate captions must remain inside a tall bottom system inset")
 	viewport.free()

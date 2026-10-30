@@ -23,7 +23,7 @@ boss_data = ExtResource("6_boss")
 
 [node name="Player" type="CharacterBody2D" parent="."]
 process_mode = 1
-position = Vector2(160, 486)
+position = Vector2(160, 456)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("2_player")
@@ -63,9 +63,9 @@ mouse_filter = 2
 [node name="TopBar" type="ColorRect" parent="UI/HUD"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 24.0
+offset_top = 18.0
 offset_right = 780.0
-offset_bottom = 110.0
+offset_bottom = 120.0
 color = Color(0.0666667, 0.0941176, 0.14902, 0.86)
 mouse_filter = 2
 
@@ -182,6 +182,7 @@ horizontal_alignment = 2
 mouse_filter = 2
 
 [node name="StatusText" type="Label" parent="UI/HUD"]
+visible = false
 layout_mode = 0
 offset_left = 44.0
 offset_top = 36.0
@@ -260,6 +261,7 @@ theme_override_font_sizes/font_size = 18
 text = "影晶会引导安全路线。"
 
 [node name="CharacterPanel" type="ColorRect" parent="UI/HUD"]
+visible = false
 layout_mode = 0
 offset_left = 880.0
 offset_top = 152.0
@@ -301,6 +303,7 @@ text = "击破 0  ·  连击 0  ·  最高 0"
 mouse_filter = 2
 
 [node name="SkillPanel" type="ColorRect" parent="UI/HUD"]
+visible = false
 layout_mode = 0
 offset_left = 880.0
 offset_top = 278.0

@@ -91,7 +91,7 @@ func select_animation() -> StringName:
 		return &"land"
 	if player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM:
 		return &"hang"
-	if player.dash_remaining > 0.0:
+	if player.is_mobility_bursting():
 		return &"dash"
 	if not player.on_rope:
 		return &"jump" if player.velocity.y < 0.0 else &"fall"
@@ -112,7 +112,7 @@ func _draw() -> void:
 		return
 	var index := get_frame_index()
 	var region := Rect2((index % COLUMNS) * FRAME_SIZE, floori(float(index) / COLUMNS) * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE)
-	var tint := Color.WHITE
+	var tint := player.character.visual_tint
 	if player.immunity_remaining > 0.0 and player.skill_immunity_remaining <= 0.0:
 		tint.a = 0.45 if fmod(player.immunity_remaining, 0.16) < 0.08 else 1.0
 	var offset := Vector2.ZERO

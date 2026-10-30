@@ -8,7 +8,7 @@
 
 ## 游戏内预览
 
-在 Godot 打开 [ui_touch_preview.tscn](../../../scenes/art/ui_touch_preview.tscn) 按 F6。预览复用现有多指、键盘、翻绳、跳跃和战斗逻辑，默认开启触屏按钮；也可切到首领预览检查武器技能。左侧下方跳跃禁用，空中翻绳键快速下落。
+在 Godot 打开 [ui_touch_preview.tscn](../../../scenes/art/ui_touch_preview.tscn) 按 F6。预览复用现有多指、键盘、翻绳、跳跃和战斗逻辑，默认开启触屏按钮；也可切到首领预览检查武器技能。左侧为翻绳，右侧为跳跃 / 影步 / 武器 / 忍术；下侧按跳跃回到上侧，空中翻绳键快速下落。
 
 ```sh
 /Applications/Godot_mono.app/Contents/MacOS/Godot --path . res://scenes/art/ui_touch_preview.tscn

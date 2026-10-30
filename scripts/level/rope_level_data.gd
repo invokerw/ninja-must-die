@@ -4,7 +4,7 @@ extends Resource
 @export var level_id: StringName
 @export var title: String
 @export var start_x: float = 160.0
-@export var rope_y: float = 520.0
+@export var rope_y: float = 490.0
 @export var recommended_speed: float = 320.0
 @export var warning_seconds: float = 1.3
 @export var minimum_flip_window: float = 0.75

@@ -12,9 +12,10 @@ func _run() -> void:
 	var scope := TestProfileScope.new("touch")
 	TouchControls.preview_enabled = true
 	await _test_movement_and_ownership()
-	await _test_jump_blocked_below()
+	await _test_jump_below_flips_up()
 	await _test_dedicated_jump_and_air_drop()
 	await _test_cooldown_and_short_tap()
+	await _test_character_mobility()
 	await _test_boss_combinations()
 	await _test_boss_touch_replay()
 	await _test_pause_focus_and_stop()
@@ -23,17 +24,18 @@ func _run() -> void:
 	TouchControls.preview_enabled = false
 	scope.close()
 	if _failures == 0:
-		print("TOUCH_PASS (real touch events, dedicated jump, no jump below rope, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)")
+		print("TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)")
 	quit(0 if _failures == 0 else 1)
 
-func _spawn(boss: bool = false, parent: Node = null) -> Node2D:
+func _spawn(boss: bool = false, parent: Node = null, character_id: StringName = &"shadow_runner") -> Node2D:
 	var main: Node2D = (BOSS_PRACTICE if boss else PRACTICE).instantiate()
+	main.greybox_character = CharacterRegistry.get_character(character_id)
 	(parent if parent != null else root).add_child(main)
 	await _frames(12 if boss else 3)
 	return main
 
 func _test_movement_and_ownership() -> void:
-	var main := await _spawn()
+	var main := await _spawn(false, null, &"thunder_guard")
 	var controls := main.touch_controls as TouchControls
 	_check(controls.get_button_text(&"jump_only") == "跳跃" and controls.get_button_text(&"rope_flip") == "下翻", "Jump must have a fixed label while the flip button describes its next action")
 	_touch(0, controls.get_action_rect(&"rope_flip").get_center(), true)
@@ -69,27 +71,19 @@ func _test_movement_and_ownership() -> void:
 	_check(not main.player.run_input.is_action_pressed(&"skill"), "An OS-cancelled touch must release its action")
 	main.free()
 
-func _test_jump_blocked_below() -> void:
+func _test_jump_below_flips_up() -> void:
 	var main := await _spawn()
 	var player := main.player as PlayerController
 	var controls := main.touch_controls as TouchControls
 	_short_tap(controls, 0, &"rope_flip")
 	await _frames(2)
-	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM and not controls._is_available(&"jump_only"), "The jump button must be disabled below the rope, including during flip lock")
-	_touch(0, controls.get_action_rect(&"jump_only").get_center(), true)
+	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM and controls._is_available(&"jump_only"), "The jump button must remain available below the rope")
+	_short_tap(controls, 0, &"jump_only")
 	await _frames(12)
-	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM and player.jumps_remaining == player.max_jump_count - 1 and not player.run_input.is_action_pressed(&"jump_only"), "Pressing or holding the disabled jump must not detach, flip or consume jumps")
-	player.run_input.press_touch(&"jump_only")
-	await _frames(2)
-	_check(player.on_rope and player.rope_side == PlayerController.ROPE_BOTTOM and player._buffer_remaining == 0.0, "Gameplay must also reject a jump arriving below the rope without buffering it")
-	player.run_input.release_touch(&"jump_only")
-	_short_tap(controls, 1, &"rope_flip")
-	await _frames(12)
-	_check(player.on_rope and player.rope_side == PlayerController.ROPE_TOP and controls._is_available(&"jump_only"), "Flipping above must restore jump availability without triggering a held or rejected jump")
-	_touch(0, Vector2.ZERO, false)
+	_check(player.on_rope and player.rope_side == PlayerController.ROPE_TOP and player.jumps_remaining == player.max_jump_count - 1, "Jumping below the rope must return to the top without consuming an air jump")
 	_short_tap(controls, 0, &"jump_only")
 	await _frames(2)
-	_check(not player.on_rope and player.velocity.y < 0.0, "After flipping above, a fresh jump tap must take off normally")
+	_check(not player.on_rope and player.velocity.y < 0.0, "A fresh jump tap after returning above must take off normally")
 	main.free()
 
 func _test_dedicated_jump_and_air_drop() -> void:
@@ -97,6 +91,7 @@ func _test_dedicated_jump_and_air_drop() -> void:
 		var main := await _spawn()
 		var player := main.player as PlayerController
 		var controls := main.touch_controls as TouchControls
+		_check(controls.get_action_rect(&"rope_flip").end.x < controls.get_action_rect(&"jump_only").position.x, "Jump must be placed in the right-side control group")
 		_touch(0, controls.get_action_rect(&"jump_only").get_center(), true)
 		await _frames(3)
 		_check(not player.on_rope and player.velocity.y < 0.0 and player.jumps_remaining == player.max_jump_count - 1, "The dedicated jump must take off above the rope")
@@ -148,7 +143,7 @@ func _test_dedicated_jump_and_air_drop() -> void:
 	main.free()
 
 func _test_cooldown_and_short_tap() -> void:
-	var main := await _spawn()
+	var main := await _spawn(false, null, &"thunder_guard")
 	var point: Vector2 = main.touch_controls.get_action_rect(&"skill").get_center()
 	_touch(0, point, true)
 	_touch(0, point, false)
@@ -169,6 +164,41 @@ func _test_cooldown_and_short_tap() -> void:
 	_touch(3, main.touch_controls.get_action_rect(&"dash").get_center(), true)
 	await _frames(2)
 	_check(main.player.dash_remaining > 0.0 and main.touch_controls.get_button_text(&"dash").contains("s"), "Touch dash must use the normal dash protection and cooldown")
+	main.free()
+
+func _test_character_mobility() -> void:
+	var main := await _spawn()
+	var controls := main.touch_controls as TouchControls
+	_check(controls.get_button_text(&"mobility").contains("踏影") and not controls._is_available(&"mobility"), "Shadow mobility must display its character name and require two jumps")
+	_short_tap(controls, 0, &"jump_only")
+	await _frames(2)
+	_short_tap(controls, 0, &"jump_only")
+	_short_tap(controls, 1, &"mobility")
+	await _frames(2)
+	_check(main.player.jumps_remaining == 0 and main.player.mobility.air_uses == 0, "Same-frame touch jump and mobility must only consume the second jump")
+	_short_tap(controls, 1, &"mobility")
+	await _frames(2)
+	_check(main.player.mobility.air_uses == 1 and main.player.velocity.y < -430, "A short fresh mobility tap must execute exactly one third jump")
+	main.free()
+	main = await _spawn(false, null, &"wind_scout")
+	controls = main.touch_controls
+	main.player.on_rope = false
+	main.player.position.y = -500.0
+	main.player.velocity.y = -100.0
+	_touch(0, controls.get_action_rect(&"mobility").get_center(), true)
+	await _frames(15)
+	_check(main.player.mobility.gliding and main.player.mobility.air_time_remaining < 1.2, "Touch hold during ascent must start gliding on descent")
+	var remaining: float = main.player.mobility.air_time_remaining
+	_touch(0, Vector2.ZERO, false)
+	await _frames(3)
+	_check(not main.player.mobility.gliding and is_equal_approx(main.player.mobility.air_time_remaining, remaining), "Releasing touch must stop glide without refreshing its duration")
+	_touch(0, controls.get_action_rect(&"mobility").get_center(), true)
+	await _frames(2)
+	main._toggle_pause()
+	_check(not main.player.mobility.gliding and not main.player.run_input.mobility_pressed, "Touch pause must clear a held glide")
+	main._toggle_pause()
+	await _frames(2)
+	_check(not main.player.mobility.gliding, "Resuming must require a new touch hold")
 	main.free()
 
 func _test_boss_combinations() -> void:
@@ -250,6 +280,12 @@ func _test_layout() -> void:
 					_check(not rect.intersects(controls.get_action_rect(other)), "Touch targets must never overlap")
 		var lower_body := viewport.get_canvas_transform() * Vector2(main.player.position.x, main.player.rope_y + main.player.rope_offset + 30.0)
 		_check(controls.get_action_rect(&"rope_flip").position.y > lower_body.y, "Touch controls must sit below both rope body positions")
+		var jump_rect := controls.get_action_rect(&"jump_only")
+		var dash_rect := controls.get_action_rect(&"dash")
+		var weapon_rect := controls.get_action_rect(&"weapon")
+		var skill_rect := controls.get_action_rect(&"skill")
+		_check(jump_rect.position.y == dash_rect.position.y and weapon_rect.position.y == skill_rect.position.y and jump_rect.position.y > weapon_rect.position.y, "Right-side controls must use two staggered triangular rows")
+		_check(weapon_rect.position.x < dash_rect.position.x and dash_rect.position.x < skill_rect.position.x and skill_rect.position.x < jump_rect.position.x, "The right-side triangle must rise toward the center")
 		_touch_for_viewport(viewport, 0, controls.get_action_rect(&"skill").get_center(), true)
 		await _frames(2)
 		_check(main.combat.skill_casts == 1, "Resized touch hit targets must still match their visual rectangles")
@@ -280,17 +316,17 @@ func _test_menu_flow() -> void:
 	await _frames(15)
 	var main := current_scene as Node2D
 	_check(is_instance_valid(main) and main.touch_controls.visible and main.run_loadout.weapon.weapon_id == &"star_lance", "A touch-only launch must enter the selected mode with the selected loadout")
-	await _tap_button(_find_button(main, "设置 F2"))
-	_check(paused and main.feedback_menu.visible, "In-run touch settings must pause the chase while gameplay controls are blocked")
-	await _tap_button(_find_button(main.feedback_menu, "关闭"))
-	_check(not paused and not main.feedback_menu.visible, "Closing touch settings must restore the previous running state")
-	await _tap_button(_find_button(main, "设置 F2"))
-	await _tap_button(_find_button(main, "角色 / 武器 C"))
-	_check(paused and main.character_details.visible and not main.feedback_menu.visible, "Touch character details must replace settings and retain a single pause owner")
-	await _tap_button(_find_button(main.character_details, "继续 / 关闭 C"))
-	_check(not paused and not main.character_details.visible, "Character details must close and resume by touch")
+	_check(not main.get_node("UI/HUD/CharacterPanel").visible and not main.get_node("UI/HUD/SkillPanel").visible and not main.weapon_text.get_parent().visible, "Runtime HUD must defer character, skill and weapon details to the pause panel and lower action buttons")
 	_touch(0, main.touch_controls.get_action_rect(&"pause").get_center(), true)
 	_touch(0, Vector2.ZERO, false)
+	_check(paused and main.result_overlay.visible, "The pause overlay must own the in-run settings entry")
+	await _tap_button(_find_button(main, "设置"))
+	_check(paused and main.feedback_menu.visible, "Pause settings must open without resuming the chase")
+	await _tap_button(_find_button(main.feedback_menu, "关闭"))
+	_check(paused and not main.feedback_menu.visible and main.result_overlay.visible, "Closing pause settings must restore the pause overlay")
+	_check(paused and main.result_title.text.contains("技能说明") and main.result_body.text.contains("月蚀斩") and main.result_body.text.contains("踏影"), "Pause must show active and passive skill introductions")
+	_check(main.result_title.position.x + main.result_title.size.x <= main.resume_button.position.x, "Pause title must leave room for the resume button")
+	_check(main.result_body.position.y + main.result_body.size.y <= main.save_status.position.y, "Pause text must end before the footer controls")
 	await _tap_button(main.resume_button)
 	_check(not paused, "The paused result panel must offer a touch resume button")
 	_touch(1, main.touch_controls.get_action_rect(&"rope_flip").get_center(), true)

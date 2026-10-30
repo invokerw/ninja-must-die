@@ -3,7 +3,10 @@ extends Control
 
 signal pause_requested
 
-const ACTIONS: Array[StringName] = [&"jump_only", &"rope_flip", &"dash", &"weapon", &"skill", &"pause"]
+const ACTIONS: Array[StringName] = [&"jump_only", &"rope_flip", &"mobility", &"weapon", &"skill", &"pause"]
+const LEFT_ACTIONS: Array[StringName] = [&"rope_flip"]
+const RIGHT_ACTIONS: Array[StringName] = [&"jump_only", &"mobility", &"weapon", &"skill"]
+const CONTROL_LIFT := 48.0
 static var preview_enabled := false
 
 var player: PlayerController
@@ -66,22 +69,24 @@ func _can_play() -> bool:
 	return is_instance_valid(player) and player.active and not get_tree().paused and not blocked and not finished
 
 func _is_available(action: StringName) -> bool:
+	action = _canonical_action(action)
 	if action == &"pause":
 		return not finished
 	if not _can_play():
 		return false
 	match action:
-		&"jump_only": return not player.on_rope or player.rope_side == PlayerController.ROPE_TOP
+		&"jump_only": return true
 		&"skill": return combat.is_skill_ready()
 		&"weapon": return combat.is_weapon_ready()
-		&"dash": return player.dash_cooldown <= 0.00001
+		&"mobility": return player.is_mobility_ready()
 	return true
 
 func get_button_text(action: StringName) -> String:
+	action = _canonical_action(action)
 	match action:
 		&"jump_only": return "跳跃"
 		&"rope_flip": return ("下翻" if player.rope_side == PlayerController.ROPE_TOP else "上翻") if player.on_rope else "快速下落"
-		&"dash": return "影步\n%.1fs" % player.dash_cooldown if player.dash_cooldown > 0.00001 else "影步\n就绪"
+		&"mobility": return player.get_mobility_text()
 		&"skill": return "%s\n%.1fs" % [player.character.active_skill.display_name, combat.skill_cooldown_remaining] if combat.skill_cooldown_remaining > 0.00001 else "%s\n就绪" % player.character.active_skill.display_name
 		&"weapon":
 			var state := "就绪" if combat.is_weapon_ready() else ("%.1fs" % combat.weapon.cooldown_remaining if combat.weapon.cooldown_remaining > 0.00001 else "首领战启用")
@@ -96,12 +101,18 @@ func _layout() -> void:
 	var side := 96.0 * factor
 	var gap := 16.0 * factor
 	var lower_body := get_viewport().get_canvas_transform() * Vector2(player.global_position.x, player.rope_y + player.rope_offset + 30.0)
-	var y := maxf(_safe.end.y - side - gap, lower_body.y + 8.0)
+	var y := maxf(_safe.end.y - side - gap - CONTROL_LIFT * factor, lower_body.y + 8.0 * factor)
 	side = minf(side, _safe.end.y - y)
-	for index in range(2):
-		_rects[ACTIONS[index]] = Rect2(_safe.position.x + 24.0 * factor + float(index) * (side + gap), y, side, side)
-	for index in range(3):
-		_rects[ACTIONS[index + 2]] = Rect2(_safe.end.x - 24.0 * factor - float(3 - index) * side - float(2 - index) * gap, y, side, side)
+	for index in range(LEFT_ACTIONS.size()):
+		_rects[LEFT_ACTIONS[index]] = Rect2(_safe.position.x + 24.0 * factor + float(index) * (side + gap), y, side, side)
+	# Keep the combat cluster in the lower-right thumb area. Two staggered rows
+	# leave room for captions while giving the group a triangular silhouette.
+	var right_x := _safe.end.x - 24.0 * factor - side
+	var row_step := side + gap
+	_rects[&"jump_only"] = Rect2(right_x, y, side, side)
+	_rects[&"mobility"] = Rect2(right_x - row_step, y, side, side)
+	_rects[&"weapon"] = Rect2(right_x - row_step - side * 0.5, y - row_step, side, side)
+	_rects[&"skill"] = Rect2(right_x - side * 0.5, y - row_step, side, side)
 	var frame := ScreenLayout.fit_frame(_safe)
 	_rects[&"pause"] = Rect2(frame.position + Vector2(1172, 8) * factor, Vector2(96, 96) * factor)
 	for action in _labels:
@@ -113,7 +124,7 @@ func _layout() -> void:
 	release_all()
 
 func get_action_rect(action: StringName) -> Rect2:
-	return _rects.get(action, Rect2())
+	return _rects.get(_canonical_action(action), Rect2())
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -183,3 +194,6 @@ func _draw() -> void:
 			continue
 		var style := "disabled" if not _is_available(action) else ("pressed" if _fingers.values().has(action) else "normal")
 		draw_style_box(_styles[style], get_action_rect(action))
+
+func _canonical_action(action: StringName) -> StringName:
+	return &"mobility" if action == &"dash" else action

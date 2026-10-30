@@ -74,7 +74,7 @@ func _test_data() -> void:
 	enemy.enemy_type = "unknown"
 	_check(not level.get_validation_errors().is_empty(), "Unknown enemy types must be rejected")
 
-func _arena(parent: Node = null) -> Node2D:
+func _arena(parent: Node = null, character_id: StringName = &"shadow_runner") -> Node2D:
 	var arena := Node2D.new()
 	(parent if parent != null else root).add_child(arena)
 	var scene := MAIN_SCENE.instantiate()
@@ -82,6 +82,7 @@ func _arena(parent: Node = null) -> Node2D:
 	scene.remove_child(player)
 	scene.free()
 	player.tuning = load("res://data/control_tuning.tres").duplicate(true)
+	player.character = CharacterRegistry.get_character(character_id)
 	arena.add_child(player)
 	(player.get_node("Camera2D") as Camera2D).position_smoothing_enabled = false
 	player.active = true
@@ -227,7 +228,7 @@ func _test_flip_and_jump() -> void:
 
 func _test_protected_contacts() -> void:
 	for action in ["skill", "dash"]:
-		var arena := _arena()
+		var arena := _arena(null, &"thunder_guard" if action == "dash" else &"shadow_runner")
 		var player := arena.get_node("Player") as PlayerController
 		player.collect_crystal()
 		var shot := _shot(player)

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="MobilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/mobility_data.gd" id="1_mobility"]
+
+[resource]
+script = ExtResource("1_mobility")
+mobility_id = &"burst"
+display_name = "雷闪"
+description = "点按短冲，前 0.12 秒保护，冷却 6 秒。"
+input_mode = 0
+cooldown_seconds = 6.0
+air_use_limit = 1
+invulnerability_seconds = 0.12
+parameters = {"duration": 0.18, "speed": 1000.0}

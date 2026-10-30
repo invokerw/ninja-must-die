@@ -6,10 +6,16 @@ extends Resource
 @export_multiline var description: String = "月蚀破敌，踏影凌空。"
 @export var active_skill: ActiveSkillData
 @export var passive: PassiveData
+@export var mobility: MobilityData
+@export var unlock_id: StringName = &"starter"
+@export var story_name: String = "影刃"
+@export var visual_tint: Color = Color.WHITE
 @export var default_weapon_id: StringName = &"crescent_wheel"
 
 func get_max_jump_count(base_count: int) -> int:
-	return base_count + (passive.extra_air_jumps if passive != null else 0)
+	# All characters share the same two basic jumps. A third jump is a
+	# mobility action and is intentionally consumed outside this count.
+	return base_count
 
 func get_validation_errors(base_count: int) -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -19,10 +25,22 @@ func get_validation_errors(base_count: int) -> PackedStringArray:
 		errors.append("角色必须配置一个主动技能")
 	else:
 		errors.append_array(active_skill.get_validation_errors())
-	if passive == null:
-		errors.append("角色必须配置一个被动能力")
-	elif passive.passive_id.is_empty() or passive.display_name.is_empty() or passive.effect != PassiveData.Effect.EXTRA_AIR_JUMPS or passive.extra_air_jumps < 0 or passive.extra_air_jumps > 1:
-		errors.append("被动能力配置无效")
-	if base_count != 2 or get_max_jump_count(base_count) not in [2, 3]:
-		errors.append("基础跳跃须为二段，有效跳跃只允许二段或三段")
+	var movement := get_mobility_data()
+	if movement == null:
+		errors.append("角色必须配置身法或兼容的旧踏影被动")
+	else:
+		errors.append_array(movement.get_validation_errors())
+	if character_id.is_empty() or story_name.is_empty():
+		errors.append("角色故事身份不能为空")
+	if base_count != 2 or get_max_jump_count(base_count) != 2:
+		errors.append("共通基础跳跃须为二段")
 	return errors
+
+func get_mobility_data() -> MobilityData:
+	if mobility != null:
+		return mobility
+	# Old character definitions can still be read. The old passive never adds
+	# to the basic jump budget; its ability moves to the mobility button.
+	if passive != null and passive.effect == PassiveData.Effect.EXTRA_AIR_JUMPS and passive.extra_air_jumps == 1:
+		return preload("res://data/characters/mobility/third_jump.tres")
+	return null

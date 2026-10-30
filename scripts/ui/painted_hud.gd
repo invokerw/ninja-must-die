@@ -7,12 +7,13 @@ static func install(main: Node2D) -> ProgressRail:
 		PaintedTheme.decorate_panel(hud.get_node(path))
 	_install_top_hud(hud)
 	var character := hud.get_node("CharacterPanel") as Control
-	character.size.y = 78
-	for spec in [["CharacterText", 10, 16], ["PassiveText", 32, 16], ["CombatText", 52, 12]]:
+	character.size.y = 48
+	for spec in [["CharacterText", 6, 16], ["PassiveText", 0, 16], ["CombatText", 28, 12]]:
 		var label := character.get_node(spec[0]) as Label
 		label.position.y = spec[1]
 		label.size.y = 20
 		label.add_theme_font_size_override("font_size", spec[2])
+	character.get_node("PassiveText").hide()
 	var skill := hud.get_node("SkillPanel") as Control
 	skill.size.y = 72
 	skill.get_node("SkillText").position.y = 10

@@ -12,6 +12,7 @@ func _run() -> void:
 	var profile_scope := TestProfileScope.new("boss")
 	_test_data()
 	await _test_entry_and_pause()
+	await _test_dash_follow()
 	await _test_practice_entry()
 	await _test_sweeps()
 	await _test_protection()
@@ -54,8 +55,9 @@ func _test_data() -> void:
 		bad.enraged_volley_waves = waves
 		_check(not bad.get_validation_errors(320.0).is_empty(), "Enraged volleys must have a bounded wave count")
 
-func _enter(health: int = 180, below: bool = false) -> Node2D:
+func _enter(health: int = 180, below: bool = false, character_id: StringName = &"shadow_runner") -> Node2D:
 	var main := MAIN_SCENE.instantiate()
+	main.greybox_character = CharacterRegistry.get_character(character_id)
 	var level := main.get_node("Level") as RopeLevelController
 	level.boss_data = BOSS_DATA.duplicate(true)
 	level.boss_data.max_health = health
@@ -107,6 +109,7 @@ func _test_sweeps() -> void:
 			await _frames(18)
 			_check(main.player.damage_count == (0 if evade else 1), "Each sweep must resolve contact at most once")
 			main.free()
+
 	var main := await _enter()
 	var boss := main.level.boss as RopeBoss
 	boss._begin_attack()
@@ -114,6 +117,18 @@ func _test_sweeps() -> void:
 	await _tap("jump")
 	await _frames(30)
 	_check(main.player.damage_count == 0, "A timely jump must also clear the upper sweep")
+	main.free()
+
+func _test_dash_follow() -> void:
+	var main := await _enter(180, false, &"thunder_guard")
+	var boss := main.level.boss as RopeBoss
+	await _frames(2)
+	var player_start: float = main.player.global_position.x
+	var boss_start: float = boss.global_position.x
+	await _tap(&"dash")
+	var player_delta: float = main.player.global_position.x - player_start
+	var boss_delta: float = boss.global_position.x - boss_start
+	_check(player_delta > boss_delta + 20.0 and boss_delta < main.player.tuning.run_speed * 0.1, "A player dash must not pull the boss into a matching dash")
 	main.free()
 
 func _test_practice_entry() -> void:
@@ -125,7 +140,7 @@ func _test_practice_entry() -> void:
 
 func _test_protection() -> void:
 	for action in ["skill", "dash"]:
-		var main := await _enter()
+		var main := await _enter(180, false, &"thunder_guard" if action == "dash" else &"shadow_runner")
 		var boss := main.level.boss as RopeBoss
 		boss._begin_attack()
 		await _frames(70)

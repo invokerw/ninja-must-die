@@ -460,4 +460,5 @@ pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_f41p3"), SubResou
 script = ExtResource("1_ci4it")
 level_id = &"fog_ridge_60s"
 title = "雾岭断桥"
+rope_y = 490.0
 segments = Array[ExtResource("2_nnwyy")]([SubResource("Resource_joji6"), SubResource("Resource_4vhge"), SubResource("Resource_mpiji"), SubResource("Resource_8wah7")])

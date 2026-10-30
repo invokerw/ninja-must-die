@@ -36,9 +36,10 @@ func _render() -> void:
 		(main.player.get_node("Camera2D") as Camera2D).position_smoothing_enabled = false
 		main.player.on_rope = spec[1] != "air"
 		main.player.rope_side = PlayerController.ROPE_BOTTOM if spec[1] == "bottom" else PlayerController.ROPE_TOP
-		main.player.position.y = 554 if spec[1] == "bottom" else (420 if spec[1] == "air" else 486)
+		main.player.position.y = 524 if spec[1] == "bottom" else (390 if spec[1] == "air" else 456)
 		if spec[1] == "cooldown":
-			main.player.dash_cooldown = 0.3
+			main.player.mobility = MobilityRuntime.new(preload("res://data/characters/mobility/burst.tres"))
+			main.player.mobility.cooldown_remaining = 0.3
 			main.combat.skill_cooldown_remaining = 7.2
 			main.combat.weapon.cooldown_remaining = 3.5
 		if spec[1] == "air":

@@ -37,6 +37,8 @@ var hit_shape: CollisionShape2D
 var previous_physics_position := Vector2.ZERO
 var _completion_emitted := false
 
+const FOLLOW_CATCHUP_MULTIPLIER := 1.45
+
 func _ready() -> void:
 	process_physics_priority = 5
 	collision_layer = 4
@@ -64,7 +66,7 @@ func _physics_process(delta: float) -> void:
 		_cancel()
 		return
 	previous_physics_position = global_position
-	_sync_position()
+	_sync_position(delta)
 	_phase += delta
 	_hit_flash = maxf(_hit_flash - delta, 0.0)
 	remaining = maxf(remaining - delta, 0.0)
@@ -101,9 +103,22 @@ func _physics_process(delta: float) -> void:
 				defeated.emit()
 	queue_redraw()
 
-func _sync_position() -> void:
+func _sync_position(delta: float = -1.0) -> void:
 	# Chase alongside the runner; the configured projectiles never aim at this position.
-	global_position = Vector2(player.global_position.x + data.forward_offset, player.rope_y - 64.0)
+	# During a player dash, advance at the normal run speed and catch up gently after
+	# the dash. This keeps the boss in front without making it visibly dash with the
+	# player.
+	var target_y := player.rope_y - 64.0
+	if delta < 0.0:
+		global_position = Vector2(player.global_position.x + data.forward_offset, target_y)
+		return
+	var desired_x := player.global_position.x + data.forward_offset
+	var normal_step := player.tuning.run_speed * delta
+	if player.is_mobility_bursting():
+		global_position.x += normal_step
+	else:
+		global_position.x = move_toward(global_position.x, desired_x, normal_step * FOLLOW_CATCHUP_MULTIPLIER)
+	global_position.y = target_y
 
 func _begin_attack() -> void:
 	# Snapshot the pattern so crossing half health cannot rewrite a telegraphed attack.

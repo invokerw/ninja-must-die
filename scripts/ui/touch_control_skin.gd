@@ -17,8 +17,9 @@ func _init(asset_root: String = "res://art/generated/ui/") -> void:
 			textures[action + "_" + role] = load(root_path + actions[action][role]["path"])
 
 func geometry(action: StringName, bounds: Rect2, pressed: bool = false) -> Dictionary:
-	var plate: Dictionary = actions[String(action)]["plate"]
-	var icon: Dictionary = actions[String(action)]["icon"]
+	var asset_action := _asset_action(action)
+	var plate: Dictionary = actions[asset_action]["plate"]
+	var icon: Dictionary = actions[asset_action]["icon"]
 	var native := Vector2(plate["width"], plate["height"])
 	var factor := minf(1.0, minf(bounds.size.x / native.x, bounds.size.y / native.y))
 	if pressed:
@@ -32,15 +33,16 @@ func geometry(action: StringName, bounds: Rect2, pressed: bool = false) -> Dicti
 func draw_button(canvas: CanvasItem, action: StringName, bounds: Rect2, state: Dictionary) -> void:
 	var pressed: bool = state["pressed"] and state["available"]
 	var shapes := geometry(action, bounds, pressed)
+	var asset_action := _asset_action(action)
 	var tint := Color.WHITE if state["available"] else Color(0.46, 0.50, 0.56, 0.76)
 	if pressed:
 		tint = Color(1.08, 1.02, 0.86)
-	canvas.draw_texture_rect(textures[String(action) + "_plate"], shapes["plate"], false, tint)
+	canvas.draw_texture_rect(textures[asset_action + "_plate"], shapes["plate"], false, tint)
 	if action == &"weapon" and state["weapon_id"] == &"star_lance":
 		# Preserve the existing spear identity until matching raster art is produced.
 		WeaponArt.draw_icon(canvas, &"star_lance", bounds.get_center(), bounds.size.x * 0.22)
 	else:
-		canvas.draw_texture_rect(textures[String(action) + "_icon"], shapes["icon"], false, tint)
+		canvas.draw_texture_rect(textures[asset_action + "_icon"], shapes["icon"], false, tint)
 	var radius := bounds.size.x * 0.36
 	if not state["available"] and state["cooldown"] <= 0.0:
 		canvas.draw_circle(bounds.get_center(), radius * 0.84, Color(0.04, 0.07, 0.11, 0.45))
@@ -57,3 +59,6 @@ func draw_button(canvas: CanvasItem, action: StringName, bounds: Rect2, state: D
 
 func _draw_chevron(canvas: CanvasItem, center: Vector2, radius: float, direction: float) -> void:
 	canvas.draw_polyline(PackedVector2Array([center + Vector2(-radius, -radius * direction), center + Vector2(0, radius * direction), center + Vector2(radius, -radius * direction)]), Color("f4d791"), 2.0, true)
+
+func _asset_action(action: StringName) -> String:
+	return "dash" if action == &"mobility" else String(action)

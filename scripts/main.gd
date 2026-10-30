@@ -2,6 +2,7 @@ extends Node2D
 
 @export var start_at_boss := false
 @export var force_touch_controls := false
+@export var greybox_character: CharacterData
 
 @onready var player: PlayerController = $Player
 @onready var combat: RunnerCombat = $Player/Combat
@@ -44,15 +45,12 @@ var run_loadout: RunLoadout
 var weapon_text: Label
 var weapon_hint: Label
 var weapon_fill: ColorRect
-var character_details: PanelContainer
-var _details_was_paused := false
 var _transitioning := false
 var _completion_recorded := false
 var save_status: Label
 var save_retry: Button
 var touch_controls: TouchControls
 var resume_button: Button
-var character_details_button: Button
 var _feedback_was_paused := false
 var _feedback_paused_run := false
 var painted_progress: ProgressRail
@@ -62,7 +60,7 @@ func _enter_tree() -> void:
 	if run_loadout == null:
 		run_loadout = RunNavigation.take_pending(scene_file_path)
 	if run_loadout == null:
-		run_loadout = PlayerProfile.current().resolve(($Player as PlayerController).character)
+		run_loadout = PlayerProfile.current().resolve(greybox_character if greybox_character != null else ($Player as PlayerController).character)
 	else:
 		run_loadout = run_loadout.copy()
 	$Player.run_loadout = run_loadout
@@ -110,15 +108,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_sync_touch_controls()
 		_layout_ui()
 		return
-	if event.is_action_pressed("character_details"):
-		_toggle_character_details()
-		return
-	if event.is_action_pressed("pause") and is_instance_valid(character_details) and character_details.visible:
-		_toggle_character_details()
-		return
 	if event.is_action_pressed("feedback_settings"):
-		feedback_menu.visible = not feedback_menu.visible
-		_sync_touch_controls()
+		_toggle_feedback_menu()
 		return
 	if event.is_action_pressed("mute"):
 		_on_feedback_setting(not FeedbackSettings.sound_enabled, "sound")
@@ -135,27 +126,53 @@ func _toggle_pause() -> void:
 	if feedback_menu.visible:
 		feedback_menu.hide()
 		return
-	if character_details.visible:
-		_toggle_character_details()
-		return
 	_raise_modal_layers()
 	get_tree().paused = not get_tree().paused
 	result_dimmer.visible = get_tree().paused
 	result_overlay.visible = get_tree().paused
 	if get_tree().paused:
-		result_title.text = "已暂停"
-		result_body.text = "点击继续返回挑战\n也可重试或返回角色与武器准备页。" if touch_controls.enabled else "按 Esc 继续\n按 R / Enter 重新开始"
+		# Reserve the upper-right corner for the resume button so it never sits
+		# over the pause title.
+		result_title.size = Vector2(390, 50)
+		result_body.size = Vector2(390, 208)
+		feedback_button.position = Vector2(440.0, 76.0)
+		feedback_button.show()
+		result_title.text = "已暂停 · 技能说明"
+		result_body.add_theme_font_size_override("font_size", 16)
+		result_body.text = _pause_body_text()
+	else:
+		result_body.size = Vector2(576, 220)
+		feedback_button.position = Vector2(440.0, 234.0)
+		feedback_button.hide()
 	_sync_touch_controls()
+
+func _ability_description_text() -> String:
+	var character := player.character
+	var active := character.active_skill
+	var lines := PackedStringArray()
+	lines.append("K  %s：前方 %d 点伤害" % [active.display_name, active.damage])
+	lines.append("冷却 %.0f 秒 · 释放后保护 %.0f 秒" % [active.cooldown_seconds, active.invulnerability_seconds])
+	lines.append("身法  %s：%s" % [character.mobility.display_name, character.mobility.description])
+	if run_loadout != null and run_loadout.weapon != null and run_loadout.weapon.skill != null:
+		var weapon := run_loadout.weapon
+		var weapon_skill := weapon.skill
+		lines.append("J  %s：%s" % [weapon.display_name, weapon.description])
+		lines.append("冷却 %.0f 秒 · %d 枚 × %d 首领基础伤害" % [weapon_skill.cooldown_seconds, weapon_skill.projectile_count, weapon_skill.boss_damage])
+	return "\n".join(lines)
+
+func _pause_body_text() -> String:
+	var controls := "点击继续返回挑战" if is_instance_valid(touch_controls) and touch_controls.enabled else "按 Esc 继续"
+	return "%s\n%s" % [_ability_description_text(), controls]
 
 func _ensure_input_map() -> void:
 	_add_key_action("jump", [KEY_SPACE, KEY_UP, KEY_W])
 	_add_key_action("drop", [KEY_DOWN, KEY_S])
+	_add_key_action("mobility", [KEY_SHIFT])
 	_add_key_action("dash", [KEY_SHIFT])
 	if InputMap.has_action("attack"):
 		InputMap.erase_action("attack")
 	_add_key_action("skill", [KEY_K])
 	_add_key_action("weapon", [KEY_J])
-	_add_key_action("character_details", [KEY_C])
 	_add_key_action("pause", [KEY_ESCAPE])
 	_add_key_action("restart", [KEY_R, KEY_ENTER, KEY_KP_ENTER])
 	_add_key_action("feedback_settings", [KEY_F2])
@@ -177,10 +194,16 @@ func _sync_touch_controls() -> void:
 	if not is_instance_valid(touch_controls):
 		return
 	touch_controls.enabled = force_touch_controls or TouchControls.is_requested()
-	touch_controls.blocked = character_details.visible or feedback_menu.visible
+	touch_controls.blocked = feedback_menu.visible
 	touch_controls.finished = _finished
 	touch_controls.sync_state()
-	resume_button.visible = get_tree().paused and not _finished and not character_details.visible
+	# Runtime skill and passive details live in the pause panel. The action
+	# buttons remain the single source of cooldown feedback.
+	$UI/HUD/CharacterPanel.hide()
+	$UI/HUD/SkillPanel.hide()
+	if is_instance_valid(weapon_text):
+		weapon_text.get_parent().hide()
+	resume_button.visible = get_tree().paused and not _finished
 
 func _layout_ui() -> void:
 	var touch := is_instance_valid(touch_controls) and touch_controls.enabled
@@ -198,12 +221,12 @@ func _notification(what: int) -> void:
 
 func _setup_feedback_controls() -> void:
 	feedback_button = Button.new()
-	feedback_button.text = "设置 F2"
-	feedback_button.position = Vector2(1136.0, 114.0)
-	feedback_button.size = Vector2(100.0, 32.0)
+	feedback_button.text = "设置"
+	feedback_button.position = Vector2(440.0, 76.0)
+	feedback_button.size = Vector2(168.0, 34.0)
 	feedback_button.z_index = 140
 	feedback_button.focus_mode = Control.FOCUS_NONE
-	$UI/HUD.add_child(feedback_button)
+	result_overlay.add_child(feedback_button)
 	PaintedTheme.style_button(feedback_button)
 	var panel := FeedbackSettingsPanel.new()
 	panel.profile = PlayerProfile.current()
@@ -217,10 +240,20 @@ func _setup_feedback_controls() -> void:
 	feedback_menu.visibility_changed.connect(_on_feedback_visibility_changed)
 	_feedback_checks = panel.checks
 	feedback_button.pressed.connect(func() -> void:
-		feedback_menu.visible = not feedback_menu.visible
-		_sync_touch_controls()
+		_toggle_feedback_menu()
 	)
 	_sync_feedback_controls()
+
+func _toggle_feedback_menu() -> void:
+	if _finished and not get_tree().paused:
+		return
+	if feedback_menu.visible:
+		feedback_menu.hide()
+		return
+	if not get_tree().paused:
+		_toggle_pause()
+	feedback_menu.show()
+	_sync_touch_controls()
 
 func _on_feedback_visibility_changed() -> void:
 	if _transitioning or not is_inside_tree():
@@ -233,17 +266,15 @@ func _on_feedback_visibility_changed() -> void:
 			feedback_menu.move_to_front()
 			if is_instance_valid(feedback_button):
 				feedback_button.move_to_front()
-			if is_instance_valid(character_details_button):
-				character_details_button.move_to_front()
 			get_tree().paused = true
 			result_dimmer.show()
 			result_overlay.hide()
 	elif not feedback_menu.visible and _feedback_paused_run:
 		_feedback_paused_run = false
-		get_tree().paused = _feedback_was_paused or _finished or character_details.visible
+		get_tree().paused = _feedback_was_paused or _finished
 		_raise_modal_layers()
 		result_dimmer.visible = get_tree().paused
-		result_overlay.visible = get_tree().paused and not character_details.visible
+		result_overlay.visible = get_tree().paused
 	_sync_touch_controls()
 
 func _on_feedback_setting(enabled: bool, setting: String) -> void:
@@ -332,7 +363,12 @@ func _show_result(title: String, body: String) -> void:
 	if player.active:
 		player.stop()
 	result_title.text = title
+	result_title.size = Vector2(576, 50)
+	result_body.size = Vector2(576, 220)
+	result_body.add_theme_font_size_override("font_size", 20)
 	result_body.text = body
+	feedback_button.position = Vector2(440.0, 234.0)
+	feedback_button.show()
 	_raise_modal_layers()
 	result_dimmer.visible = true
 	result_overlay.visible = true
@@ -356,16 +392,13 @@ func _return_to_setup() -> void:
 		_transitioning = false
 
 func _setup_equipment_controls() -> void:
-	character_details_button = _hud_button($UI/HUD, "角色 / 武器 C", Rect2(880, 114, 230, 32), _toggle_character_details)
-	character_details_button.z_index = 140
 	# Keep the full HUD above the boss volley's highest lane (y=396).
-	$UI/HUD/CharacterPanel.size.y = 72.0
-	character_text.position.y = 2.0
-	character_text.size.y = 26.0
-	passive_text.position.y = 28.0
-	passive_text.size.y = 22.0
-	combat_text.position.y = 50.0
-	combat_text.size.y = 20.0
+	$UI/HUD/CharacterPanel.size.y = 48.0
+	character_text.position.y = 4.0
+	character_text.size.y = 24.0
+	passive_text.visible = false
+	combat_text.position.y = 28.0
+	combat_text.size.y = 18.0
 	combat_text.add_theme_font_size_override("font_size", 14)
 	$UI/HUD/SkillPanel.position.y = 236.0
 	$UI/HUD/SkillPanel.size.y = 76.0
@@ -381,6 +414,7 @@ func _setup_equipment_controls() -> void:
 	var panel := ColorRect.new()
 	panel.position = Vector2(880, 324)
 	panel.size = Vector2(356, 60)
+	panel.hide()
 	panel.color = Color(0.067, 0.094, 0.149, 0.94)
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$UI/HUD.add_child(panel)
@@ -407,36 +441,15 @@ func _setup_equipment_controls() -> void:
 	back.add_child(weapon_fill)
 	combat_feedback.position = Vector2(60, 318)
 	combat_feedback.size = Vector2(720, 28)
-	character_details = PanelContainer.new()
-	character_details.position = Vector2(320, 160)
-	character_details.size = Vector2(640, 400)
-	character_details.z_index = 120
-	character_details.mouse_filter = Control.MOUSE_FILTER_STOP
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color("111827")
-	style.border_color = Color("d8b56a")
-	style.set_border_width_all(2)
-	character_details.add_theme_stylebox_override("panel", style)
-	$UI/HUD.add_child(character_details)
-	var content := Control.new()
-	content.custom_minimum_size = Vector2(636, 396)
-	content.mouse_filter = Control.MOUSE_FILTER_STOP
-	character_details.add_child(content)
-	var title := _hud_label(content, Rect2(32, 24, 570, 42), 28)
-	title.text = "%s · 本局装备" % player.character.display_name
-	title.modulate = Color("d8b56a")
-	var body := _hud_label(content, Rect2(32, 86, 570, 212), 20)
-	var skill := run_loadout.weapon.skill
-	body.text = "K  %s · 冷却 %.0f 秒 / 无敌 %.0f 秒\n被动  %s\n\nJ  %s · 冷却 %.0f 秒\n%d 枚 × %d 首领战基础伤害 · 无无敌\n本局装备固定，返回准备页可更换。" % [player.character.active_skill.display_name, player.character.active_skill.cooldown_seconds, player.character.active_skill.invulnerability_seconds, player.character.passive.display_name, run_loadout.weapon.display_name, skill.cooldown_seconds, skill.projectile_count, skill.boss_damage]
-	_hud_button(content, "继续 / 关闭 C", Rect2(32, 324, 228, 44), _toggle_character_details)
-	_hud_button(content, "结束本局并返回准备", Rect2(280, 324, 324, 44), _return_to_setup)
-	character_details.hide()
 	result_overlay.position = Vector2(320, 160)
 	result_overlay.size = Vector2(640, 400)
 	result_title.position = Vector2(32, 24)
 	result_title.size = Vector2(576, 50)
 	result_body.position = Vector2(32, 84)
 	result_body.size = Vector2(576, 220)
+	result_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	result_body.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	result_body.add_theme_font_size_override("font_size", 20)
 	save_status = _hud_label(result_overlay, Rect2(32, 304, 400, 23), 15)
 	save_retry = _hud_button(result_overlay, "重试保存", Rect2(440, 294, 168, 30), PlayerProfile.current().save_profile)
 	save_retry.hide()
@@ -454,25 +467,6 @@ func _update_save_status() -> void:
 	var profile := PlayerProfile.current()
 	save_status.text = "暂未保存，可重试" if profile.save_pending else ("成绩已保存" if _completion_recorded else "")
 	save_retry.visible = profile.save_pending
-
-func _toggle_character_details() -> void:
-	if not is_instance_valid(character_details):
-		return
-	if feedback_menu.visible:
-		feedback_menu.hide()
-	if character_details.visible:
-		character_details.hide()
-		get_tree().paused = _details_was_paused
-		result_dimmer.visible = _details_was_paused
-		result_overlay.visible = _details_was_paused
-	else:
-		_details_was_paused = get_tree().paused
-		get_tree().paused = true
-		result_dimmer.show()
-		result_overlay.hide()
-		character_details.show()
-		character_details.move_to_front()
-	_sync_touch_controls()
 
 func _raise_modal_layers() -> void:
 	result_dimmer.move_to_front()
@@ -520,7 +514,7 @@ func _update_status() -> void:
 	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [
 		player.health, player.tuning.max_health, player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
 	]
-	hint_text.text = "左侧跳跃 / 翻绳 · 右侧影步 / 武器 / 忍术 · 顶部暂停" if is_instance_valid(touch_controls) and touch_controls.enabled else "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：影步 · Esc：暂停 · R：重来"
+	hint_text.text = "左侧翻绳 · 右侧跳跃 / 身法 / 武器 / 忍术 · 顶部暂停" if is_instance_valid(touch_controls) and touch_controls.enabled else "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：身法 · Esc：暂停 · R：重来"
 	var skill := player.character.active_skill
 	var remaining := combat.skill_cooldown_remaining
 	var cooldown_text := "就绪"
@@ -531,8 +525,8 @@ func _update_status() -> void:
 	skill_fill.size.x = skill_fill.get_parent().size.x * clampf(1.0 - remaining / skill.cooldown_seconds, 0.0, 1.0)
 	protection_text.text = "月光庇护  %.1fs" % player.skill_immunity_remaining if player.skill_immunity_remaining > 0.00001 else "冷却 %.0fs · 释放后无敌 %.0fs" % [skill.cooldown_seconds, skill.invulnerability_seconds]
 	protection_text.modulate = Color("d8b56a") if player.skill_immunity_remaining > 0.00001 else Color("91a1ad")
-	character_text.text = "%s · 被动 %s" % [player.character.display_name, player.character.passive.display_name]
-	passive_text.text = "空中追加跳跃  %d / %d" % [player.jumps_remaining, player.max_jump_count - 1]
+	character_text.text = "%s · %s" % [player.character.display_name, player.mobility.data.display_name]
+	passive_text.text = player.get_mobility_text().replace("\n", " · ")
 	combat_text.text = "击破 %d  ·  连击 %d  ·  最高 %d" % [combat.kills, combat.combo, combat.max_combo]
 	combat_feedback.text = combat.feedback
 	var weapon_remaining := combat.weapon.cooldown_remaining
@@ -558,7 +552,7 @@ func _update_threat_hint() -> void:
 	var nearest_seconds := INF
 	var message := "前方：安全段"
 	var nearest_side := ""
-	var speed := player.tuning.dash_speed if player.dash_remaining > 0.0 else player.tuning.run_speed
+	var speed := player.get_forward_speed()
 	for hazard in level.hazards:
 		if not is_instance_valid(hazard):
 			continue

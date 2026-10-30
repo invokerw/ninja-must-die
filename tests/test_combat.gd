@@ -36,8 +36,9 @@ func _test_character_data() -> void:
 	bad.active_skill = null
 	_check(not bad.get_validation_errors(2).is_empty(), "Missing active must be rejected")
 	bad = CHARACTER.duplicate(true)
+	bad.mobility = null
 	bad.passive = null
-	_check(not bad.get_validation_errors(2).is_empty(), "Missing passive must be rejected")
+	_check(not bad.get_validation_errors(2).is_empty(), "Missing mobility and legacy fallback must be rejected")
 	bad = CHARACTER.duplicate(true)
 	bad.active_skill.cooldown_seconds = 1.0
 	_check(not bad.get_validation_errors(2).is_empty(), "Cooldown shorter than protection must be rejected")
@@ -49,13 +50,12 @@ func _test_character_data() -> void:
 	_check(not bad.get_validation_errors(2).is_empty(), "Invalid damage area must be rejected")
 	_check(not CHARACTER.get_validation_errors(3).is_empty(), "Passive must not silently become a global fourth jump")
 
-func _make_player(extra_jumps: int = 1) -> PlayerController:
+func _make_player(character_id: StringName = &"shadow_runner") -> PlayerController:
 	var scene := MAIN_SCENE.instantiate()
 	var player := scene.get_node("Player") as PlayerController
 	scene.remove_child(player)
 	scene.free()
-	player.character = CHARACTER.duplicate(true)
-	player.character.passive.extra_air_jumps = extra_jumps
+	player.character = CharacterRegistry.get_character(character_id).duplicate(true)
 	root.add_child(player)
 	player.active = true
 	return player
@@ -106,7 +106,7 @@ func _test_lower_and_airborne_skill() -> void:
 	await _frames(10)
 	await _tap("jump")
 	await _frames(10)
-	await _tap("jump")
+	await _tap("mobility")
 	var vertical_speed := player.velocity.y
 	var remaining := player.jumps_remaining
 	_check(combat.try_skill(), "Airborne cast must be accepted")
@@ -142,7 +142,7 @@ func _test_cast_mobility() -> void:
 	await _frames(1)
 	await _tap("jump")
 	await _tap("dash")
-	_check(player.jumps_remaining == 1 and player.dash_remaining > 0.0 and combat._skill_pending, "Air jump and dash must remain responsive during windup")
+	_check(player.jumps_remaining == 0 and player.mobility.air_uses == 1 and combat._skill_pending, "Basic jump and character mobility must remain responsive during windup")
 	player.free()
 
 func _test_cooldown_and_protection() -> void:
@@ -197,7 +197,7 @@ func _test_same_tick_contact() -> void:
 	target.free()
 
 func _test_independent_protection() -> void:
-	var player := _make_player()
+	var player := _make_player(&"thunder_guard")
 	var combat := player.get_node("Combat") as RunnerCombat
 	player.take_damage()
 	var hurt_time := player.immunity_remaining
@@ -212,7 +212,7 @@ func _test_independent_protection() -> void:
 	player.take_damage()
 	_check(player.damage_count == 2, "Overlapping protections must not add their durations")
 	player.free()
-	player = _make_player()
+	player = _make_player(&"thunder_guard")
 	combat = player.get_node("Combat") as RunnerCombat
 	combat.try_skill()
 	await _frames(115)
@@ -222,34 +222,33 @@ func _test_independent_protection() -> void:
 	player.free()
 
 func _test_jump_budgets() -> void:
-	for bonus in [0, 1]:
-		var player := _make_player(bonus)
+	for id in CharacterRegistry.CHARACTERS:
+		var player := _make_player(id)
 		var combat := player.get_node("Combat") as RunnerCombat
 		await _tap("drop")
 		await _frames(8)
 		await _tap("jump")
-		_check(player.on_rope and player.jumps_remaining == 1 + bonus, "Bottom-to-top flip must preserve jump budget")
+		_check(player.on_rope and player.jumps_remaining == 1, "Bottom-to-top flip must preserve the shared two-jump budget")
 		await _frames(8)
 		await _tap("jump")
 		await _frames(10)
 		await _tap("jump")
-		_check(player.jumps_remaining == bonus, "Second jump must consume one air jump")
-		if bonus == 1:
-			await _frames(10)
-			await _tap("jump")
-			_check(player.jumps_remaining == 0 and player.velocity.y < -430.0, "Passive third jump must use its configured impulse")
+		_check(player.jumps_remaining == 0, "Second jump must exhaust the basic air jump")
+		await _frames(10)
+		await _tap("mobility")
+		if id == &"shadow_runner":
+			_check(player.velocity.y < -430.0, "Third jump must use the separate mobility input")
 		await _frames(6)
 		combat.try_skill()
-		await _tap("dash")
 		player.collect_crystal()
 		var velocity_before := player.velocity.y
 		await _tap("jump")
-		_check(player.jumps_remaining == 0 and player.velocity.y > velocity_before, "Skill, dash and crystal pickup must not refresh exhausted jumps")
+		_check(player.jumps_remaining == 0 and player.velocity.y > velocity_before, "Skill, mobility and pickups must not refresh exhausted jumps")
 		for tick in range(150):
 			if player.on_rope:
 				break
 			await _frames(1)
-		_check(player.on_rope and player.jumps_remaining == 1 + bonus, "Actual landing must restore character-specific jump budget")
+		_check(player.on_rope and player.jumps_remaining == 1, "Landing must restore the shared basic jump budget")
 		Input.action_press("jump")
 		await _frames(100)
 		_check(player.on_rope, "Held jump must land once without chaining")
@@ -334,7 +333,7 @@ func _test_pause_stop_and_death() -> void:
 	target.free()
 	player = _make_player()
 	combat = player.get_node("Combat") as RunnerCombat
-	_check(combat.is_skill_ready() and combat.skill_casts == 0 and player.skill_immunity_remaining == 0.0 and player.jumps_remaining == 2, "Fresh run must not inherit runtime timers or jump budget")
+	_check(combat.is_skill_ready() and combat.skill_casts == 0 and player.skill_immunity_remaining == 0.0 and player.jumps_remaining == 1, "Fresh run must not inherit runtime timers or jump budget")
 	_check(CHARACTER.active_skill.cooldown_seconds == 12.0 and CHARACTER.passive.extra_air_jumps == 1, "Runtime state must never mutate character resources")
 	player.free()
 
@@ -343,7 +342,7 @@ func _test_authored_encounters() -> void:
 		var main := MAIN_SCENE.instantiate()
 		root.add_child(main)
 		var target: RopeSentry = main.level.enemies[index]
-		main.player.position.x = target.position.x - 260.0
+		main.player.position.x = target.position.x - 200.0
 		await _frames(2)
 		await _tap("skill")
 		await _frames(10)

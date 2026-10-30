@@ -19,10 +19,12 @@ func _run() -> void:
 	await _test_full_route(true, true)
 	await _test_full_route(false, false, true)
 	await _test_full_route(true, true, true)
+	for character_id in [&"wind_scout", &"thunder_guard"]:
+		await _test_full_route(false, false, true, character_id)
 	await _test_pause_and_reload()
 	await _test_finish_below_rope()
 	if _failures == 0:
-		print("LEVEL_ROUTE_PASS (data validation, 4 practice runs, 2 boss clears, pause/reload, lower finish)")
+		print("LEVEL_ROUTE_PASS (data validation, 4 practice runs, 3 characters / 4 boss clears, pause/reload, lower finish)")
 	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
@@ -46,23 +48,22 @@ func _test_data() -> void:
 	bad.segments[1].enemies[0].offset_x = -1.0
 	_check(not bad.get_validation_errors().is_empty(), "Enemy placement outside a segment must be rejected")
 
-func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: bool = false) -> void:
+func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: bool = false, character_id: StringName = &"shadow_runner") -> void:
 	var main := (COMPLETE_SCENE if with_boss else MAIN_SCENE).instantiate()
-	if not with_combat:
-		var baseline := load("res://data/characters/shadow_runner.tres").duplicate(true) as CharacterData
-		baseline.passive.extra_air_jumps = 0
-		main.get_node("Player").character = baseline
+	main.get_node("Player").character = CharacterRegistry.get_character(character_id)
 	main.run_loadout = RunLoadout.capture(main.get_node("Player").character, PlayerProfile.WEAPONS[&"crescent_wheel"])
 	root.add_child(main)
 	var player := main.get_node("Player") as PlayerController
 	var world := main.get_node("Level") as RopeLevelController
 	var combat := player.get_node("Combat") as RunnerCombat
+	var hit_positions: Array[Vector2] = []
+	player.health_changed.connect(func(_health: int, _max: int) -> void: hit_positions.append(player.global_position))
 	_check(world.enemies.size() == 5 and world.shooters.size() == 2, "The route must contain five rope sentries and two separate screen sources")
 	var events: Array[Dictionary] = []
 	var start := LEVEL_DATA.start_x
 	for segment in LEVEL_DATA.segments:
 		for hazard in segment.hazards:
-			if with_actions and ((segment.segment_id == &"combinations" and hazard.offset_x <= 640.0) or (segment.segment_id == &"sprint" and hazard.offset_x == 480.0)):
+			if with_actions and segment.segment_id == &"combinations" and hazard.offset_x <= 640.0:
 				continue
 			var side := PlayerController.ROPE_BOTTOM if hazard.cable_side == "top" else PlayerController.ROPE_TOP
 			events.append({"x": start + hazard.offset_x - 100.0, "side": side})
@@ -74,11 +75,8 @@ func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: 
 			events.append({"x": start + 390.0, "action": &"jump"})
 			events.append({"x": start + 490.0, "action": &"jump"})
 			if with_combat:
-				events.append({"x": start + 590.0, "action": &"jump"})
+				events.append({"x": start + 590.0, "action": &"mobility"})
 				events.append({"x": start + 700.0, "action": &"drop"})
-		if with_actions and segment.segment_id == &"sprint":
-			events.append({"x": start + 140.0, "side": PlayerController.ROPE_TOP})
-			events.append({"x": start + 430.0, "action": &"dash"})
 		start += segment.length_px
 	events.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.x < b.x)
 	_sections = [0]
@@ -119,7 +117,7 @@ func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: 
 			for shooter in world.shooters:
 				ranged_shots += shooter.shots_fired
 	_check(main._finished and main.result_title.text.contains("完成"), "Route replay must finish successfully")
-	_check(player.damage_count == 0, "Route must be traversable without taking damage")
+	_check(player.damage_count == 0, "Route must be traversable without taking damage: %s" % str(hit_positions))
 	_check(player.crystals == world.pickup_positions.size(), "A legal route must collect all crystals without releasing the rope")
 	_check(_sections == [0, 1, 2, 3], "Section notifications must occur in order exactly once")
 	_check(main.progress_label.text.contains("100%"), "Finish HUD must reach 100%")
@@ -138,10 +136,10 @@ func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: 
 		_check(main.run_result != null and main.run_result.kills == combat.kills and main.run_result.max_combo == combat.max_combo, "Results must preserve the run's real combat statistics")
 	else:
 		_check(ranged_shots == 6, "Both three-bullet volleys must really fire during the no-skill full route")
-	var route_name := ("triple jump/dash/skills" if with_actions else "cooldown/skills") if with_combat else ("base double jump/dash" if with_actions else "base flips")
+	var route_name := ("third mobility jump/skills" if with_actions else "cooldown/skills") if with_combat else ("base double jump" if with_actions else "base flips")
 	if with_boss:
 		route_name += " + boss"
-	print("ROUTE_REPLAY %s: %.2fs, %d/%d crystals, %d hits, %d kills" % [route_name, main._elapsed_time, player.crystals, world.pickup_positions.size(), player.damage_count, combat.kills])
+	print("ROUTE_REPLAY %s %s: %.2fs, %d/%d crystals, %d hits, %d kills" % [character_id, route_name, main._elapsed_time, player.crystals, world.pickup_positions.size(), player.damage_count, combat.kills])
 	paused = false
 	main.free()
 
