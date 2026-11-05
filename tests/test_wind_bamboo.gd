@@ -13,9 +13,13 @@ func _run() -> void:
 	_test_catalog()
 	_test_data()
 	await _test_falling_bamboo_pause()
-	await _test_full_route()
+	for character_id in CharacterRegistry.CHARACTERS:
+		for weapon_id in PlayerProfile.WEAPONS:
+			await _test_full_route(character_id, weapon_id, false)
+			await _test_full_route(character_id, weapon_id, true)
+	await _test_retry()
 	if _failures == 0:
-		print("WIND_BAMBOO_PASS (catalog, 85 second route, 50 crystals, falling bamboo pause)")
+		print("WIND_BAMBOO_PASS (3 characters x 2 weapons x base/mobility routes, bamboo phases/pause, selected-level retry)")
 	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
@@ -56,32 +60,54 @@ func _test_falling_bamboo_pause() -> void:
 			break
 	_check(bamboo != null, "Built wind bamboo route must instantiate a falling bamboo hazard")
 	if bamboo != null:
-		player.position.x = bamboo.position.x - 360.0
+		player.position.x = bamboo.position.x - 280.0
 		await _frames(2)
 		var collision := bamboo.get_child(0) as CollisionPolygon2D
 		_check(not collision == null and collision.disabled, "Falling bamboo must remain non-colliding during its warning")
+		_check(bamboo._triggered and not bamboo._active and not bamboo._exiting, "Warning must be a distinct non-colliding phase")
+		var warning_elapsed := bamboo._elapsed
 		var paused_position := player.position
 		var paused_elapsed: float = main._elapsed_time
 		paused = true
 		await _frames(70)
 		_check(player.position == paused_position and is_equal_approx(main._elapsed_time, paused_elapsed), "Pausing must freeze the falling bamboo warning and route timer")
+		_check(bamboo._elapsed == warning_elapsed and collision.disabled, "Pause must freeze warning state and collision")
 		paused = false
-		await _frames(65)
+		await _frames(60)
 		_check(not collision.disabled, "Falling bamboo must become collidable after its warning")
+		await _assert_phase_freezes(bamboo)
+		await _frames(70)
+		_check(bamboo._exiting and not bamboo._active and collision.disabled, "Exit must disable collision")
+		await _assert_phase_freezes(bamboo)
+		await _frames(30)
+		_check(not bamboo._active and not bamboo._exiting and not bamboo._warning_active and collision.disabled, "Retired bamboo must remain non-colliding")
 	main.free()
 
-func _test_full_route() -> void:
-	var main := PRACTICE_SCENE.instantiate()
-	main.get_node("Level").data = LEVEL_DATA
-	main.get_node("Level").boss_data = null
-	root.add_child(main)
+func _assert_phase_freezes(bamboo: Hazard) -> void:
+	var elapsed := bamboo._elapsed
+	var active := bamboo._active
+	var exiting := bamboo._exiting
+	var disabled := bamboo._collision.disabled
+	paused = true
+	await _frames(90)
+	_check(bamboo._elapsed == elapsed and bamboo._active == active and bamboo._exiting == exiting and bamboo._collision.disabled == disabled, "Pause must freeze active/exit timer and collision")
+	paused = false
+
+func _test_full_route(character_id: StringName, weapon_id: StringName, alternative: bool) -> void:
+	paused = false
+	var loadout := RunLoadout.capture(CharacterRegistry.get_character(character_id), PlayerProfile.WEAPONS[weapon_id])
+	_check(RunNavigation.launch_level(self, "res://scenes/main.tscn", loadout, LevelCatalog.WIND_BAMBOO_ID) == OK, "Formal wind bamboo route must launch")
 	await _frames(2)
+	var main := current_scene
+	_check(main.get_run_mode() == &"full", "Boss-free second level must retain formal mode")
 	var player := main.get_node("Player") as PlayerController
 	var world := main.get_node("Level") as RopeLevelController
 	var events: Array[Dictionary] = []
 	var segment_start := LEVEL_DATA.start_x
 	for segment in LEVEL_DATA.segments:
 		for hazard in segment.hazards:
+			if alternative and segment == LEVEL_DATA.segments[0] and hazard.hazard_type == "falling_bamboo":
+				continue
 			var safe_side := PlayerController.ROPE_BOTTOM if hazard.cable_side == "top" else PlayerController.ROPE_TOP
 			# Leave time to collect the preceding crystal, then move before the
 			# falling bamboo becomes collidable or the spike reaches the player.
@@ -92,9 +118,37 @@ func _test_full_route() -> void:
 		segment_start += segment.length_px
 	events.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.x < b.x)
 	var index := 0
+	var stage := 0
+	var mobility_used := false
+	var bamboo_x := LEVEL_DATA.start_x + LEVEL_DATA.segments[0].hazards[0].offset_x
 	for tick in range(6200):
 		if main._finished:
 			break
+		if alternative:
+			if character_id == &"thunder_guard":
+				if stage == 0 and player.position.x >= bamboo_x - 65.0:
+					await _tap(&"mobility")
+					mobility_used = player.mobility.cooldown_remaining > 0.0
+					stage = 3
+			else:
+				if stage == 0 and player.position.x >= bamboo_x - 280.0:
+					await _tap(&"jump")
+					stage = 1
+				elif stage == 1 and player.position.x >= bamboo_x - 140.0:
+					await _tap(&"jump")
+					stage = 2
+				elif stage == 2:
+					if character_id == &"shadow_runner" and player.position.x >= bamboo_x - 30.0:
+						await _tap(&"mobility")
+						mobility_used = player.mobility.air_uses == 1
+						stage = 3
+					elif character_id == &"wind_scout" and player.velocity.y > 0.0:
+						Input.action_press(&"mobility")
+						await _frames(2)
+						mobility_used = player.mobility.gliding
+						stage = 3
+				if stage == 3 and player.position.x > bamboo_x + 120.0:
+					Input.action_release(&"mobility")
 		if index < events.size() and player.position.x >= events[index].x:
 			var event := events[index]
 			index += 1
@@ -102,11 +156,33 @@ func _test_full_route() -> void:
 			if player.on_rope and player.rope_side != target:
 				await _tap(&"drop" if target == PlayerController.ROPE_BOTTOM else &"jump")
 		await _frames(1)
-	_check(main._finished and main.result_title.text.contains("完成"), "Base double-jump route must finish wind bamboo")
+	Input.action_release(&"mobility")
+	var label := "%s/%s/%s" % [character_id, weapon_id, "mobility" if alternative else "base"]
+	_check(main._finished and main.result_title.text.contains("完成"), "Route must finish wind bamboo: " + label)
 	_check(player.damage_count == 0, "Base route must avoid falling bamboo and spikes")
-	_check(player.crystals == 50 and world.pickup_positions.size() == 50, "Wind bamboo route must make all fifty crystals collectable")
+	_check(player.crystals >= (44 if alternative else 50) and world.pickup_positions.size() == 50, "Route must reach its collection target: " + label)
+	_check(not alternative or mobility_used, "Alternative route must actually activate its mobility: " + label)
+	_check(main.run_loadout.growth_snapshot.is_empty() and main.run_loadout.item_snapshot.is_empty(), "Routes must use zero growth and no consumables")
 	_check(main._elapsed_time >= 80.0 and main._elapsed_time <= 92.0, "Wind bamboo route must keep its authored 85 second pacing")
+	print("WIND_ROUTE %s: %.2fs, %d/50 crystals, %d hits" % [label, main._elapsed_time, player.crystals, player.damage_count])
 	main.free()
+
+func _test_retry() -> void:
+	var loadout := RunLoadout.capture(CharacterRegistry.get_character(&"thunder_guard"), PlayerProfile.WEAPONS[&"star_lance"])
+	for path in ["res://scenes/main.tscn", "res://scenes/practice.tscn"]:
+		_check(RunNavigation.launch_level(self, path, loadout, LevelCatalog.WIND_BAMBOO_ID) == OK, "Selected second level must launch")
+		await _frames(4)
+		var main := current_scene
+		await _tap(&"mobility")
+		main._toggle_pause()
+		main._restart_run()
+		await _frames(4)
+		main = current_scene
+		_check(main.level.data.level_id == LevelCatalog.WIND_BAMBOO_ID and main.level.boss_data == null, "Retry must preserve second level and its boss-free route")
+		_check(main.run_loadout.character.character_id == &"thunder_guard" and main.run_loadout.weapon.weapon_id == &"star_lance", "Retry must preserve character and weapon")
+		_check(not paused and main.player.active and main.player.mobility.cooldown_remaining == 0.0 and main.player.crystals == 0, "Retry must reset runtime and resume play")
+		_check(main.get_run_mode() == (&"full" if path.ends_with("main.tscn") else &"parkour_practice"), "Retry must preserve formal/practice mode")
+		main.free()
 
 func _tap(action: StringName) -> void:
 	Input.action_press(action)

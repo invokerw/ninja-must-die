@@ -55,10 +55,12 @@ var _feedback_was_paused := false
 var _feedback_paused_run := false
 var painted_progress: ProgressRail
 var run_mode_override: StringName = &""
+var selected_level_id: StringName = &""
 
 func _enter_tree() -> void:
 	add_to_group("run_sessions")
 	var pending_level_id := RunNavigation.take_pending_level(scene_file_path)
+	selected_level_id = pending_level_id
 	run_mode_override = RunNavigation.take_pending_mode(scene_file_path)
 	if not pending_level_id.is_empty():
 		var level_entry := LevelCatalog.get_level(pending_level_id)
@@ -392,7 +394,12 @@ func _restart_run() -> void:
 		return
 	_transitioning = true
 	player.stop()
-	if RunNavigation.launch(get_tree(), scene_file_path, run_loadout) != OK:
+	var error: Error
+	if not selected_level_id.is_empty():
+		error = RunNavigation.launch_level(get_tree(), scene_file_path, run_loadout, selected_level_id)
+	else:
+		error = RunNavigation.launch(get_tree(), scene_file_path, run_loadout)
+	if error != OK:
 		_transitioning = false
 
 func _return_to_setup() -> void:

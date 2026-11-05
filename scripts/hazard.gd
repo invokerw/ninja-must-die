@@ -31,6 +31,7 @@ func _ready() -> void:
 		Vector2(hazard_size.x * 0.5, 0)
 	])
 	_collision.disabled = hazard_type == "falling_bamboo"
+	_active = hazard_type != "falling_bamboo"
 	add_child(_collision)
 	queue_redraw()
 
@@ -65,7 +66,11 @@ func _process_falling_bamboo(delta: float) -> void:
 	if not _triggered:
 		return
 	_elapsed += delta
-	if _elapsed >= warning_seconds and _elapsed < warning_seconds + active_seconds:
+	if _elapsed < warning_seconds:
+		_active = false
+		_exiting = false
+		_collision.disabled = true
+	elif _elapsed < warning_seconds + active_seconds:
 		_active = true
 		_exiting = false
 		_collision.disabled = false

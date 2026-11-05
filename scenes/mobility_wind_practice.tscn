@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://ct5y2tte1a0c6"]
-
-[ext_resource type="PackedScene" path="res://scenes/practice.tscn" id="1_practice"]
-[ext_resource type="Resource" uid="uid://godfsmh6n72e" path="res://data/characters/wind_scout.tres" id="2_character"]
-
-[node name="MobilityPractice" unique_id=339469159 instance=ExtResource("1_practice")]
-greybox_character = ExtResource("2_character")

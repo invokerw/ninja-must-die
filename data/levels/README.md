@@ -2,7 +2,7 @@
 
 当前主场景的 `Level` 节点读取 `fog_ridge_60s.tres`。该资源使用 Godot 自定义 `Resource`，可在检查器中直接展开修改；`main.gd` 不再保存机关或影晶坐标。
 
-第一章目录由 `scripts/progress/level_catalog.gd` 提供稳定 ID 和解锁前置，准备页的“关卡选择”入口会读取目录并把选中的资源注入共用正式 / 练习场景。当前第二关灰盒资源为 `wind_bamboo_85s.tres`；故事、奖励和三名角色替代路线尚未接入。
+第一章目录由 `scripts/progress/level_catalog.gd` 提供稳定 ID 和解锁前置，准备页的“关卡选择”入口会读取目录并把选中的资源注入共用正式 / 练习场景。当前第二关灰盒资源为 `wind_bamboo_85s.tres`；故事与正式奖励尚未接入，三名角色的基础 / 身法替代路线回放见下文。
 
 F5 准备页选择完整关卡后，`scenes/main.tscn` 配置 `Boss Data=res://data/enemies/bridge_kite.tres`，在这条 60 秒路线之后进入约 40 秒首领追逐战。`scenes/practice.tscn` 将 `Boss Data` 设为空，保留原终点；`scenes/boss_practice.tscn` 直接进入首领。首领参数、攻击窗口与评级说明见 [小型首领](../../docs/BOSS_ENCOUNTER.md)。
 
@@ -29,7 +29,11 @@ F5 准备页选择完整关卡后，`scenes/main.tscn` 配置 `Boss Data=res://d
 /Applications/Godot_mono.app/Contents/MacOS/Godot --headless --path . --log-file /tmp/ninja-wind_bamboo.log --fixed-fps 60 --script res://tests/test_wind_bamboo.gd
 ```
 
-预期输出 `WIND_BAMBOO_PASS`。当前回归覆盖目录前置、85 秒路线、五十颗影晶和落竹暂停冻结；三名角色替代路线、触屏和 Android 实机仍待后续阶段验收。
+预期输出 `WIND_BAMBOO_PASS`。2026-11-05 扩展回归覆盖三名角色 × 两把武器 × 基础 / 身法替代路线，共 12 次完整回放；全部零成长、无道具、0 受击、50 / 50 影晶，约 84.48～84.88 秒。基础路线只需上下翻绳；替代路线在第一组落竹处实际发动踏影、御风或雷闪，不新增专属场景。
+
+落竹预警、生效、退场分别检查碰撞和暂停冻结，退场后不再碰撞；正式 / 练习重试均保留第二关、角色和武器，重建冷却与收集状态。第二关无首领，正式入口仍保存为完整关卡模式。
+
+人工入口：F5 → 关卡选择 → 通关第一关后选择风竹渡 → 开始挑战或进入练习。真人手感、第二关触屏操作、视觉与 Android 实机验收仍待进行。当前五段仍采用重复的落竹 / 尖刺布局；更丰富的固定弹道组合和收集分叉尚未编排，本轮不将阶段 B 标记为全部完成。
 
 ## 编辑步骤
 
