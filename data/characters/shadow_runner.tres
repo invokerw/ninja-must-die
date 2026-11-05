@@ -1,36 +1,19 @@
-[gd_resource type="Resource" script_class="CharacterData" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://c6bsjm0xha23s"]
 
-[ext_resource type="Script" path="res://scripts/characters/character_data.gd" id="1_character"]
-[ext_resource type="Script" path="res://scripts/characters/active_skill_data.gd" id="2_skill"]
-[ext_resource type="Script" path="res://scripts/characters/passive_data.gd" id="3_passive"]
+[ext_resource type="Script" uid="uid://du4pmngwmxfm5" path="res://scripts/characters/character_data.gd" id="1_character"]
+[ext_resource type="Script" uid="uid://bmdlaeno6abos" path="res://scripts/characters/active_skill_data.gd" id="2_skill"]
+[ext_resource type="Script" uid="uid://div31yfuhwap1" path="res://scripts/characters/passive_data.gd" id="3_passive"]
 [ext_resource type="Resource" path="res://data/characters/mobility/third_jump.tres" id="4_mobility"]
 
 [sub_resource type="Resource" id="ActiveSkill_moon_slash"]
 script = ExtResource("2_skill")
-skill_id = &"moon_slash"
-display_name = "月蚀斩"
-cooldown_seconds = 12.0
-invulnerability_seconds = 2.0
-cast_delay_seconds = 0.12
-forward_range = 640.0
-half_height = 100.0
-damage = 3
-boss_damage = 24
 
 [sub_resource type="Resource" id="Passive_triple_jump"]
 script = ExtResource("3_passive")
-passive_id = &"triple_jump"
-display_name = "踏影（三段跳）"
-extra_air_jumps = 1
 
 [resource]
 script = ExtResource("1_character")
-character_id = &"shadow_runner"
-display_name = "影刃"
 description = "月蚀破敌，踏影凌空。忍术提供短时保护，二段跳后点按身法发动踏影。"
 active_skill = SubResource("ActiveSkill_moon_slash")
 passive = SubResource("Passive_triple_jump")
 mobility = ExtResource("4_mobility")
-unlock_id = &"starter"
-story_name = "影刃"
-default_weapon_id = &"crescent_wheel"

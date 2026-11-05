@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="RopeLevelData" format=3]
+[gd_resource type="Resource" script_class="RopeLevelData" format=3 uid="uid://lsb6iafqi0dx"]
 
-[ext_resource type="Script" path="res://scripts/level/rope_level_data.gd" id="1_ci4it"]
-[ext_resource type="Script" path="res://scripts/level/rope_segment_data.gd" id="2_nnwyy"]
-[ext_resource type="Script" path="res://scripts/level/rope_hazard_data.gd" id="3_qpg04"]
-[ext_resource type="Script" path="res://scripts/level/rope_pickup_data.gd" id="4_xfk5v"]
-[ext_resource type="Script" path="res://scripts/level/rope_enemy_data.gd" id="5_enemy"]
+[ext_resource type="Script" uid="uid://mit1tkswji0e" path="res://scripts/level/rope_level_data.gd" id="1_ci4it"]
+[ext_resource type="Script" uid="uid://dhva4856vpwq2" path="res://scripts/level/rope_segment_data.gd" id="2_nnwyy"]
+[ext_resource type="Script" uid="uid://kn615ai2o5vt" path="res://scripts/level/rope_hazard_data.gd" id="3_qpg04"]
+[ext_resource type="Script" uid="uid://dhvc4i3b4fdqx" path="res://scripts/level/rope_pickup_data.gd" id="4_xfk5v"]
+[ext_resource type="Script" uid="uid://chiji22bjxya7" path="res://scripts/level/rope_enemy_data.gd" id="5_enemy"]
 
 [sub_resource type="Resource" id="Resource_b0clb"]
 script = ExtResource("3_qpg04")
@@ -60,6 +60,23 @@ title = "钢索入门"
 hint = "↓ 翻到钢索下方；↑ 翻回上方。影晶会引导安全路线。"
 hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_b0clb"), SubResource("Resource_frjuf"), SubResource("Resource_rtt7k")])
 pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_07kf0"), SubResource("Resource_l4g2w"), SubResource("Resource_gfh4h"), SubResource("Resource_ahihj"), SubResource("Resource_haoc2"), SubResource("Resource_2w1yp"), SubResource("Resource_yubnk")])
+
+[sub_resource type="Resource" id="Enemy_alternating_1"]
+script = ExtResource("5_enemy")
+offset_x = 720.0
+cable_side = "bottom"
+enemy_type = "shooter"
+screen_height_ratio = 0.8
+fire_direction = Vector2(-1, -0.04)
+
+[sub_resource type="Resource" id="Enemy_alternating_2"]
+script = ExtResource("5_enemy")
+offset_x = 2000.0
+
+[sub_resource type="Resource" id="Enemy_alternating_3"]
+script = ExtResource("5_enemy")
+offset_x = 3920.0
+cable_side = "bottom"
 
 [sub_resource type="Resource" id="Resource_ayx54"]
 script = ExtResource("3_qpg04")
@@ -156,32 +173,30 @@ script = ExtResource("4_xfk5v")
 offset_x = 4680.0
 cable_side = "bottom"
 
-[sub_resource type="Resource" id="Enemy_alternating_1"]
-script = ExtResource("5_enemy")
-offset_x = 720.0
-cable_side = "bottom"
-enemy_type = "shooter"
-screen_height_ratio = 0.8
-fire_direction = Vector2(-1, -0.04)
-
-[sub_resource type="Resource" id="Enemy_alternating_2"]
-script = ExtResource("5_enemy")
-offset_x = 2000.0
-
-[sub_resource type="Resource" id="Enemy_alternating_3"]
-script = ExtResource("5_enemy")
-offset_x = 3920.0
-cable_side = "bottom"
-
 [sub_resource type="Resource" id="Resource_4vhge"]
 script = ExtResource("2_nnwyy")
 segment_id = &"alternating"
 title = "上下交替"
 hint = "右侧会并排齐射：金线预告固定弹道，留意弹道间隙；影步和 K 可保护通过。"
 length_px = 4800.0
-enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_alternating_1"), SubResource("Enemy_alternating_2"), SubResource("Enemy_alternating_3")])
 hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_ayx54"), SubResource("Resource_r53xj"), SubResource("Resource_nn78f"), SubResource("Resource_jofsn"), SubResource("Resource_f2dp8"), SubResource("Resource_54nam"), SubResource("Resource_uqwcp")])
 pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_eg1ul"), SubResource("Resource_lx7w0"), SubResource("Resource_va3j2"), SubResource("Resource_yt8fm"), SubResource("Resource_j8tdn"), SubResource("Resource_umpcd"), SubResource("Resource_ms6w1"), SubResource("Resource_qgmp8"), SubResource("Resource_mh73w"), SubResource("Resource_btwdq"), SubResource("Resource_smidd"), SubResource("Resource_clbjq"), SubResource("Resource_be7vi"), SubResource("Resource_qfgtf")])
+enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_alternating_1"), SubResource("Enemy_alternating_2"), SubResource("Enemy_alternating_3")])
+
+[sub_resource type="Resource" id="Enemy_combinations_1"]
+script = ExtResource("5_enemy")
+offset_x = 1680.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Enemy_combinations_2"]
+script = ExtResource("5_enemy")
+offset_x = 1680.0
+enemy_type = "shooter"
+
+[sub_resource type="Resource" id="Enemy_combinations_3"]
+script = ExtResource("5_enemy")
+offset_x = 4400.0
+cable_side = "bottom"
 
 [sub_resource type="Resource" id="Resource_8444d"]
 script = ExtResource("3_qpg04")
@@ -336,30 +351,20 @@ script = ExtResource("4_xfk5v")
 offset_x = 6240.0
 cable_side = "bottom"
 
-[sub_resource type="Resource" id="Enemy_combinations_1"]
-script = ExtResource("5_enemy")
-offset_x = 1680.0
-cable_side = "bottom"
-
-[sub_resource type="Resource" id="Enemy_combinations_2"]
-script = ExtResource("5_enemy")
-offset_x = 1680.0
-enemy_type = "shooter"
-
-[sub_resource type="Resource" id="Enemy_combinations_3"]
-script = ExtResource("5_enemy")
-offset_x = 4400.0
-cable_side = "bottom"
-
 [sub_resource type="Resource" id="Resource_mpiji"]
 script = ExtResource("2_nnwyy")
 segment_id = &"combinations"
 title = "连续机关"
 hint = "月蚀斩冷却 12 秒；踏影可三段跳，空中 ↓ 快速落绳。影晶只计收集与连击。"
 length_px = 6400.0
-enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_combinations_1"), SubResource("Enemy_combinations_2"), SubResource("Enemy_combinations_3")])
 hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_8444d"), SubResource("Resource_fdkd2"), SubResource("Resource_u0tpt"), SubResource("Resource_qppnc"), SubResource("Resource_5acsq"), SubResource("Resource_dbmpg"), SubResource("Resource_bn81l"), SubResource("Resource_3fes1"), SubResource("Resource_cr8fg"), SubResource("Resource_qh0sv"), SubResource("Resource_tugc4"), SubResource("Resource_yjiks"), SubResource("Resource_sovtm")])
 pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_s3qqi"), SubResource("Resource_5m3vo"), SubResource("Resource_d1jxl"), SubResource("Resource_vsfn5"), SubResource("Resource_mg2ru"), SubResource("Resource_4rcxb"), SubResource("Resource_ba3vf"), SubResource("Resource_qpl4r"), SubResource("Resource_g7qgc"), SubResource("Resource_d5i3a"), SubResource("Resource_6a6v0"), SubResource("Resource_xrkdu"), SubResource("Resource_suxgp"), SubResource("Resource_t55dd"), SubResource("Resource_xxg1d"), SubResource("Resource_5s1p6"), SubResource("Resource_sgb6b"), SubResource("Resource_1kctm")])
+enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_combinations_1"), SubResource("Enemy_combinations_2"), SubResource("Enemy_combinations_3")])
+
+[sub_resource type="Resource" id="Enemy_sprint_1"]
+script = ExtResource("5_enemy")
+offset_x = 3200.0
+cable_side = "bottom"
 
 [sub_resource type="Resource" id="Resource_so0du"]
 script = ExtResource("3_qpg04")
@@ -441,24 +446,18 @@ offset_x = 4000.0
 script = ExtResource("4_xfk5v")
 offset_x = 4160.0
 
-[sub_resource type="Resource" id="Enemy_sprint_1"]
-script = ExtResource("5_enemy")
-offset_x = 3200.0
-cable_side = "bottom"
-
 [sub_resource type="Resource" id="Resource_8wah7"]
 script = ExtResource("2_nnwyy")
 segment_id = &"sprint"
 title = "冲刺收尾"
 hint = "保持翻绳可安全通过；K 就绪时可保留或释放，收集和击破维持连击。"
 length_px = 4800.0
-enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_sprint_1")])
 hazards = Array[ExtResource("3_qpg04")]([SubResource("Resource_so0du"), SubResource("Resource_2ao2a"), SubResource("Resource_at8s6"), SubResource("Resource_6a8bj"), SubResource("Resource_f37mu"), SubResource("Resource_gw1xv")])
 pickups = Array[ExtResource("4_xfk5v")]([SubResource("Resource_f41p3"), SubResource("Resource_hprao"), SubResource("Resource_5pr45"), SubResource("Resource_ddwq0"), SubResource("Resource_5ysjw"), SubResource("Resource_8q23b"), SubResource("Resource_ct0b6"), SubResource("Resource_gvti4"), SubResource("Resource_tc4gt"), SubResource("Resource_2su4h"), SubResource("Resource_htgcf")])
+enemies = Array[ExtResource("5_enemy")]([SubResource("Enemy_sprint_1")])
 
 [resource]
 script = ExtResource("1_ci4it")
 level_id = &"fog_ridge_60s"
 title = "雾岭断桥"
-rope_y = 490.0
 segments = Array[ExtResource("2_nnwyy")]([SubResource("Resource_joji6"), SubResource("Resource_4vhge"), SubResource("Resource_mpiji"), SubResource("Resource_8wah7")])

@@ -1,20 +1,12 @@
-[gd_resource type="Resource" script_class="CharacterData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://cs56n5bsyylws"]
 
-[ext_resource type="Script" path="res://scripts/characters/character_data.gd" id="1_character"]
-[ext_resource type="Script" path="res://scripts/characters/active_skill_data.gd" id="2_skill"]
+[ext_resource type="Script" uid="uid://du4pmngwmxfm5" path="res://scripts/characters/character_data.gd" id="1_character"]
+[ext_resource type="Script" uid="uid://bmdlaeno6abos" path="res://scripts/characters/active_skill_data.gd" id="2_skill"]
 [ext_resource type="Resource" path="res://data/characters/mobility/burst.tres" id="4_mobility"]
 
 [sub_resource type="Resource" id="ActiveSkill_thunder_guard"]
 script = ExtResource("2_skill")
-skill_id = &"moon_slash"
 display_name = "月蚀斩（灰盒）"
-cooldown_seconds = 12.0
-invulnerability_seconds = 2.0
-cast_delay_seconds = 0.12
-forward_range = 640.0
-half_height = 100.0
-damage = 3
-boss_damage = 24
 
 [resource]
 script = ExtResource("1_character")
@@ -25,5 +17,5 @@ active_skill = SubResource("ActiveSkill_thunder_guard")
 mobility = ExtResource("4_mobility")
 unlock_id = &"chapter_01_03_clear"
 story_name = "烬锋"
-default_weapon_id = &"star_lance"
 visual_tint = Color(1, 0.7, 0.45, 1)
+default_weapon_id = &"star_lance"

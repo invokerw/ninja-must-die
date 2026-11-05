@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://csm7mflsvqc0p"]
+
+[ext_resource type="PackedScene" path="res://scenes/practice.tscn" id="1_practice"]
+[ext_resource type="Resource" path="res://data/characters/thunder_guard.tres" id="2_character"]
+
+[node name="MobilityPractice" unique_id=972021545 instance=ExtResource("1_practice")]
+greybox_character = ExtResource("2_character")
