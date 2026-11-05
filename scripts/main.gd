@@ -56,8 +56,10 @@ var _feedback_paused_run := false
 var painted_progress: ProgressRail
 var run_mode_override: StringName = &""
 var selected_level_id: StringName = &""
+var run_id := ""
 
 func _enter_tree() -> void:
+	run_id = Crypto.new().generate_random_bytes(16).hex_encode()
 	add_to_group("run_sessions")
 	var pending_level_id := RunNavigation.take_pending_level(scene_file_path)
 	selected_level_id = pending_level_id
@@ -346,16 +348,19 @@ func _on_finish_reached() -> void:
 	progress_fill.size.x = progress_fill.get_parent().size.x
 	progress_label.text = ("首领练习" if start_at_boss else ("关卡进度" if level.boss_data != null else "终点进度")) + "  100%"
 	var boss_practice := start_at_boss and is_instance_valid(level.boss)
+	if not _completion_recorded:
+		_completion_recorded = true
+		PlayerProfile.current().record_completion(level.data.level_id, get_run_mode(), run_result)
 	var body := "评级 %s    总分 %d\n用时 %.1f 秒    受击 %d 次\n影晶 %d / %d    击破 %d\n最高连击 %d" % [run_result.rank, run_result.score, run_result.time_seconds, run_result.damage_count, run_result.collectible_count, run_result.collectible_total, run_result.kills, run_result.max_combo]
+	if get_run_mode() == &"full":
+		var record := PlayerProfile.current().history.get_record(level.data.level_id, &"full")
+		body = "本局 %d 星 · 历史 %d 星 · %s\n分数 %d / 3000 · 影晶 %d / %d · 受击 %d 次\n用时 %.1f 秒 · 击破 %d · 最高连击 %d" % [run_result.stars, record.get("best_stars", run_result.stars), "无伤印" if run_result.flawless else "本局未获无伤印", run_result.score, run_result.collectible_count, run_result.collectible_total, run_result.damage_count, run_result.time_seconds, run_result.kills, run_result.max_combo]
 	if is_instance_valid(level.boss):
 		body += "\n首领：%s · 已击破" % level.boss.data.display_name
 		body += "\n伤害：武器 %d · 忍术 %d · 飞镖 %d" % [combat.damage_by_source[&"weapon"], combat.damage_by_source[&"skill"], combat.damage_by_source[&"pickup"]]
 	if boss_practice:
 		body = "首领：%s · 已击破\n用时 %.1f 秒    受击 %d 次\n练习完成，可重试熟悉其他躲法" % [level.boss.data.display_name, run_result.time_seconds, run_result.damage_count]
 		body += "\n%s · 武器 %d / 忍术 %d / 飞镖 %d" % [run_loadout.weapon.display_name, combat.damage_by_source[&"weapon"], combat.damage_by_source[&"skill"], combat.damage_by_source[&"pickup"]]
-	if not _completion_recorded:
-		_completion_recorded = true
-		PlayerProfile.current().record_completion(level.data.level_id, get_run_mode(), run_result)
 	_show_result("%s · 完成" % ("首领练习" if boss_practice else level.data.title), body)
 	_update_save_status()
 
@@ -367,7 +372,11 @@ func get_run_mode() -> StringName:
 	return &"full" if level.boss_data != null else &"parkour_practice"
 
 func _calculate_result() -> RunResult:
-	return RunResult.calculate(_elapsed_time, level.get_nominal_seconds(), player.damage_count, player.crystals, level.pickup_positions.size(), combat.kills, combat.max_combo)
+	var result := RunResult.calculate(_elapsed_time, level.get_nominal_seconds(), player.damage_count, player.crystals, level.pickup_positions.size(), combat.kills, combat.max_combo)
+	result.capture_context(level.data.level_id, get_run_mode(), run_id, run_loadout)
+	if get_run_mode() == &"full":
+		result.apply_formal_rules()
+	return result
 
 func _get_rank() -> String:
 	return _calculate_result().rank
@@ -381,7 +390,7 @@ func _show_result(title: String, body: String) -> void:
 	result_body.size = Vector2(576, 220)
 	result_body.add_theme_font_size_override("font_size", 20)
 	result_body.text = body
-	feedback_button.position = Vector2(440.0, 234.0)
+	feedback_button.position = Vector2(440.0, 258.0)
 	feedback_button.show()
 	_raise_modal_layers()
 	result_dimmer.visible = true

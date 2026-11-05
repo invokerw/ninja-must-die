@@ -71,7 +71,7 @@ func _test_data_and_profile() -> void:
 	var broken := PlayerProfile.new("res://.godot/missing-profile-dir/save.json")
 	_check(broken.try_equip(CHARACTER, &"star_lance") and not broken.save_profile() and broken.get_equipped_weapon(CHARACTER).weapon_id == &"star_lance", "A failed save must keep the in-memory choice and report failure")
 	var future_path := "res://.godot/test-future-profile.json"
-	var future_text := JSON.stringify({"version": 2, "future_field": [1, 2, 3]})
+	var future_text := JSON.stringify({"version": ProfileStore.VERSION + 1, "future_field": [1, 2, 3]})
 	file = FileAccess.open(future_path, FileAccess.WRITE)
 	file.store_string(future_text)
 	file.close()

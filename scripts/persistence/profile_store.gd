@@ -1,7 +1,7 @@
 class_name ProfileStore
 extends RefCounted
 
-const VERSION := 1
+const VERSION := 2
 
 static func read(path: String) -> Dictionary:
 	var primary := _read_file(path)

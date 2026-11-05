@@ -111,8 +111,10 @@ func _refresh_profile() -> void:
 			label.text = "尚无通关纪录\n完成此模式后自动保存\n三个模式分别记录"
 		elif mode == &"boss_practice":
 			label.text = "历史最快  %.2f 秒\n已完成 %d 次\n独立练习，不计整关评级" % [record.best_time, record.completions]
+		elif record.has("best_stars"):
+			label.text = "最高 %d 星 · %s\n最高分 %d · 最佳收集 %d / %d\n最快 %.2f 秒 · 已完成 %d 次" % [record.best_stars, "已获无伤印" if record.flawless else "尚无无伤印", record.best_score, record.best_collected, record.collectible_total, record.best_time, record.completions]
 		else:
-			label.text = "最佳评级 %s  ·  最快 %.2f 秒\n最高分 %d  ·  最佳收集 %d / %d\n已完成 %d 次 · 各项纪录独立统计" % [record.best_rank, record.best_time, record.best_score, record.best_collected, record.collectible_total, record.completions]
+			label.text = "%s %s · 最快 %.2f 秒\n最高分 %d · 最佳收集 %d / %d\n%s" % ["旧版评级" if mode == &"full" else "最佳评级", record.best_rank, record.best_time, record.best_score, record.best_collected, record.collectible_total, "星级待重新挑战" if mode == &"full" else "练习不记录主线星级"]
 
 func _toggle_settings() -> void:
 	feedback_menu.visible = not feedback_menu.visible

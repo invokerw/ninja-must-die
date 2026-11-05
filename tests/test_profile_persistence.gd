@@ -23,12 +23,31 @@ func _initialize() -> void:
 			push_error("Cross-process records/settings write failed")
 			quit(1)
 			return
+		var formal := RunResult.calculate(85.0, 85.0, 1, 40, 50, 0, 4)
+		formal.capture_context(LevelCatalog.WIND_BAMBOO_ID, &"full", "cross-process-formal", profile.resolve(character))
+		formal.apply_formal_rules()
+		if not profile.record_completion(LevelCatalog.WIND_BAMBOO_ID, &"full", formal):
+			push_error("Cross-process star snapshot write failed")
+			quit(1)
+			return
 		print("PROFILE_WRITE_PASS")
 	else:
 		FeedbackSettings.apply(profile.feedback_settings)
 		var record := profile.history.get_record(&"fog_ridge_60s", &"full")
 		if profile.get_equipped_weapon(character).weapon_id != &"star_lance" or FeedbackSettings.sound_enabled or FeedbackSettings.particles_enabled or FeedbackSettings.shake_enabled or FeedbackSettings.flash_enabled or record.get("best_time", 0.0) != 98.4 or record.get("best_rank", "") != "S" or profile.history.get_record(&"fog_ridge_60s", &"boss_practice").get("best_time", 0.0) != 34.3:
 			push_error("A fresh process did not restore equipment, settings and separate records")
+			quit(1)
+			return
+		var formal := profile.history.get_record(LevelCatalog.WIND_BAMBOO_ID, &"full")
+		if formal.get("best_stars") != 3 or formal.get("flawless") != false or formal.get("best_score") != 2650 or formal.get("best_score_snapshot", {}).get("weapon_id") != "star_lance" or formal.get("best_score_snapshot", {}).get("run_id") != "cross-process-formal":
+			push_error("A fresh process did not restore stars and their complete configuration snapshot")
+			quit(1)
+			return
+		var repeated := RunResult.calculate(85.0, 85.0, 1, 40, 50, 0, 4)
+		repeated.capture_context(LevelCatalog.WIND_BAMBOO_ID, &"full", "cross-process-formal", profile.resolve(character))
+		repeated.apply_formal_rules()
+		if profile.record_completion(LevelCatalog.WIND_BAMBOO_ID, &"full", repeated) or profile.history.get_record(LevelCatalog.WIND_BAMBOO_ID, &"full").completions != 1:
+			push_error("A reloaded run ID was recorded twice")
 			quit(1)
 			return
 		for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:

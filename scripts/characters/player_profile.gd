@@ -44,6 +44,7 @@ func load_profile() -> void:
 	owned_weapon_ids = STARTER_WEAPONS.duplicate()
 	character_loadouts.clear()
 	history.load_records(_document.get("run_records", {}))
+	history.load_progress(_document.get("level_progress", {}))
 	feedback_settings = FeedbackSettings.defaults()
 	var settings: Variant = _document.get("settings", {})
 	if settings is Dictionary:
@@ -137,11 +138,12 @@ func save_profile() -> bool:
 		save_status_changed.emit()
 		return false
 	var document := _document.duplicate(true)
-	document["version"] = 1
+	document["version"] = ProfileStore.VERSION
 	document["selected_character_id"] = String(selected_character_id)
 	document["owned_weapon_ids"] = owned_weapon_ids.map(func(id: StringName) -> String: return String(id))
 	document["character_loadouts"] = character_loadouts.duplicate(true)
 	document["run_records"] = history.to_dictionary()
+	document["level_progress"] = history.progress_to_dictionary()
 	var settings: Variant = document.get("settings", {})
 	if not settings is Dictionary:
 		settings = {}

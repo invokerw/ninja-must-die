@@ -71,7 +71,7 @@ godot_bin=/Applications/Godot_mono.app/Contents/MacOS/Godot
 | 移动、翻绳、落地、影晶、路线 | `rope_landing`、`rope_pickups`、`level_route`；涉及身法加 `mobility` |
 | 身法、输入和生命周期 | `mobility`、`touch_controls`；影响路线时加 `level_route` |
 | 战斗、弹体、首领、武器 | 按影响选择 `combat`、`projectiles`、`boss`、`weapons` |
-| 档案、成绩、设置、重试装备 | `save`、`weapons`，并执行跨进程存档写入 / 读取 |
+| 档案、成绩、设置、重试装备 | `save`、`stars_records`、`weapons`，并执行跨进程存档写入 / 读取 |
 | 触屏、HUD、角色美术、反馈 | 按影响选择 `touch_controls`、`ui_art_preview`、`player_art`、`feedback`；布局与视觉变化补实际图形检查 |
 | 导出元数据和打包配置 | Python 导出测试，核对两个导出预设及资源排除规则 |
 | 仅修改文档 | 核对引用、路径、命令及状态描述，并运行 `git diff --check` |
@@ -86,7 +86,7 @@ suite=mobility
 修改共通基础设施或准备发布时运行完整回归；套件清单随测试演进维护，发布要求以工作流为准，美术预览另按影响补测：
 
 ```sh
-for suite in rope_landing rope_pickups level_route mobility combat projectiles boss feedback weapons save touch_controls player_art ui_art_preview; do
+for suite in rope_landing rope_pickups level_route mobility combat projectiles boss feedback weapons save stars_records touch_controls player_art ui_art_preview level_select wind_bamboo; do
     "$godot_bin" --headless --path . --fixed-fps 60 --log-file "/tmp/ninja-$suite.log" --script "res://tests/test_$suite.gd" || exit $?
 done
 python3 -m unittest discover -s tests -p test_ci_export.py

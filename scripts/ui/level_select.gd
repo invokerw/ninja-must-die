@@ -19,6 +19,8 @@ var _card_titles: Dictionary = {}
 var _card_records: Dictionary = {}
 var _lock_art: Array[Control] = []
 var _record_rows: Array[Label] = []
+var record_character_only := false
+var _record_view_buttons: Array[Button] = []
 
 func _enter_tree() -> void:
 	run_loadout = RunNavigation.take_pending(scene_file_path)
@@ -63,7 +65,11 @@ func _ready() -> void:
 	var goal_title := _label("挑战目标", Rect2(852, 424, 340, 40), 21, Color("e8d5a4"))
 	goal_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	goal_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	var goals := _label("观察预警，抵达终点\n收集影晶，提高评级\n练习不会推进解锁", Rect2(852, 460, 340, 80), 17)
+	for index in range(2):
+		var view := _button("全角色最高" if index == 0 else "当前角色", Rect2(850 + index * 178, 344, 170, 48), _set_record_view.bind(index == 1))
+		view.toggle_mode = true
+		_record_view_buttons.append(view)
+	var goals := _label("收集与受击决定星级\n无伤印独立记录\n练习不改主线星级", Rect2(852, 460, 340, 80), 17)
 	goals.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	goals.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	detail_score = _label("", Rect2(852, 548, 340, 28), 17, Color("bdcbd2"))
@@ -117,11 +123,41 @@ func _select_level(level_id: StringName) -> void:
 		art.get_node(NodePath(node_name)).modulate = Color.WHITE if unlocked else Color(0.45, 0.48, 0.52)
 	detail_title.text = entry.title + ("  · 已解锁" if unlocked else "  · 未解锁")
 	detail_body.text = _description(entry)
-	var selected_record := _get_record(selected_level_id)
+	var selected_record := profile.history.get_record(selected_level_id, &"full", run_loadout.character.character_id if record_character_only else &"")
+	for index in range(_record_view_buttons.size()):
+		_record_view_buttons[index].set_pressed_no_signal(record_character_only == (index == 1))
 	var record_lines := _record_text(selected_record).split("\n")
 	for index in range(_record_rows.size()):
 		_record_rows[index].text = record_lines[index]
 	detail_score.text = "最高分    尚无纪录" if selected_record.is_empty() else "最高分    %d" % selected_record.best_score
+	detail_score.tooltip_text = _snapshot_text(selected_record)
+	detail_record.tooltip_text = detail_score.tooltip_text
+
+func _set_record_view(character_only: bool) -> void:
+	record_character_only = character_only
+	_select_level(selected_level_id)
+
+func _snapshot_text(record: Dictionary) -> String:
+	if not record.has("best_score_snapshot"):
+		return "旧版纪录缺少单局快照，星级待重新挑战。" if not record.is_empty() else "当前视图尚无正式纪录。"
+	var snapshot: Dictionary = record.best_score_snapshot
+	var fastest: Dictionary = record.fastest_snapshot
+	var text := "最高分单局：%s · %s\n%d / %d 影晶 · 受击 %d 次 · %.2f 秒\n最快单局：%s · %s" % [_character_name(snapshot.character_id), _weapon_name(snapshot.weapon_id), snapshot.collected, snapshot.collectible_total, snapshot.damage_count, snapshot.time_seconds, _character_name(fastest.character_id), _weapon_name(fastest.weapon_id)]
+	if record.flawless:
+		var stamp: Dictionary = record.flawless_snapshot
+		text += "\n首次无伤：%s UTC · %s · %s" % [stamp.completed_at, _character_name(stamp.character_id), _weapon_name(stamp.weapon_id)]
+	if not record.get("legacy_record", {}).is_empty():
+		var legacy: Dictionary = record.legacy_record
+		text += "\n旧版：%s · %d 分 · 最快 %.2f 秒 · %d 次通关\n旧版成绩未换算为星级。" % [legacy.best_rank, legacy.best_score, legacy.best_time, legacy.completions]
+	return text
+
+func _character_name(id: String) -> String:
+	var character := CharacterRegistry.get_character(StringName(id))
+	return character.display_name if character != null else id
+
+func _weapon_name(id: String) -> String:
+	var weapon := PlayerProfile.WEAPONS.get(StringName(id)) as WeaponData
+	return weapon.display_name if weapon != null else id
 
 func _description(entry: Dictionary) -> String:
 	var description: String = entry.get("description", "")
@@ -173,12 +209,17 @@ func _get_record(level_id: StringName) -> Dictionary:
 func _record_short_text(record: Dictionary) -> String:
 	if record.is_empty():
 		return "尚无正式纪录"
-	return "最高 %s · %d / %d" % [record.best_rank, record.best_collected, record.collectible_total]
+	if record.has("best_stars"):
+		return "最高 %d 星 · %s" % [record.best_stars, "无伤印" if record.flawless else "尚无无伤印"]
+	return "旧版 %s · 星级待挑战" % record.best_rank
 
 func _record_text(record: Dictionary) -> String:
 	if record.is_empty():
-		return "评级    尚无纪录\n用时    尚无纪录\n收集    尚无纪录"
-	return "评级    %s · %d 次通关\n最快    %.2f 秒\n收集    %d / %d" % [record.best_rank, record.completions, record.best_time, record.best_collected, record.collectible_total]
+		return "星级    尚无纪录\n用时    尚无纪录\n收集    尚无纪录"
+	if record.has("best_stars"):
+		var snapshot: Dictionary = record.best_score_snapshot
+		return "最高 %d 星 · %s\n最快    %.2f 秒\n最高分局 %d/%d · 受击 %d 次" % [record.best_stars, "无伤印" if record.flawless else "尚无无伤印", record.best_time, snapshot.collected, snapshot.collectible_total, snapshot.damage_count]
+	return "旧版 %s · 星级待挑战\n最快    %.2f 秒\n收集    %d / %d" % [record.best_rank, record.best_time, record.best_collected, record.collectible_total]
 
 func _label(text: String, rect: Rect2, font_size: int, color: Color = Color("dde7e7")) -> Label:
 	var label := Label.new()

@@ -56,7 +56,7 @@ func _test_legacy_and_validation() -> void:
 	_write(STORE_PATH + ".bak", "null")
 	profile.load_profile()
 	_check(profile.history.get_record(LEVEL, &"full").is_empty() and profile.get_equipped_weapon(CHARACTER).weapon_id == &"crescent_wheel" and not profile.load_notice.is_empty(), "Invalid JSON roots must fall back to playable defaults")
-	_write(STORE_PATH, JSON.stringify({"version": 2, "settings": {"sound": false}, "future": [9]}))
+	_write(STORE_PATH, JSON.stringify({"version": ProfileStore.VERSION + 1, "settings": {"sound": false}, "future": [9]}))
 	profile.load_profile()
 	var original := FileAccess.get_file_as_string(STORE_PATH)
 	var backup := FileAccess.get_file_as_string(STORE_PATH + ".bak")
