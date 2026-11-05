@@ -16,6 +16,7 @@ var history_labels: Dictionary = {}
 var save_retry: Button
 var _launching := false
 var _equipment_save_pending := false
+var wallet: Label
 
 func _ready() -> void:
 	PaintedTheme.apply_font(self)
@@ -28,6 +29,7 @@ func _ready() -> void:
 	backdrop.add_child(PaintedBackdrop.new())
 	_panel(Rect2(0, 0, 1280, 720), Color("111827", 0.50))
 	_label("角色与武器", Rect2(44, 30, 1100, 48), 34, Color("d8b56a"))
+	wallet = _label("", Rect2(640, 45, 265, 32), 20, Color("d8b56a"))
 	_label("选择出战装备，踏入雾岭断桥。", Rect2(44, 88, 1100, 30), 20)
 	_panel(Rect2(44, 142, 400, 348), Color("192536"))
 	_panel(Rect2(470, 142, 766, 348), Color("192536"))
@@ -100,6 +102,7 @@ func _refresh_equipment() -> void:
 		status.text = profile.load_notice
 
 func _refresh_profile() -> void:
+	wallet.text = "铜钱 %d%s" % [profile.coins, " · 待保存" if not profile.pending_transaction.is_empty() else ""]
 	if not profile.save_pending:
 		_equipment_save_pending = false
 	_refresh_equipment()

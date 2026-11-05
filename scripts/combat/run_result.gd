@@ -11,6 +11,7 @@ var kills: int
 var max_combo: int
 var score: int
 var rank: String
+var completed := false
 var stars := 0
 var flawless := false
 var score_rule_version := 0

@@ -9,6 +9,8 @@ static var _pending_level_id: StringName = &""
 static var _pending_mode: StringName = &""
 
 static func launch(tree: SceneTree, path: String, loadout: RunLoadout) -> Error:
+	if path.ends_with("/main.tscn") and not PlayerProfile.current().can_start_formal_run():
+		return ERR_BUSY
 	_pending = loadout.copy()
 	_pending_path = path
 	_pending_level_id = &""
@@ -37,6 +39,8 @@ static func open_level_select(tree: SceneTree, loadout: RunLoadout) -> Error:
 	return error
 
 static func launch_level(tree: SceneTree, path: String, loadout: RunLoadout, level_id: StringName) -> Error:
+	if path.ends_with("/main.tscn") and not PlayerProfile.current().can_start_formal_run():
+		return ERR_BUSY
 	_pending = loadout.copy()
 	_pending_path = path
 	_pending_level_id = LevelCatalog.canonicalize(level_id)

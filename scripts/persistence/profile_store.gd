@@ -1,7 +1,11 @@
 class_name ProfileStore
 extends RefCounted
 
-const VERSION := 2
+const VERSION := 3
+
+# Optional write boundary observer for deterministic I/O-failure regression.
+# Returning false cancels the write before the named operation.
+static var write_guard: Callable
 
 static func read(path: String) -> Dictionary:
 	var primary := _read_file(path)
@@ -16,7 +20,14 @@ static func is_newer(document: Dictionary) -> bool:
 	return float(document.get("version", VERSION)) > VERSION
 
 static func write(path: String, document: Dictionary) -> bool:
+	if int(document.get("version", 0)) == VERSION and not RewardService.valid_state(document):
+		return false
+	var primary := _read_file(path)
+	if primary.valid and is_newer(primary.document):
+		return false
 	var temporary := path + ".tmp"
+	if not _allow("temporary"):
+		return false
 	var file := FileAccess.open(temporary, FileAccess.WRITE)
 	if file == null:
 		return false
@@ -26,18 +37,20 @@ static func write(path: String, document: Dictionary) -> bool:
 	file.close()
 	if error != OK:
 		return false
-	var primary := _read_file(path)
 	# Keep a known valid generation; never replace it with damaged input.
-	if primary.valid and is_newer(primary.document):
-		return false
 	var backup_source := path if primary.valid else temporary
 	if not primary.valid and FileAccess.file_exists(path):
 		if _copy(path, path + ".corrupt") != OK:
 			return false
 	if primary.valid or not _read_file(path + ".bak").valid:
+		if not _allow("backup"):
+			return false
 		if _copy(backup_source, path + ".bak.tmp") != OK or _rename(path + ".bak.tmp", path + ".bak") != OK:
 			return false
-	return _rename(temporary, path) == OK
+	return _allow("replace") and _rename(temporary, path) == OK
+
+static func _allow(stage: String) -> bool:
+	return not write_guard.is_valid() or bool(write_guard.call(stage))
 
 static func _read_file(path: String) -> Dictionary:
 	var invalid := {"valid": false, "document": {}}
@@ -56,6 +69,8 @@ static func _read_file(path: String) -> Dictionary:
 		return invalid
 	var version: Variant = parsed.get("version", VERSION)
 	if not (version is int or version is float) or not is_finite(float(version)) or float(version) < 0.0 or float(version) != floorf(float(version)):
+		return invalid
+	if int(version) == VERSION and (not RewardService.valid_state(parsed) or parsed.get("pending_transaction") != null):
 		return invalid
 	return {"valid": true, "document": parsed}
 

@@ -2,7 +2,7 @@
 
 当前主场景的 `Level` 节点读取 `fog_ridge_60s.tres`。该资源使用 Godot 自定义 `Resource`，可在检查器中直接展开修改；`main.gd` 不再保存机关或影晶坐标。
 
-第一章目录由 `scripts/progress/level_catalog.gd` 提供稳定 ID 和解锁前置，准备页的“关卡选择”入口会读取目录并把选中的资源注入共用正式 / 练习场景。当前第二关灰盒资源为 `wind_bamboo_85s.tres`；故事与正式奖励尚未接入，三名角色的基础 / 身法替代路线回放见下文。
+第一章目录由 `scripts/progress/level_catalog.gd` 提供稳定 ID 和解锁前置，准备页的“关卡选择”入口会读取目录并把选中的资源注入共用正式 / 练习场景。当前第二关灰盒资源为 `wind_bamboo_85s.tres`；故事尚未接入，正式奖励及存档事务已接入，三名角色的基础 / 身法替代路线回放见下文。
 
 F5 准备页选择完整关卡后，`scenes/main.tscn` 配置 `Boss Data=res://data/enemies/bridge_kite.tres`，在这条 60 秒路线之后进入约 40 秒首领追逐战。`scenes/practice.tscn` 将 `Boss Data` 设为空，保留原终点；`scenes/boss_practice.tscn` 直接进入首领。首领参数、攻击窗口与评级说明见 [小型首领](../../docs/BOSS_ENCOUNTER.md)。
 

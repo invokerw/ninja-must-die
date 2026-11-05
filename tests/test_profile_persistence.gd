@@ -26,6 +26,7 @@ func _initialize() -> void:
 		var formal := RunResult.calculate(85.0, 85.0, 1, 40, 50, 0, 4)
 		formal.capture_context(LevelCatalog.WIND_BAMBOO_ID, &"full", "cross-process-formal", profile.resolve(character))
 		formal.apply_formal_rules()
+		formal.completed = true
 		if not profile.record_completion(LevelCatalog.WIND_BAMBOO_ID, &"full", formal):
 			push_error("Cross-process star snapshot write failed")
 			quit(1)
@@ -46,8 +47,13 @@ func _initialize() -> void:
 		var repeated := RunResult.calculate(85.0, 85.0, 1, 40, 50, 0, 4)
 		repeated.capture_context(LevelCatalog.WIND_BAMBOO_ID, &"full", "cross-process-formal", profile.resolve(character))
 		repeated.apply_formal_rules()
+		repeated.completed = true
 		if profile.record_completion(LevelCatalog.WIND_BAMBOO_ID, &"full", repeated) or profile.history.get_record(LevelCatalog.WIND_BAMBOO_ID, &"full").completions != 1:
 			push_error("A reloaded run ID was recorded twice")
+			quit(1)
+			return
+		if profile.coins != 476 or profile.reward_summary("cross-process-formal").get("total") != 356 or not profile.pending_transaction.is_empty():
+			push_error("A fresh process did not restore one atomic wallet/reward-ledger generation")
 			quit(1)
 			return
 		for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:

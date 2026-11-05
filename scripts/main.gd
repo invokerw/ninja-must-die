@@ -57,6 +57,10 @@ var painted_progress: ProgressRail
 var run_mode_override: StringName = &""
 var selected_level_id: StringName = &""
 var run_id := ""
+var rewards_button: Button
+var _result_stats := ""
+var _reward_details := ""
+var reward_notice: Label
 
 func _enter_tree() -> void:
 	run_id = Crypto.new().generate_random_bytes(16).hex_encode()
@@ -101,6 +105,10 @@ func _ready() -> void:
 	combat.changed.connect(_update_status)
 	if not level.build(player):
 		_show_result("关卡无法加载", "请检查关卡资源，详细原因见调试输出。")
+		return
+	if get_run_mode() == &"full" and not PlayerProfile.current().can_start_formal_run():
+		_show_result("请先保存奖励", PlayerProfile.current().last_error)
+		_update_save_status()
 		return
 	player.active = true
 	if start_at_boss and level.boss_data != null:
@@ -343,6 +351,7 @@ func _on_finish_reached() -> void:
 		return
 	player.stop()
 	run_result = _calculate_result()
+	run_result.completed = true
 	feedback.finish(true)
 	_update_status()
 	progress_fill.size.x = progress_fill.get_parent().size.x
@@ -361,7 +370,16 @@ func _on_finish_reached() -> void:
 	if boss_practice:
 		body = "首领：%s · 已击破\n用时 %.1f 秒    受击 %d 次\n练习完成，可重试熟悉其他躲法" % [level.boss.data.display_name, run_result.time_seconds, run_result.damage_count]
 		body += "\n%s · 武器 %d / 忍术 %d / 飞镖 %d" % [run_loadout.weapon.display_name, combat.damage_by_source[&"weapon"], combat.damage_by_source[&"skill"], combat.damage_by_source[&"pickup"]]
+	var summary := PlayerProfile.current().reward_summary(run_id)
+	if not summary.is_empty():
+		body += "\n" + ResultRewards.line(summary)
 	_show_result("%s · 完成" % ("首领练习" if boss_practice else level.data.title), body)
+	if not summary.is_empty():
+		result_body.add_theme_font_size_override("font_size", 18)
+		result_body.tooltip_text = ResultRewards.breakdown(summary)
+		_result_stats = body
+		_reward_details = ResultRewards.details(summary)
+		rewards_button.show()
 	_update_save_status()
 
 func get_run_mode() -> StringName:
@@ -479,8 +497,17 @@ func _setup_equipment_controls() -> void:
 	result_body.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	result_body.add_theme_font_size_override("font_size", 20)
 	save_status = _hud_label(result_overlay, Rect2(32, 304, 400, 23), 15)
+	reward_notice = _hud_label($UI/HUD, Rect2(430, 94, 650, 26), 15)
+	reward_notice.text = "奖励未保存，请返回准备页重试保存"
+	reward_notice.add_theme_color_override("font_color", Color("e8d5a4"))
 	save_retry = _hud_button(result_overlay, "重试保存", Rect2(440, 294, 168, 30), PlayerProfile.current().save_profile)
 	save_retry.hide()
+	rewards_button = _hud_button(result_overlay, "奖励明细", Rect2(32, 258, 168, 42), func() -> void:
+		var showing_details := result_body.text == _reward_details
+		result_body.text = _result_stats if showing_details else _reward_details
+		rewards_button.text = "奖励明细" if showing_details else "返回成绩"
+	)
+	rewards_button.hide()
 	PlayerProfile.current().save_status_changed.connect(_update_save_status)
 	$UI/HUD/ResultOverlay/RetryHint.hide()
 	_hud_button(result_overlay, "重试 R / Enter", Rect2(32, 330, 272, 44), _restart_run)
@@ -494,6 +521,9 @@ func _update_save_status() -> void:
 		return
 	var profile := PlayerProfile.current()
 	save_status.text = "暂未保存，可重试" if profile.save_pending else ("成绩已保存" if _completion_recorded else "")
+	if not profile.pending_transaction.is_empty():
+		save_status.text = "奖励仅在内存中，请先重试保存"
+	reward_notice.visible = not profile.pending_transaction.is_empty() and not profile.last_error.is_empty()
 	save_retry.visible = profile.save_pending
 
 func _raise_modal_layers() -> void:

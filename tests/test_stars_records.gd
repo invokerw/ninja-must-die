@@ -30,6 +30,7 @@ func _result(id: String, collected := 50, damage := 0, seconds := 100.0, charact
 	var result := RunResult.calculate(seconds, 100.0, damage, collected, 50, 1, 4)
 	result.capture_context(level, &"full", id, loadout)
 	result.apply_formal_rules()
+	result.completed = true
 	return result
 
 func _test_formula() -> void:
@@ -95,7 +96,7 @@ func _test_legacy_and_storage() -> void:
 	_check(record.best_stars == 3 and record.flawless and record.completions == 1 and record.legacy_record.best_score == old.best_score, "v2 reload and legacy alias must expose new stars plus untouched old record")
 	_check(not restored.record_completion(LEVEL, &"full", result) and restored.history.get_record(LEVEL, &"full").completions == 1, "Reloaded run IDs must remain deduplicated")
 	var document: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
-	_check(document.version == 2 and document.run_records == JSON.parse_string(JSON.stringify(old_records)) and document.custom.preserve, "v1 to v2 save must preserve unknown fields and original legacy buckets")
+	_check(document.version == ProfileStore.VERSION and document.run_records == JSON.parse_string(JSON.stringify(old_records)) and document.custom.preserve, "Save migration must preserve unknown fields and original legacy buckets")
 	document.level_progress[String(LEVEL)]["future_entry"] = {"keep": 4}
 	document.level_progress[String(LEVEL)].overall["future_record"] = 9
 	document.level_progress[String(LEVEL)].characters["future_character"] = {"keep": true}
@@ -228,7 +229,7 @@ func _capture(output: String) -> void:
 				main.level.boss.remaining = 10.0
 				main.combat.try_skill()
 				await _frames(56)
-				_check(main._finished and main.result_body.get_line_count() == 5, "Full boss result must fit five lines above settings/save actions")
+				_check(main._finished and main.result_body.get_line_count() <= 7, "Full boss result and reward must fit above settings/save actions")
 			else:
 				var select := SELECT.instantiate()
 				select.profile = PlayerProfile.new()

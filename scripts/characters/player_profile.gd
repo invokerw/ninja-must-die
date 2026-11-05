@@ -23,6 +23,33 @@ var load_notice := ""
 var history := RunHistory.new()
 var feedback_settings := FeedbackSettings.defaults()
 var _document: Dictionary = {}
+var _reward_state: Dictionary = {}
+var _pending_transaction: Dictionary = {}
+var _transaction_failed := false
+var coins: int:
+	get: return int(_reward_state.get("coins", 0))
+var pending_transaction: Dictionary:
+	get: return _pending_transaction.duplicate(true)
+
+func reward_summary(run_id: String) -> Dictionary:
+	var ledger: Dictionary = _reward_state.get("reward_ledger", {})
+	var runs: Dictionary = ledger.get("runs", {})
+	return (runs.get(run_id, {}) as Dictionary).duplicate(true)
+
+func reward_state() -> Dictionary:
+	return _reward_state.duplicate(true)
+
+func can_start_formal_run() -> bool:
+	if ProfileStore.is_newer(_document):
+		last_error = "存档版本较新，暂不能开始正式挑战；可进入免费练习。"
+		return false
+	if _transaction_failed:
+		last_error = "通关奖励尚未保存，请先重试保存；可进入免费练习。"
+		return false
+	# Commit starter/legacy entitlements before starting the first formal run.
+	if not _pending_transaction.is_empty():
+		return save_profile()
+	return true
 
 static func current() -> PlayerProfile:
 	if _shared == null:
@@ -33,6 +60,9 @@ static func current() -> PlayerProfile:
 
 func _init(path: String = "user://save.json") -> void:
 	save_path = path
+	_reward_state = RewardService.initial_state({}, history)
+	_pending_transaction = {"id": "rewards-migration-v3", "kind": "migration"}
+	save_pending = true
 
 func load_profile() -> void:
 	var loaded := ProfileStore.read(save_path)
@@ -45,6 +75,15 @@ func load_profile() -> void:
 	character_loadouts.clear()
 	history.load_records(_document.get("run_records", {}))
 	history.load_progress(_document.get("level_progress", {}))
+	_pending_transaction = {}
+	_transaction_failed = false
+	if not ProfileStore.is_newer(_document):
+		_reward_state = RewardService.initial_state(_document, history)
+		if int(_document.get("version", 0)) < 3:
+			_pending_transaction = {"id": "rewards-migration-v3", "kind": "migration"}
+			save_pending = true
+	else:
+		_reward_state = {}
 	feedback_settings = FeedbackSettings.defaults()
 	var settings: Variant = _document.get("settings", {})
 	if settings is Dictionary:
@@ -144,6 +183,9 @@ func save_profile() -> bool:
 	document["character_loadouts"] = character_loadouts.duplicate(true)
 	document["run_records"] = history.to_dictionary()
 	document["level_progress"] = history.progress_to_dictionary()
+	for field in RewardService.FIELDS:
+		document[field] = _reward_state[field]
+	document["pending_transaction"] = null
 	var settings: Variant = document.get("settings", {})
 	if not settings is Dictionary:
 		settings = {}
@@ -152,9 +194,12 @@ func save_profile() -> bool:
 	document["settings"] = settings
 	if not ProfileStore.write(save_path, document):
 		last_error = "本次更改已生效，暂未保存。"
+		_transaction_failed = not _pending_transaction.is_empty()
 		save_status_changed.emit()
 		return false
 	_document = document
+	_pending_transaction = {}
+	_transaction_failed = false
 	save_pending = false
 	load_notice = ""
 	save_status_changed.emit()
@@ -170,6 +215,23 @@ func set_feedback_setting(key: String, enabled: bool) -> bool:
 	return save_profile()
 
 func record_completion(level_id: StringName, mode: StringName, result: RunResult) -> bool:
+	if mode == &"full" and result != null and result.score_rule_version != 0:
+		# Future documents remain read-only; keep understandable records in memory.
+		if ProfileStore.is_newer(_document):
+			if history.record_completion(level_id, mode, result):
+				save_pending = true
+			return save_profile()
+		if LevelCatalog.canonicalize(level_id) != result.level_id or _transaction_failed or (not _pending_transaction.is_empty() and _pending_transaction.kind != "migration"):
+			last_error = "通关奖励尚未保存，请先重试保存。"
+			return false
+		var transaction := RewardService.complete_run(_reward_state, history, result)
+		if transaction.is_empty():
+			return false
+		_reward_state = transaction.state
+		history.load_progress(transaction.progress)
+		_pending_transaction = {"id": result.run_id, "kind": "completion", "summary": transaction.summary.duplicate(true)}
+		save_pending = true
+		return save_profile()
 	if not history.record_completion(level_id, mode, result):
 		return false
 	save_pending = true

@@ -21,6 +21,8 @@ var _lock_art: Array[Control] = []
 var _record_rows: Array[Label] = []
 var record_character_only := false
 var _record_view_buttons: Array[Button] = []
+var wallet: Label
+var save_retry: Button
 
 func _enter_tree() -> void:
 	run_loadout = RunNavigation.take_pending(scene_file_path)
@@ -35,6 +37,9 @@ func _ready() -> void:
 	add_child(art)
 	_label("第一章 · 驿灯路线", Rect2(168, 88, 250, 28), 18, Color("e8d5a4"))
 	_label("沿山上行", Rect2(104, 185, 190, 32), 19)
+	wallet = _label("", Rect2(560, 82, 400, 40), 22, Color("e8d5a4"))
+	save_retry = _button("重试保存", Rect2(1000, 82, 168, 48), profile.save_profile)
+	profile.save_status_changed.connect(func() -> void: _select_level(selected_level_id))
 	var back := _button("", Rect2(1184, 16, 80, 64), _return_to_setup)
 	back.tooltip_text = "返回角色与武器"
 	var entries := LevelCatalog.list_levels(&"chapter_01")
@@ -97,6 +102,8 @@ func _select_level(level_id: StringName) -> void:
 	if entry.is_empty():
 		return
 	selected_level_id = LevelCatalog.canonicalize(level_id)
+	wallet.text = "铜钱 %d%s" % [profile.coins, " · 待保存" if not profile.pending_transaction.is_empty() else ""]
+	save_retry.visible = profile.save_pending
 	var completed := _completed_level_ids()
 	var unlocked := LevelCatalog.is_unlocked(selected_level_id, completed)
 	for id in level_buttons:
@@ -119,6 +126,8 @@ func _select_level(level_id: StringName) -> void:
 		status.text = "当前出战：%s · %s" % [run_loadout.character.display_name, run_loadout.weapon.display_name]
 		start_button.disabled = false
 		practice_button.disabled = false
+		if not profile.pending_transaction.is_empty() and not profile.last_error.is_empty():
+			status.text = "奖励仅在内存中，请先重试保存；可进入免费练习。"
 	for node_name in ["loop_02_roi_5_runner_control_composite", "loop_04_roi_5_runner_footer_plate", "loop_02_roi_6_left_control_composite", "loop_03_roi_6_left_footer_plate"]:
 		art.get_node(NodePath(node_name)).modulate = Color.WHITE if unlocked else Color(0.45, 0.48, 0.52)
 	detail_title.text = entry.title + ("  · 已解锁" if unlocked else "  · 未解锁")
@@ -174,7 +183,7 @@ func _start_level(practice: bool) -> void:
 	var path: String = entry.practice_scene if practice else entry.formal_scene
 	if RunNavigation.launch_level(get_tree(), path, run_loadout, selected_level_id) != OK:
 		_launching = false
-		status.text = "暂时无法进入关卡，请重试。"
+		status.text = profile.last_error if not profile.last_error.is_empty() else "暂时无法进入关卡，请重试。"
 
 func _return_to_setup() -> void:
 	if _launching:
