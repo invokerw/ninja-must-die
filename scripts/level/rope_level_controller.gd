@@ -56,6 +56,11 @@ func build(player: PlayerController) -> bool:
 			hazard.cable_side = entry.cable_side
 			hazard.hazard_size = entry.size
 			hazard.warning_distance = data.recommended_speed * data.warning_seconds
+			hazard.hazard_type = entry.hazard_type
+			hazard.warning_seconds = entry.warning_seconds
+			hazard.active_seconds = entry.active_seconds
+			hazard.exit_seconds = entry.exit_seconds
+			hazard.safe_side = entry.safe_side
 			add_child(hazard)
 			hazards.append(hazard)
 		for entry in segment.pickups:

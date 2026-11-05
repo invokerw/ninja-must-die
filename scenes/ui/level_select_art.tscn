@@ -1,0 +1,415 @@
+[gd_scene load_steps=42 format=3]
+
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/background_final.png" id="1"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_06_overview_left_progression_panel.png" id="2"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_05_overview_right_detail_panel.png" id="3"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_05_overview_navigation_backplate.png" id="4"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_05_roi_4_locked_card_backplate.png" id="5"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_04_overview_wide_illustration_panel.png" id="6"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_04_roi_5_runner_footer_plate.png" id="7"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_04_roi_5_crown_backplate.png" id="8"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_04_roi_5_compass_backplate.png" id="9"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_04_roi_4_lower_footer.png" id="10"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_04_roi_1_progress_rail.png" id="11"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_6_right_footer_plate.png" id="12"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_6_left_footer_plate.png" id="13"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_5_timer_backplate.png" id="15"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_5_header_backplate.png" id="16"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_4_lock_backplate.png" id="17"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_4_route_ornament.png" id="18"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_3_back_button_plate.png" id="19"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_1_progress_node_two.png" id="20"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_1_progress_node_one.png" id="21"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_1_progress_active.png" id="22"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_03_roi_1_progress_start.png" id="23"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_6_right_control_composite.png" id="24"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_6_left_control_composite.png" id="25"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_5_runner_control_composite.png" id="26"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_5_crown_icon.png" id="30"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_5_timer_icon.png" id="31"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_5_compass_icon.png" id="32"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_5_top_diamond_badge.png" id="33"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_4_lock_icon.png" id="34"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_4_lower_badge.png" id="35"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_3_back_arrow.png" id="36"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_2_central_corner_ornament.png" id="37"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_2_top_diamond_control.png" id="38"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_1_side_diamond.png" id="39"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_1_side_lantern.png" id="40"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_1_feature_card.png" id="41"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_1_side_circle_button.png" id="42"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_1_side_label_plate.png" id="43"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_1_top_label_plate.png" id="44"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/level_select/v01/loop_02_roi_1_top_medallion.png" id="45"]
+
+[node name="LevelSelectArt" type="Control"]
+mouse_filter = 2
+
+[node name="background_final" type="TextureRect" parent="."]
+offset_left = 0.0000
+offset_top = 0.0000
+offset_right = 1280.0000
+offset_bottom = 720.0000
+mouse_filter = 2
+texture = ExtResource("1")
+expand_mode = 1
+
+[node name="loop_06_overview_left_progression_panel" type="TextureRect" parent="."]
+offset_left = 40.5742
+offset_top = 162.9756
+offset_right = 464.6890
+offset_bottom = 659.5537
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+
+[node name="loop_05_overview_right_detail_panel" type="TextureRect" parent="."]
+offset_left = 464.6890
+offset_top = 164.5058
+offset_right = 1240.1914
+offset_bottom = 661.8491
+mouse_filter = 2
+texture = ExtResource("3")
+expand_mode = 1
+
+[node name="loop_05_overview_navigation_backplate" type="TextureRect" parent="."]
+offset_left = 36.7464
+offset_top = 39.0223
+offset_right = 518.2775
+offset_bottom = 164.5058
+mouse_filter = 2
+texture = ExtResource("4")
+expand_mode = 1
+
+[node name="loop_05_roi_4_locked_card_backplate" type="TextureRect" parent="."]
+offset_left = 114.0670
+offset_top = 392.5186
+offset_right = 450.1435
+offset_bottom = 543.2519
+mouse_filter = 2
+texture = ExtResource("5")
+expand_mode = 1
+
+[node name="loop_04_overview_wide_illustration_panel" type="TextureRect" parent="."]
+offset_left = 485.3589
+offset_top = 184.3996
+offset_right = 1221.8182
+offset_bottom = 403.2306
+mouse_filter = 2
+texture = ExtResource("6")
+expand_mode = 1
+
+[node name="loop_04_roi_5_runner_footer_plate" type="TextureRect" parent="."]
+offset_left = 561.1483
+offset_top = 565.4134
+offset_right = 820.6699
+offset_bottom = 662.5866
+mouse_filter = 2
+texture = ExtResource("7")
+expand_mode = 1
+
+[node name="loop_04_roi_5_crown_backplate" type="TextureRect" parent="."]
+offset_left = 490.7177
+offset_top = 511.8810
+offset_right = 546.6029
+offset_bottom = 571.5622
+mouse_filter = 2
+texture = ExtResource("8")
+expand_mode = 1
+
+[node name="loop_04_roi_5_compass_backplate" type="TextureRect" parent="."]
+offset_left = 490.7177
+offset_top = 412.4123
+offset_right = 546.6029
+offset_bottom = 473.6238
+mouse_filter = 2
+texture = ExtResource("9")
+expand_mode = 1
+
+[node name="loop_04_roi_4_lower_footer" type="TextureRect" parent="."]
+offset_left = 120.9569
+offset_top = 492.7524
+offset_right = 444.7847
+offset_bottom = 537.1307
+mouse_filter = 2
+texture = ExtResource("10")
+expand_mode = 1
+
+[node name="loop_04_roi_1_progress_rail" type="TextureRect" parent="."]
+offset_left = 168.4211
+offset_top = 124.7184
+offset_right = 452.4402
+offset_bottom = 141.5515
+mouse_filter = 2
+texture = ExtResource("11")
+expand_mode = 1
+
+[node name="loop_03_roi_6_right_footer_plate" type="TextureRect" parent="."]
+offset_left = 1041.9139
+offset_top = 584.5420
+offset_right = 1220.2871
+offset_bottom = 643.4581
+mouse_filter = 2
+texture = ExtResource("12")
+expand_mode = 1
+
+[node name="loop_03_roi_6_left_footer_plate" type="TextureRect" parent="."]
+offset_left = 843.6364
+offset_top = 585.3071
+offset_right = 1012.0574
+offset_bottom = 642.6929
+mouse_filter = 2
+texture = ExtResource("13")
+expand_mode = 1
+
+[node name="loop_03_roi_5_timer_backplate" type="TextureRect" parent="."]
+offset_left = 490.7177
+offset_top = 463.6769
+offset_right = 542.7751
+offset_bottom = 521.8278
+mouse_filter = 2
+texture = ExtResource("15")
+expand_mode = 1
+
+[node name="loop_03_roi_5_header_backplate" type="TextureRect" parent="."]
+offset_left = 493.7799
+offset_top = 337.4283
+offset_right = 837.7799
+offset_bottom = 395.5792
+mouse_filter = 2
+texture = ExtResource("16")
+expand_mode = 1
+
+[node name="loop_03_roi_4_lock_backplate" type="TextureRect" parent="."]
+offset_left = 244.2500
+offset_top = 413.8000
+offset_right = 321.7500
+offset_bottom = 490.5250
+mouse_filter = 2
+texture = ExtResource("17")
+expand_mode = 1
+
+[node name="loop_03_roi_4_route_ornament" type="TextureRect" parent="."]
+offset_left = 68.8995
+offset_top = 342.0191
+offset_right = 104.1148
+offset_bottom = 631.2434
+mouse_filter = 2
+texture = ExtResource("18")
+expand_mode = 1
+
+[node name="loop_03_roi_3_back_button_plate" type="TextureRect" parent="."]
+offset_left = 1192.7273
+offset_top = 21.4240
+offset_right = 1258.5646
+offset_bottom = 86.4612
+mouse_filter = 2
+texture = ExtResource("19")
+expand_mode = 1
+
+[node name="loop_03_roi_1_progress_node_two" type="TextureRect" parent="."]
+offset_left = 355.9809
+offset_top = 119.3624
+offset_right = 382.0096
+offset_bottom = 146.9075
+mouse_filter = 2
+texture = ExtResource("20")
+expand_mode = 1
+
+[node name="loop_03_roi_1_progress_node_one" type="TextureRect" parent="."]
+offset_left = 282.4880
+offset_top = 119.3624
+offset_right = 308.5167
+offset_bottom = 146.1424
+mouse_filter = 2
+texture = ExtResource("21")
+expand_mode = 1
+
+[node name="loop_03_roi_1_progress_active" type="TextureRect" parent="."]
+offset_left = 196.7464
+offset_top = 111.7109
+offset_right = 235.0239
+offset_bottom = 155.3241
+mouse_filter = 2
+texture = ExtResource("22")
+expand_mode = 1
+
+[node name="loop_03_roi_1_progress_start" type="TextureRect" parent="."]
+offset_left = 161.5311
+offset_top = 119.3624
+offset_right = 185.2632
+offset_bottom = 146.1424
+mouse_filter = 2
+texture = ExtResource("23")
+expand_mode = 1
+
+[node name="loop_02_roi_6_right_control_composite" type="TextureRect" parent="."]
+offset_left = 1019.5882
+offset_top = 563.7647
+offset_right = 1118.4118
+offset_bottom = 665.0588
+mouse_filter = 2
+texture = ExtResource("24")
+expand_mode = 1
+
+[node name="loop_02_roi_6_left_control_composite" type="TextureRect" parent="."]
+offset_left = 822.4757
+offset_top = 567.1068
+offset_right = 919.5243
+offset_bottom = 664.1553
+mouse_filter = 2
+texture = ExtResource("25")
+expand_mode = 1
+
+[node name="loop_02_roi_5_runner_control_composite" type="TextureRect" parent="."]
+offset_left = 566.6667
+offset_top = 564.0000
+offset_right = 662.6667
+offset_bottom = 664.6667
+mouse_filter = 2
+texture = ExtResource("26")
+expand_mode = 1
+
+[node name="loop_02_roi_5_crown_icon" type="TextureRect" parent="."]
+offset_left = 500.6699
+offset_top = 518.7673
+offset_right = 539.7129
+offset_bottom = 560.0850
+mouse_filter = 2
+texture = ExtResource("30")
+expand_mode = 1
+
+[node name="loop_02_roi_5_timer_icon" type="TextureRect" parent="."]
+offset_left = 503.7321
+offset_top = 475.1541
+offset_right = 536.6507
+offset_bottom = 511.8810
+mouse_filter = 2
+texture = ExtResource("31")
+expand_mode = 1
+
+[node name="loop_02_roi_5_compass_icon" type="TextureRect" parent="."]
+offset_left = 501.4354
+offset_top = 426.1849
+offset_right = 537.4163
+offset_bottom = 462.1467
+mouse_filter = 2
+texture = ExtResource("32")
+expand_mode = 1
+
+[node name="loop_02_roi_5_top_diamond_badge" type="TextureRect" parent="."]
+offset_left = 497.6077
+offset_top = 339.7237
+offset_right = 550.4306
+offset_bottom = 393.2837
+mouse_filter = 2
+texture = ExtResource("33")
+expand_mode = 1
+
+[node name="loop_02_roi_4_lock_icon" type="TextureRect" parent="."]
+offset_left = 262.3750
+offset_top = 427.7500
+offset_right = 303.6250
+offset_bottom = 474.2500
+mouse_filter = 2
+texture = ExtResource("34")
+expand_mode = 1
+
+[node name="loop_02_roi_4_lower_badge" type="TextureRect" parent="."]
+offset_left = 115.5981
+offset_top = 390.2232
+offset_right = 170.7177
+offset_bottom = 473.6238
+mouse_filter = 2
+texture = ExtResource("35")
+expand_mode = 1
+
+[node name="loop_02_roi_3_back_arrow" type="TextureRect" parent="."]
+offset_left = 1207.2727
+offset_top = 38.2572
+offset_right = 1242.4880
+offset_bottom = 69.6281
+mouse_filter = 2
+texture = ExtResource("36")
+expand_mode = 1
+
+[node name="loop_02_roi_2_central_corner_ornament" type="TextureRect" parent="."]
+offset_left = 427.9426
+offset_top = 163.7407
+offset_right = 492.2488
+offset_bottom = 218.8310
+mouse_filter = 2
+texture = ExtResource("37")
+expand_mode = 1
+
+[node name="loop_02_roi_2_top_diamond_control" type="TextureRect" parent="."]
+offset_left = 430.2392
+offset_top = 120.1275
+offset_right = 453.9713
+offset_bottom = 145.3773
+mouse_filter = 2
+texture = ExtResource("38")
+expand_mode = 1
+
+[node name="loop_02_roi_1_side_diamond" type="TextureRect" parent="."]
+offset_left = 81.1483
+offset_top = 341.2540
+offset_right = 104.1148
+offset_bottom = 369.5643
+mouse_filter = 2
+texture = ExtResource("39")
+expand_mode = 1
+
+[node name="loop_02_roi_1_side_lantern" type="TextureRect" parent="."]
+offset_left = 63.5407
+offset_top = 248.6716
+offset_right = 100.2871
+offset_bottom = 341.2540
+mouse_filter = 2
+texture = ExtResource("40")
+expand_mode = 1
+
+[node name="loop_02_roi_1_feature_card" type="TextureRect" parent="."]
+offset_left = 112.5359
+offset_top = 229.5430
+offset_right = 450.9091
+offset_bottom = 380.2763
+mouse_filter = 2
+texture = ExtResource("41")
+expand_mode = 1
+
+[node name="loop_02_roi_1_side_circle_button" type="TextureRect" parent="."]
+offset_left = 66.6029
+offset_top = 185.1647
+offset_right = 99.5215
+offset_bottom = 218.0659
+mouse_filter = 2
+texture = ExtResource("42")
+expand_mode = 1
+
+[node name="loop_02_roi_1_side_label_plate" type="TextureRect" parent="."]
+offset_left = 100.2871
+offset_top = 185.9299
+offset_right = 300.8612
+offset_bottom = 219.5962
+mouse_filter = 2
+texture = ExtResource("43")
+expand_mode = 1
+
+[node name="loop_02_roi_1_top_label_plate" type="TextureRect" parent="."]
+offset_left = 165.3589
+offset_top = 87.9915
+offset_right = 333.7799
+offset_bottom = 123.1881
+mouse_filter = 2
+texture = ExtResource("44")
+expand_mode = 1
+
+[node name="loop_02_roi_1_top_medallion" type="TextureRect" parent="."]
+offset_left = 38.2775
+offset_top = 35.1966
+offset_right = 165.3589
+offset_bottom = 164.5058
+mouse_filter = 2
+texture = ExtResource("45")
+expand_mode = 1

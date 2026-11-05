@@ -1,0 +1,348 @@
+[gd_resource type="Resource" script_class="RopeLevelData" format=3 uid="uid://6chpc7dbdeje"]
+
+[ext_resource type="Script" uid="uid://mit1tkswji0e" path="res://scripts/level/rope_level_data.gd" id="1_level"]
+[ext_resource type="Script" uid="uid://dhva4856vpwq2" path="res://scripts/level/rope_segment_data.gd" id="2_segment"]
+[ext_resource type="Script" uid="uid://chiji22bjxya7" path="res://scripts/level/rope_enemy_data.gd" id="3_5spn7"]
+[ext_resource type="Script" uid="uid://kn615ai2o5vt" path="res://scripts/level/rope_hazard_data.gd" id="3_hazard"]
+[ext_resource type="Script" uid="uid://dhvc4i3b4fdqx" path="res://scripts/level/rope_pickup_data.gd" id="4_pickup"]
+
+[sub_resource type="Resource" id="Hazard_0_falling_bamboo"]
+script = ExtResource("3_hazard")
+offset_x = 1800.0
+size = Vector2(76, 160)
+hazard_type = "falling_bamboo"
+warning_seconds = 0.95
+
+[sub_resource type="Resource" id="Hazard_0_spike"]
+script = ExtResource("3_hazard")
+offset_x = 3900.0
+cable_side = "bottom"
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Pickup_0_0"]
+script = ExtResource("4_pickup")
+offset_x = 300.0
+
+[sub_resource type="Resource" id="Pickup_0_1"]
+script = ExtResource("4_pickup")
+offset_x = 700.0
+
+[sub_resource type="Resource" id="Pickup_0_2"]
+script = ExtResource("4_pickup")
+offset_x = 1100.0
+
+[sub_resource type="Resource" id="Pickup_0_3"]
+script = ExtResource("4_pickup")
+offset_x = 1500.0
+
+[sub_resource type="Resource" id="Pickup_0_4"]
+script = ExtResource("4_pickup")
+offset_x = 2200.0
+
+[sub_resource type="Resource" id="Pickup_0_5"]
+script = ExtResource("4_pickup")
+offset_x = 2700.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_0_6"]
+script = ExtResource("4_pickup")
+offset_x = 3100.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_0_7"]
+script = ExtResource("4_pickup")
+offset_x = 3500.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_0_8"]
+script = ExtResource("4_pickup")
+offset_x = 4400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_0_9"]
+script = ExtResource("4_pickup")
+offset_x = 5000.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Segment_0"]
+script = ExtResource("2_segment")
+segment_id = &"wind_bamboo_01"
+title = "竹影入峡"
+hint = "上侧落竹会先亮起预警，及时下翻。"
+length_px = 5440.0
+hazards = Array[ExtResource("3_hazard")]([SubResource("Hazard_0_falling_bamboo"), SubResource("Hazard_0_spike")])
+pickups = Array[ExtResource("4_pickup")]([SubResource("Pickup_0_0"), SubResource("Pickup_0_1"), SubResource("Pickup_0_2"), SubResource("Pickup_0_3"), SubResource("Pickup_0_4"), SubResource("Pickup_0_5"), SubResource("Pickup_0_6"), SubResource("Pickup_0_7"), SubResource("Pickup_0_8"), SubResource("Pickup_0_9")])
+
+[sub_resource type="Resource" id="Hazard_1_falling_bamboo"]
+script = ExtResource("3_hazard")
+offset_x = 1800.0
+size = Vector2(76, 160)
+hazard_type = "falling_bamboo"
+warning_seconds = 0.95
+
+[sub_resource type="Resource" id="Hazard_1_spike"]
+script = ExtResource("3_hazard")
+offset_x = 3900.0
+cable_side = "bottom"
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Pickup_1_0"]
+script = ExtResource("4_pickup")
+offset_x = 300.0
+
+[sub_resource type="Resource" id="Pickup_1_1"]
+script = ExtResource("4_pickup")
+offset_x = 700.0
+
+[sub_resource type="Resource" id="Pickup_1_2"]
+script = ExtResource("4_pickup")
+offset_x = 1100.0
+
+[sub_resource type="Resource" id="Pickup_1_3"]
+script = ExtResource("4_pickup")
+offset_x = 1500.0
+
+[sub_resource type="Resource" id="Pickup_1_4"]
+script = ExtResource("4_pickup")
+offset_x = 2200.0
+
+[sub_resource type="Resource" id="Pickup_1_5"]
+script = ExtResource("4_pickup")
+offset_x = 2700.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_1_6"]
+script = ExtResource("4_pickup")
+offset_x = 3100.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_1_7"]
+script = ExtResource("4_pickup")
+offset_x = 3500.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_1_8"]
+script = ExtResource("4_pickup")
+offset_x = 4400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_1_9"]
+script = ExtResource("4_pickup")
+offset_x = 5000.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Segment_1"]
+script = ExtResource("2_segment")
+segment_id = &"wind_bamboo_02"
+title = "落叶回风"
+hint = "下侧尖刺与落竹交替出现，保持节奏。"
+length_px = 5440.0
+hazards = Array[ExtResource("3_hazard")]([SubResource("Hazard_1_falling_bamboo"), SubResource("Hazard_1_spike")])
+pickups = Array[ExtResource("4_pickup")]([SubResource("Pickup_1_0"), SubResource("Pickup_1_1"), SubResource("Pickup_1_2"), SubResource("Pickup_1_3"), SubResource("Pickup_1_4"), SubResource("Pickup_1_5"), SubResource("Pickup_1_6"), SubResource("Pickup_1_7"), SubResource("Pickup_1_8"), SubResource("Pickup_1_9")])
+
+[sub_resource type="Resource" id="Hazard_2_falling_bamboo"]
+script = ExtResource("3_hazard")
+offset_x = 1800.0
+size = Vector2(76, 160)
+hazard_type = "falling_bamboo"
+warning_seconds = 0.95
+
+[sub_resource type="Resource" id="Hazard_2_spike"]
+script = ExtResource("3_hazard")
+offset_x = 3900.0
+cable_side = "bottom"
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Pickup_2_0"]
+script = ExtResource("4_pickup")
+offset_x = 300.0
+
+[sub_resource type="Resource" id="Pickup_2_1"]
+script = ExtResource("4_pickup")
+offset_x = 700.0
+
+[sub_resource type="Resource" id="Pickup_2_2"]
+script = ExtResource("4_pickup")
+offset_x = 1100.0
+
+[sub_resource type="Resource" id="Pickup_2_3"]
+script = ExtResource("4_pickup")
+offset_x = 1500.0
+
+[sub_resource type="Resource" id="Pickup_2_4"]
+script = ExtResource("4_pickup")
+offset_x = 2200.0
+
+[sub_resource type="Resource" id="Pickup_2_5"]
+script = ExtResource("4_pickup")
+offset_x = 2700.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_2_6"]
+script = ExtResource("4_pickup")
+offset_x = 3100.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_2_7"]
+script = ExtResource("4_pickup")
+offset_x = 3500.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_2_8"]
+script = ExtResource("4_pickup")
+offset_x = 4400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_2_9"]
+script = ExtResource("4_pickup")
+offset_x = 5000.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Segment_2"]
+script = ExtResource("2_segment")
+segment_id = &"wind_bamboo_03"
+title = "断篁交错"
+hint = "先看预警，再在安全侧收集影晶。"
+length_px = 5440.0
+hazards = Array[ExtResource("3_hazard")]([SubResource("Hazard_2_falling_bamboo"), SubResource("Hazard_2_spike")])
+pickups = Array[ExtResource("4_pickup")]([SubResource("Pickup_2_0"), SubResource("Pickup_2_1"), SubResource("Pickup_2_2"), SubResource("Pickup_2_3"), SubResource("Pickup_2_4"), SubResource("Pickup_2_5"), SubResource("Pickup_2_6"), SubResource("Pickup_2_7"), SubResource("Pickup_2_8"), SubResource("Pickup_2_9")])
+
+[sub_resource type="Resource" id="Hazard_3_falling_bamboo"]
+script = ExtResource("3_hazard")
+offset_x = 1800.0
+size = Vector2(76, 160)
+hazard_type = "falling_bamboo"
+warning_seconds = 0.95
+
+[sub_resource type="Resource" id="Hazard_3_spike"]
+script = ExtResource("3_hazard")
+offset_x = 3900.0
+cable_side = "bottom"
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Pickup_3_0"]
+script = ExtResource("4_pickup")
+offset_x = 300.0
+
+[sub_resource type="Resource" id="Pickup_3_1"]
+script = ExtResource("4_pickup")
+offset_x = 700.0
+
+[sub_resource type="Resource" id="Pickup_3_2"]
+script = ExtResource("4_pickup")
+offset_x = 1100.0
+
+[sub_resource type="Resource" id="Pickup_3_3"]
+script = ExtResource("4_pickup")
+offset_x = 1500.0
+
+[sub_resource type="Resource" id="Pickup_3_4"]
+script = ExtResource("4_pickup")
+offset_x = 2200.0
+
+[sub_resource type="Resource" id="Pickup_3_5"]
+script = ExtResource("4_pickup")
+offset_x = 2700.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_3_6"]
+script = ExtResource("4_pickup")
+offset_x = 3100.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_3_7"]
+script = ExtResource("4_pickup")
+offset_x = 3500.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_3_8"]
+script = ExtResource("4_pickup")
+offset_x = 4400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_3_9"]
+script = ExtResource("4_pickup")
+offset_x = 5000.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Segment_3"]
+script = ExtResource("2_segment")
+segment_id = &"wind_bamboo_04"
+title = "风鸣高台"
+hint = "落竹退场后再回到主路线。"
+length_px = 5440.0
+hazards = Array[ExtResource("3_hazard")]([SubResource("Hazard_3_falling_bamboo"), SubResource("Hazard_3_spike")])
+pickups = Array[ExtResource("4_pickup")]([SubResource("Pickup_3_0"), SubResource("Pickup_3_1"), SubResource("Pickup_3_2"), SubResource("Pickup_3_3"), SubResource("Pickup_3_4"), SubResource("Pickup_3_5"), SubResource("Pickup_3_6"), SubResource("Pickup_3_7"), SubResource("Pickup_3_8"), SubResource("Pickup_3_9")])
+
+[sub_resource type="Resource" id="Hazard_4_falling_bamboo"]
+script = ExtResource("3_hazard")
+offset_x = 1800.0
+size = Vector2(76, 160)
+hazard_type = "falling_bamboo"
+warning_seconds = 0.95
+
+[sub_resource type="Resource" id="Hazard_4_spike"]
+script = ExtResource("3_hazard")
+offset_x = 3900.0
+cable_side = "bottom"
+size = Vector2(54, 64)
+
+[sub_resource type="Resource" id="Pickup_4_0"]
+script = ExtResource("4_pickup")
+offset_x = 300.0
+
+[sub_resource type="Resource" id="Pickup_4_1"]
+script = ExtResource("4_pickup")
+offset_x = 700.0
+
+[sub_resource type="Resource" id="Pickup_4_2"]
+script = ExtResource("4_pickup")
+offset_x = 1100.0
+
+[sub_resource type="Resource" id="Pickup_4_3"]
+script = ExtResource("4_pickup")
+offset_x = 1500.0
+
+[sub_resource type="Resource" id="Pickup_4_4"]
+script = ExtResource("4_pickup")
+offset_x = 2200.0
+
+[sub_resource type="Resource" id="Pickup_4_5"]
+script = ExtResource("4_pickup")
+offset_x = 2700.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_4_6"]
+script = ExtResource("4_pickup")
+offset_x = 3100.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_4_7"]
+script = ExtResource("4_pickup")
+offset_x = 3500.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_4_8"]
+script = ExtResource("4_pickup")
+offset_x = 4400.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Pickup_4_9"]
+script = ExtResource("4_pickup")
+offset_x = 5000.0
+cable_side = "bottom"
+
+[sub_resource type="Resource" id="Segment_4"]
+script = ExtResource("2_segment")
+segment_id = &"wind_bamboo_05"
+title = "渡灯前路"
+hint = "穿过最后一段竹阵，抵达渡口。"
+length_px = 5440.0
+hazards = Array[ExtResource("3_hazard")]([SubResource("Hazard_4_falling_bamboo"), SubResource("Hazard_4_spike")])
+pickups = Array[ExtResource("4_pickup")]([SubResource("Pickup_4_0"), SubResource("Pickup_4_1"), SubResource("Pickup_4_2"), SubResource("Pickup_4_3"), SubResource("Pickup_4_4"), SubResource("Pickup_4_5"), SubResource("Pickup_4_6"), SubResource("Pickup_4_7"), SubResource("Pickup_4_8"), SubResource("Pickup_4_9")])
+
+[resource]
+script = ExtResource("1_level")
+level_id = &"chapter_01_02_wind_bamboo"
+title = "风竹渡"
+segments = Array[ExtResource("2_segment")]([SubResource("Segment_0"), SubResource("Segment_1"), SubResource("Segment_2"), SubResource("Segment_3"), SubResource("Segment_4")])

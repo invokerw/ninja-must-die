@@ -54,9 +54,19 @@ var resume_button: Button
 var _feedback_was_paused := false
 var _feedback_paused_run := false
 var painted_progress: ProgressRail
+var run_mode_override: StringName = &""
 
 func _enter_tree() -> void:
 	add_to_group("run_sessions")
+	var pending_level_id := RunNavigation.take_pending_level(scene_file_path)
+	run_mode_override = RunNavigation.take_pending_mode(scene_file_path)
+	if not pending_level_id.is_empty():
+		var level_entry := LevelCatalog.get_level(pending_level_id)
+		var selected_data := LevelCatalog.get_data(pending_level_id)
+		if selected_data != null:
+			$Level.data = selected_data
+		var boss_path: String = level_entry.get("boss_data_path", "")
+		$Level.boss_data = load(boss_path) as BossEncounterData if not boss_path.is_empty() else null
 	if run_loadout == null:
 		run_loadout = RunNavigation.take_pending(scene_file_path)
 	if run_loadout == null:
@@ -348,6 +358,8 @@ func _on_finish_reached() -> void:
 	_update_save_status()
 
 func get_run_mode() -> StringName:
+	if not run_mode_override.is_empty():
+		return run_mode_override
 	if start_at_boss:
 		return &"boss_practice"
 	return &"full" if level.boss_data != null else &"parkour_practice"

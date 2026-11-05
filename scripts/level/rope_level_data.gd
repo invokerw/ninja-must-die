@@ -57,6 +57,8 @@ func get_validation_errors(player_half_width: float = 18.0) -> PackedStringArray
 			if hazard == null:
 				errors.append("机关资源不能为空")
 				continue
+			for hazard_error in hazard.get_validation_errors():
+				errors.append("%s：%s" % [segment.title, hazard_error])
 			if not _valid_placement(hazard.offset_x, hazard.cable_side, segment.length_px):
 				errors.append("%s：机关位置或侧别无效" % segment.title)
 			if hazard.size.x <= 0.0 or hazard.size.y <= 0.0:

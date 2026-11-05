@@ -2,6 +2,8 @@
 
 当前主场景的 `Level` 节点读取 `fog_ridge_60s.tres`。该资源使用 Godot 自定义 `Resource`，可在检查器中直接展开修改；`main.gd` 不再保存机关或影晶坐标。
 
+第一章目录由 `scripts/progress/level_catalog.gd` 提供稳定 ID 和解锁前置，准备页的“关卡选择”入口会读取目录并把选中的资源注入共用正式 / 练习场景。当前第二关灰盒资源为 `wind_bamboo_85s.tres`；故事、奖励和三名角色替代路线尚未接入。
+
 F5 准备页选择完整关卡后，`scenes/main.tscn` 配置 `Boss Data=res://data/enemies/bridge_kite.tres`，在这条 60 秒路线之后进入约 40 秒首领追逐战。`scenes/practice.tscn` 将 `Boss Data` 设为空，保留原终点；`scenes/boss_practice.tscn` 直接进入首领。首领参数、攻击窗口与评级说明见 [小型首领](../../docs/BOSS_ENCOUNTER.md)。
 
 ## 当前路线
@@ -17,11 +19,23 @@ F5 准备页选择完整关卡后，`scenes/main.tscn` 配置 `Boss Data=res://d
 
 最后约 5 秒为奖励与终点缓冲区。全关仅上下翻绳即可完成；影步为可选操作，组合段另支持单跳和二段跳跨越机关。
 
+## 第二关灰盒：风竹渡
+
+按 320 px/s 基础跑速计算，五段各 5440 px，总长 27200 px，目标时长约 85 秒。每段包含一组上侧落竹和一组下侧尖刺，以及 10 颗影晶；落竹先显示预警，预警结束后只在危险侧生效并在持续时间结束后退场，另一侧为安全侧。
+
+落竹的资源字段为 `Hazard Type=falling_bamboo`、`Warning Seconds`、`Active Seconds` 和 `Safe Side`。暂停会同时冻结预警计时、碰撞生效和退场；静态校验会拒绝未知类型、非有限尺寸、无效时间和安全侧等于危险侧的配置。专项回归入口：
+
+```sh
+/Applications/Godot_mono.app/Contents/MacOS/Godot --headless --path . --log-file /tmp/ninja-wind_bamboo.log --fixed-fps 60 --script res://tests/test_wind_bamboo.gd
+```
+
+预期输出 `WIND_BAMBOO_PASS`。当前回归覆盖目录前置、85 秒路线、五十颗影晶和落竹暂停冻结；三名角色替代路线、触屏和 Android 实机仍待后续阶段验收。
+
 ## 编辑步骤
 
 1. 在 Godot 文件系统中打开 `res://data/levels/fog_ridge_60s.tres`。
 2. 展开 `Segments`，选择段落，修改 `Title`、`Hint` 和 `Length Px`。时间以世界位置触发，不依赖计时器，使用影步后提示仍跟随所在段落。
-3. 展开段落的 `Hazards`：`Offset X` 是相对本段起点的横向距离；`Cable Side` 为上侧或下侧；`Size` 控制机关宽高。
+3. 展开段落的 `Hazards`：`Offset X` 是相对本段起点的横向距离；`Cable Side` 为上侧或下侧；`Size` 控制机关宽高。`Hazard Type=spike` 使用固定机关；`Hazard Type=falling_bamboo` 额外读取预警、生效和安全侧字段。
 4. 展开 `Pickups`：只设置 `Offset X` 和 `Cable Side`。影晶高度由角色的 `rope_offset` 决定，关卡数据不提供纵向偏移，防止超过身位。
 5. 展开 `Enemies`：`Enemy Type=sentry` 使用 `Offset X` 放置普通接触哨兵，按 `Cable Side` 确定钢索侧别，`Health` 仅用于普通哨兵。`Enemy Type=shooter` 则把 `Offset X` 解释为开始右侧来袭的玩家进度，不生成钢索敌人；可编辑 `Screen Edge Offset`（48 px，正值在画外，负值在右边缘内）、`Screen Height Ratio`（屏幕高度比例）、`Windup Seconds`（0.8 秒）和 `Projectile Speed`（720 px/s）。`Fire Direction` 直接指定固定方向，不按玩家位置瞄准；`Volley Count` 控制并排数量（当前 3），`Volley Spacing` 控制弹道中心间距（当前 144 px）。`Cable Side` 仅提示主要危险侧，发射源的位置始终按屏幕计算。
 6. 按 F5 运行并验收。关卡长度、背景钢索、相机右边界、进度、提示和评级基准都随数据更新。

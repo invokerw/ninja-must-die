@@ -1,0 +1,891 @@
+{
+  "status": "approved",
+  "runtime_ready": false,
+  "source": "art/concepts/ui/level_select/v01.png",
+  "run": "art/workbench/ui_level_select_v01_20261102_run06",
+  "canvas": [
+    1672,
+    941
+  ],
+  "layer_count": 67,
+  "structural_verification": "passed",
+  "source_fidelity": "not_established",
+  "layers": [
+    {
+      "id": "background_final",
+      "name": "背景",
+      "file": "layers/000_background_final.png",
+      "bbox": [
+        0,
+        0,
+        1672,
+        941
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/background.png",
+      "sha256": "42e9dc99b7559bf3798d487406d5d7b9271210afdf85537a7c5fa5c4c73dae2d"
+    },
+    {
+      "id": "loop_06_overview_left_progression_panel",
+      "name": "第 5 轮 / Tall dark blue-black HUD backplate with a fine gold perimeter, ornate rounded upper corners, subtle patterned surface, and a softly fading lower extent.",
+      "file": "layers/001_loop_06_overview_left_progression_panel.png",
+      "bbox": [
+        53,
+        213,
+        554,
+        649
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_06/cutouts/batch_01/layers/001_overview_left_progression_panel.png",
+      "sha256": "e381a51e49eb4057da10a6a788828782cdd9212a59eff43329f274155162dcd0"
+    },
+    {
+      "id": "loop_05_overview_right_detail_panel",
+      "name": "第 4 轮 / Large dark detail backplate with an ornate gold outer border, retaining its continuous surface behind removed illustrations, stat controls, and footer controls.",
+      "file": "layers/002_loop_05_overview_right_detail_panel.png",
+      "bbox": [
+        607,
+        215,
+        1013,
+        650
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_05/cutouts/batch_01/layers/001_overview_right_detail_panel.png",
+      "sha256": "0403738e36cc10cb3779c48d11e665abf7fb62bf9b33bb5a301876b68d7b7660"
+    },
+    {
+      "id": "loop_05_overview_navigation_backplate",
+      "name": "第 4 轮 / Long dark navigation backplate with a large circular left end, thin gold perimeter, and pointed ornamental right end; retains its complete geometry behind removed controls.",
+      "file": "layers/003_loop_05_overview_navigation_backplate.png",
+      "bbox": [
+        48,
+        51,
+        629,
+        164
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_05/cutouts/batch_02/layers/001_overview_navigation_backplate.png",
+      "sha256": "74f087a95e6ebb6a3e607af64aa99506cdfdf335f7d7841b2e2d3c2fc145ae08"
+    },
+    {
+      "id": "loop_05_roi_4_locked_card_backplate",
+      "name": "第 4 轮 / Wide dark HUD backplate with an ornate silver perimeter frame, moonlit mountain-and-bridge illustration surface, and subtle outer shadow.",
+      "file": "layers/004_loop_05_roi_4_locked_card_backplate.png",
+      "bbox": [
+        149,
+        513,
+        439,
+        197
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_05/cutouts/batch_02/layers/002_roi_4_locked_card_backplate.png",
+      "sha256": "20bb4cf934feb89501d138746d7ac9336937dd1c354fef8448578e56a9e37dd4"
+    },
+    {
+      "id": "loop_04_overview_wide_illustration_panel",
+      "name": "第 3 轮 / Wide inset moonlit mountain-and-bridge illustration with its dark beveled perimeter frame, excluding the removed brushstroke header.",
+      "file": "layers/005_loop_04_overview_wide_illustration_panel.png",
+      "bbox": [
+        634,
+        241,
+        962,
+        286
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_04/cutouts/batch_01/layers/001_overview_wide_illustration_panel.png",
+      "sha256": "dc652eed4e9656bd13e4587d82b3305c84befd5af13bc1cbcddd67f58ebbe624"
+    },
+    {
+      "id": "loop_04_roi_6_mountain_panel",
+      "name": "第 3 轮 / Wide inset mountain illustration panel with a thin beveled gold border, clipped ornamental corners and a centered top notch.",
+      "file": "layers/006_loop_04_roi_6_mountain_panel.png",
+      "bbox": [
+        1102,
+        534,
+        494,
+        190
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_04/cutouts/batch_02/layers/001_roi_6_mountain_panel.png",
+      "sha256": "194f99467f33ab64ebebdf67d9135a938643d0c43f222edcf2cad4197b9cc137"
+    },
+    {
+      "id": "loop_04_roi_5_runner_footer_plate",
+      "name": "第 3 轮 / Long dark burgundy footer backplate with a pointed gold-orange outline and red brushstroke surround, including its original left extent behind the removed running control.",
+      "file": "layers/007_loop_04_roi_5_runner_footer_plate.png",
+      "bbox": [
+        733,
+        736,
+        339,
+        127
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_04/cutouts/batch_02/layers/002_roi_5_runner_footer_plate.png",
+      "sha256": "76ba0798887d6ab7bf6b825c2ece942afceae5f979f1c44e54a58d39165c4963"
+    },
+    {
+      "id": "loop_04_roi_5_crown_backplate",
+      "name": "第 3 轮 / Dark circular control backplate with a thin muted bronze rim, behind the removed crown emblem.",
+      "file": "layers/008_loop_04_roi_5_crown_backplate.png",
+      "bbox": [
+        641,
+        669,
+        73,
+        78
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_04/cutouts/batch_03/layers/003_roi_5_crown_backplate.png",
+      "sha256": "0ad3fa8fde33432b86ccd2df0acf2c41f38a8a295a419d1c3c1af97f2e769413"
+    },
+    {
+      "id": "loop_04_roi_5_compass_backplate",
+      "name": "第 3 轮 / Dark circular control backplate with a thin muted bronze rim, behind the removed compass emblem.",
+      "file": "layers/009_loop_04_roi_5_compass_backplate.png",
+      "bbox": [
+        641,
+        539,
+        73,
+        80
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_04/cutouts/batch_03/layers/002_roi_5_compass_backplate.png",
+      "sha256": "7f087ffd4bcfaf0eb5d0019788cf0d01b8461224d80b8dfac00df463cdbe844a"
+    },
+    {
+      "id": "loop_04_roi_4_lower_footer",
+      "name": "第 3 轮 / Wide dark inset footer strip with a thin silver outline and ornate angular silver end details.",
+      "file": "layers/010_loop_04_roi_4_lower_footer.png",
+      "bbox": [
+        158,
+        644,
+        423,
+        58
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_04/cutouts/batch_02/layers/003_roi_4_lower_footer.png",
+      "sha256": "b48930dc64f00b48d15b6183f2bdc3d8b3c74d4c93f70422374c85dcf5c3ded7"
+    },
+    {
+      "id": "loop_04_roi_1_progress_rail",
+      "name": "第 3 轮 / Thin horizontal metallic progress rail with a gold starting segment and a gray remaining segment, retaining its original continuous extent beneath removed markers.",
+      "file": "layers/011_loop_04_roi_1_progress_rail.png",
+      "bbox": [
+        220,
+        163,
+        371,
+        22
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_04/cutouts/batch_03/layers/001_roi_1_progress_rail.png",
+      "sha256": "d0a9ad70d4267f3f9d98ef5e6374787fdc0c795ab59434a407d03fa74f6eb883"
+    },
+    {
+      "id": "loop_03_roi_6_right_footer_plate",
+      "name": "第 2 轮 / Long dark footer control backplate with a thin gold outline and pointed right end, including its original extent behind the removed swirling control.",
+      "file": "layers/012_loop_03_roi_6_right_footer_plate.png",
+      "bbox": [
+        1361,
+        760,
+        233,
+        77
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_01/layers/003_roi_6_right_footer_plate.png",
+      "sha256": "0cdf82b6fd36ccd24031ce5580ddaf85999233536b38adcc0b4791448d1a4461"
+    },
+    {
+      "id": "loop_03_roi_6_left_footer_plate",
+      "name": "第 2 轮 / Long dark footer control backplate with a thin gold outline and pointed right end, including its original extent behind the removed crossed-swords control.",
+      "file": "layers/013_loop_03_roi_6_left_footer_plate.png",
+      "bbox": [
+        1102,
+        760,
+        220,
+        75
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_01/layers/006_roi_6_left_footer_plate.png",
+      "sha256": "97ba600777dcf0ab2d39f1f95c14231ad192af068c026c61faa228893ee71716"
+    },
+    {
+      "id": "loop_03_roi_6_progress_cable",
+      "name": "第 2 轮 / Twisted dark horizontal progress cable with pale highlights, extending across the illustration panel.",
+      "file": "layers/014_loop_03_roi_6_progress_cable.png",
+      "bbox": [
+        1109,
+        638,
+        483,
+        40
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_01/layers/002_roi_6_progress_cable.png",
+      "sha256": "38016fbeb20b96741ef350e853c9468ac1e40ac9daaf0912b901f9bb3ddd89c7"
+    },
+    {
+      "id": "loop_03_roi_5_runner_backplate",
+      "name": "第 2 轮 / Dark circular backplate behind the removed luminous running control.",
+      "file": "layers/015_loop_03_roi_5_runner_backplate.png",
+      "bbox": [
+        746,
+        736,
+        132,
+        133
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_01/layers/004_roi_5_runner_backplate.png",
+      "sha256": "bb002bffc99db2d1e4826ff026e7b770395fa2b6481ea152c9a63495e2811450"
+    },
+    {
+      "id": "loop_03_roi_5_third_row_divider",
+      "name": "第 2 轮 / Thin subdued horizontal divider beneath the third stat row.",
+      "file": "layers/016_loop_03_roi_5_third_row_divider.png",
+      "bbox": [
+        701,
+        715,
+        368,
+        16
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_02/layers/002_roi_5_third_row_divider.png",
+      "sha256": "cbbbe079b5f825f5a95a16d4cc05362f9965f8cf12aabf92867eb0a4696ef35b"
+    },
+    {
+      "id": "loop_03_roi_5_second_row_divider",
+      "name": "第 2 轮 / Thin subdued horizontal divider beneath the second stat row.",
+      "file": "layers/017_loop_03_roi_5_second_row_divider.png",
+      "bbox": [
+        709,
+        650,
+        360,
+        16
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_02/layers/003_roi_5_second_row_divider.png",
+      "sha256": "832efd070f578f34f1cf7fe0b3d13d0dc606bd551530a92631acdef69d25a0f4"
+    },
+    {
+      "id": "loop_03_roi_5_first_row_divider",
+      "name": "第 2 轮 / Thin subdued horizontal divider beneath the first stat row.",
+      "file": "layers/018_loop_03_roi_5_first_row_divider.png",
+      "bbox": [
+        704,
+        590,
+        365,
+        15
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_02/layers/004_roi_5_first_row_divider.png",
+      "sha256": "4208e716a580de02823ed8fa5860fcaaa13051d6f6ca6544703ea9923cdb0239"
+    },
+    {
+      "id": "loop_03_roi_5_timer_backplate",
+      "name": "第 2 轮 / Dark circular control disc with a thin muted bronze rim.",
+      "file": "layers/019_loop_03_roi_5_timer_backplate.png",
+      "bbox": [
+        641,
+        606,
+        68,
+        76
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_02/layers/005_roi_5_timer_backplate.png",
+      "sha256": "51f11202035dbf185682b47bda9e24641a6655832c23a89e56da0b993a6dd04c"
+    },
+    {
+      "id": "loop_03_roi_5_header_backplate",
+      "name": "第 2 轮 / Long dark burgundy header backplate with an orange outlined left end and brush-edged right end.",
+      "file": "layers/020_loop_03_roi_5_header_backplate.png",
+      "bbox": [
+        645,
+        441,
+        371,
+        76
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_01/layers/001_roi_5_header_backplate.png",
+      "sha256": "725aaa8dabe52384dd32fdfcacef9ba7fdcf966ea3d3968764128fe36254e90e"
+    },
+    {
+      "id": "loop_03_roi_4_middle_diamond",
+      "name": "第 2 轮 / Middle silver-gray four-point diamond indicator with a pale outline and shaded interior.",
+      "file": "layers/021_loop_03_roi_4_middle_diamond.png",
+      "bbox": [
+        487,
+        650,
+        51,
+        52
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_02/layers/007_roi_4_middle_diamond.png",
+      "sha256": "61c5f575145f6f4984a5ac2574abdae0271034f11243eb4eca965e86108c8ef2"
+    },
+    {
+      "id": "loop_03_roi_4_lock_backplate",
+      "name": "第 2 轮 / Circular dark lock-control backplate with concentric metallic outlines and subtle outer shadow; the padlock glyph is absent.",
+      "file": "layers/022_loop_03_roi_4_lock_backplate.png",
+      "bbox": [
+        320,
+        545,
+        100,
+        99
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_01/layers/007_roi_4_lock_backplate.png",
+      "sha256": "a598a835601d1573863b02ff35376f0a3268a5451184eb15cc679d75ab7dfa62"
+    },
+    {
+      "id": "loop_03_roi_4_route_ornament",
+      "name": "第 2 轮 / Pale vertical progression connector with curved sections and outlined diamond nodes.",
+      "file": "layers/023_loop_03_roi_4_route_ornament.png",
+      "bbox": [
+        90,
+        447,
+        46,
+        378
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_01/layers/005_roi_4_route_ornament.png",
+      "sha256": "32b90ad1f49ee27f003e6a50dd67e44ea438d72766b1d0579ea4dc6147db15b9"
+    },
+    {
+      "id": "loop_03_roi_3_back_button_plate",
+      "name": "第 2 轮 / Dark circular back-button backplate with a double gold rim and subtle outer shadow; excludes the removed arrow.",
+      "file": "layers/024_loop_03_roi_3_back_button_plate.png",
+      "bbox": [
+        1558,
+        28,
+        86,
+        85
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_02/layers/001_roi_3_back_button_plate.png",
+      "sha256": "a3a9d60cda2f4bde8f4915ceeaacba39bd823baf355518270305ef3ea67accdb"
+    },
+    {
+      "id": "loop_03_roi_1_progress_node_two",
+      "name": "第 2 轮 / Gray outlined circular progress node with a dark center.",
+      "file": "layers/025_loop_03_roi_1_progress_node_two.png",
+      "bbox": [
+        465,
+        156,
+        34,
+        36
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_03/layers/001_roi_1_progress_node_two.png",
+      "sha256": "c122a4da99a089b09807afbaa4effdf21585adf6e8cf3f3726a5a2ec05ece025"
+    },
+    {
+      "id": "loop_03_roi_1_progress_node_one",
+      "name": "第 2 轮 / Gray outlined circular progress node with a dark center.",
+      "file": "layers/026_loop_03_roi_1_progress_node_one.png",
+      "bbox": [
+        369,
+        156,
+        34,
+        35
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_03/layers/002_roi_1_progress_node_one.png",
+      "sha256": "785948cd002ea1c3206ea67315657662e03aaf585e3277b413f09ee37e7aed87"
+    },
+    {
+      "id": "loop_03_roi_1_progress_active",
+      "name": "第 2 轮 / Bright gold diamond progress marker with a pale center and orange glow.",
+      "file": "layers/027_loop_03_roi_1_progress_active.png",
+      "bbox": [
+        257,
+        146,
+        50,
+        57
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_02/layers/006_roi_1_progress_active.png",
+      "sha256": "c2851fb73602fe538f8460259665816a5a39952b3bd23a3008e14af4e02ff474"
+    },
+    {
+      "id": "loop_03_roi_1_progress_start",
+      "name": "第 2 轮 / Small hollow gold diamond at the beginning of the progress track.",
+      "file": "layers/028_loop_03_roi_1_progress_start.png",
+      "bbox": [
+        211,
+        156,
+        31,
+        35
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_03/cutouts/batch_03/layers/003_roi_1_progress_start.png",
+      "sha256": "37c31efa7235c380df524ed57bd0c2cfdbdfae685ad5287fe79f2a7b8a0e44f3"
+    },
+    {
+      "id": "loop_02_roi_6_right_control_composite",
+      "name": "第 1 轮 / Circular gold-rimmed control containing a white swirling brushstroke illustration and its surrounding luminous ring.",
+      "file": "layers/029_loop_02_roi_6_right_control_composite.png",
+      "bbox": [
+        1335,
+        739,
+        120,
+        123
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_02/layers/003_roi_6_right_control_composite.png",
+      "sha256": "9698cc370e7e4b6054b8e5c167faef84023820e1d7454742b7cfd8a069e27b10"
+    },
+    {
+      "id": "loop_02_roi_6_left_control_composite",
+      "name": "第 1 轮 / Circular gold-rimmed control containing a white crossed-swords illustration and its surrounding luminous ring.",
+      "file": "layers/030_loop_02_roi_6_left_control_composite.png",
+      "bbox": [
+        1077,
+        743,
+        119,
+        119
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_02/layers/004_roi_6_left_control_composite.png",
+      "sha256": "e32a1ae0733c9a7f8797e3c08847c342503b0d74af5dc3bc3a4b2113ae6e2ecb"
+    },
+    {
+      "id": "loop_02_roi_6_track_end",
+      "name": "第 1 轮 / Red and black spiked mechanical fixture attached to the right end of the progress track.",
+      "file": "layers/031_loop_02_roi_6_track_end.png",
+      "bbox": [
+        1501,
+        591,
+        94,
+        87
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_02/layers/007_roi_6_track_end.png",
+      "sha256": "c889fff1548249153951e795225e8c8aec724afa063e7488dfbfdd27be9680d4"
+    },
+    {
+      "id": "loop_02_roi_6_marker_right",
+      "name": "第 1 轮 / Glowing orange diamond marker positioned on the right section of the progress track.",
+      "file": "layers/032_loop_02_roi_6_marker_right.png",
+      "bbox": [
+        1406,
+        613,
+        44,
+        53
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_05/layers/001_roi_6_marker_right.png",
+      "sha256": "d58ce48b507d9c4741a6b89391faab59e204085f754365104e2bf9fbfe1708f6"
+    },
+    {
+      "id": "loop_02_roi_6_marker_center",
+      "name": "第 1 轮 / Glowing orange diamond marker positioned above the center of the progress track.",
+      "file": "layers/033_loop_02_roi_6_marker_center.png",
+      "bbox": [
+        1339,
+        603,
+        43,
+        55
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_04/layers/007_roi_6_marker_center.png",
+      "sha256": "12d46fadf06aff2147fd34db5a4d0ce9848be509ec987d00b70579a720a9289e"
+    },
+    {
+      "id": "loop_02_roi_6_marker_left",
+      "name": "第 1 轮 / Glowing orange diamond marker positioned on the left section of the progress track.",
+      "file": "layers/034_loop_02_roi_6_marker_left.png",
+      "bbox": [
+        1257,
+        617,
+        48,
+        53
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_04/layers/004_roi_6_marker_left.png",
+      "sha256": "aa07c1000979a53995bcafd7ffeebcd24888451116e0cba1d25c5fbc04bec216"
+    },
+    {
+      "id": "loop_02_roi_5_runner_control_composite",
+      "name": "第 1 轮 / Luminous circular gold ring composited with a pale running figure and speed streaks",
+      "file": "layers/035_loop_02_roi_5_runner_control_composite.png",
+      "bbox": [
+        737,
+        753,
+        144,
+        151
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_02/layers/002_roi_5_runner_control_composite.png",
+      "sha256": "2143fb9fc24b2b956b92f38b45bf78bdc6f1739b148c2aa503d318aa5ce12795"
+    },
+    {
+      "id": "loop_02_roi_5_vertical_separator",
+      "name": "第 1 轮 / Thin pale-gold vertical separator with small end accents",
+      "file": "layers/036_loop_02_roi_5_vertical_separator.png",
+      "bbox": [
+        1079,
+        535,
+        20,
+        208
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_04/layers/001_roi_5_vertical_separator.png",
+      "sha256": "f997bd45a48c0f9402c696666bc7b9f9daed0c427cfdeb3987b540ef3aecb222"
+    },
+    {
+      "id": "loop_02_roi_5_second_dash_progress",
+      "name": "第 1 轮 / Short sequence of pale horizontal progress dashes",
+      "file": "layers/037_loop_02_roi_5_second_dash_progress.png",
+      "bbox": [
+        881,
+        704,
+        81,
+        20
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_06/layers/006_roi_5_second_dash_progress.png",
+      "sha256": "286fcac740ead0ddc93d63b5f3892f62214279548d8c76eb1e5b71569708a042"
+    },
+    {
+      "id": "loop_02_roi_5_first_dash_progress",
+      "name": "第 1 轮 / Short sequence of pale horizontal progress dashes",
+      "file": "layers/038_loop_02_roi_5_first_dash_progress.png",
+      "bbox": [
+        881,
+        639,
+        81,
+        19
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_06/layers/007_roi_5_first_dash_progress.png",
+      "sha256": "8e5557b4914ae8b64cbecc9003faa1cedd3b9f1321b9977532807f8164c01423"
+    },
+    {
+      "id": "loop_02_roi_5_fourth_outline_diamond",
+      "name": "第 1 轮 / Unfilled gray beveled diamond slot on the second progress row",
+      "file": "layers/039_loop_02_roi_5_fourth_outline_diamond.png",
+      "bbox": [
+        1023,
+        681,
+        43,
+        52
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_05/layers/003_roi_5_fourth_outline_diamond.png",
+      "sha256": "5b24f60244c7edc69568b4ded79dbbd90a07bb687ef829b6b91c59b114998216"
+    },
+    {
+      "id": "loop_02_roi_5_third_outline_diamond",
+      "name": "第 1 轮 / Unfilled gray beveled diamond slot on the second progress row",
+      "file": "layers/040_loop_02_roi_5_third_outline_diamond.png",
+      "bbox": [
+        980,
+        681,
+        43,
+        52
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_05/layers/002_roi_5_third_outline_diamond.png",
+      "sha256": "d727acb15ac8d3331823149d7cd53bef73fc929dc9da5c5cdc568aa563510eef"
+    },
+    {
+      "id": "loop_02_roi_5_second_outline_diamond",
+      "name": "第 1 轮 / Unfilled gray beveled diamond slot on the first progress row",
+      "file": "layers/041_loop_02_roi_5_second_outline_diamond.png",
+      "bbox": [
+        1023,
+        620,
+        43,
+        50
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_05/layers/006_roi_5_second_outline_diamond.png",
+      "sha256": "c78d3071618dd0200c9ef342968a7692f5a139593bd915b7367cc1312be2395a"
+    },
+    {
+      "id": "loop_02_roi_5_first_outline_diamond",
+      "name": "第 1 轮 / Unfilled gray beveled diamond slot on the first progress row",
+      "file": "layers/042_loop_02_roi_5_first_outline_diamond.png",
+      "bbox": [
+        980,
+        620,
+        43,
+        50
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_05/layers/005_roi_5_first_outline_diamond.png",
+      "sha256": "f4af20319e7071575c1b3b933daca661af3b1929359c0e4d5e09852d82924638"
+    },
+    {
+      "id": "loop_02_roi_5_gold_diamond_three",
+      "name": "第 1 轮 / Glowing gold four-point diamond indicator",
+      "file": "layers/043_loop_02_roi_5_gold_diamond_three.png",
+      "bbox": [
+        1024,
+        556,
+        42,
+        48
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_06/layers/003_roi_5_gold_diamond_three.png",
+      "sha256": "3f8e99368fe6754f4e0f3a96c95ab3d2bfc581186573015cdb952b5326b92e39"
+    },
+    {
+      "id": "loop_02_roi_5_gold_diamond_two",
+      "name": "第 1 轮 / Glowing gold four-point diamond indicator",
+      "file": "layers/044_loop_02_roi_5_gold_diamond_two.png",
+      "bbox": [
+        982,
+        556,
+        42,
+        48
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_06/layers/002_roi_5_gold_diamond_two.png",
+      "sha256": "e8b76293066825d599d23d892a0223566ddd4efb0c38441f203efdb0286fd0e2"
+    },
+    {
+      "id": "loop_02_roi_5_gold_diamond_one",
+      "name": "第 1 轮 / Glowing gold four-point diamond indicator",
+      "file": "layers/045_loop_02_roi_5_gold_diamond_one.png",
+      "bbox": [
+        939,
+        556,
+        43,
+        48
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_06/layers/001_roi_5_gold_diamond_one.png",
+      "sha256": "c673ee40ff813225cc2ee57ffcf39a5a1257c8c6bbde529ba1c88db604a67364"
+    },
+    {
+      "id": "loop_02_roi_5_third_row_backplate",
+      "name": "第 1 轮 / Short slate-gray beveled horizontal capsule behind the third row",
+      "file": "layers/046_loop_02_roi_5_third_row_backplate.png",
+      "bbox": [
+        711,
+        688,
+        158,
+        44
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_03/layers/004_roi_5_third_row_backplate.png",
+      "sha256": "05f9800f1067736f456f82bbc8c3f170da125acef1e9f74ebc200baf8efe5955"
+    },
+    {
+      "id": "loop_02_roi_5_second_row_backplate",
+      "name": "第 1 轮 / Short slate-gray beveled horizontal capsule behind the second row",
+      "file": "layers/047_loop_02_roi_5_second_row_backplate.png",
+      "bbox": [
+        711,
+        623,
+        158,
+        45
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_03/layers/003_roi_5_second_row_backplate.png",
+      "sha256": "45d85a611954ac9d143b01fda17aaaf9cb553190c789ca53d4bce63dbb68b2d4"
+    },
+    {
+      "id": "loop_02_roi_5_first_row_backplate",
+      "name": "第 1 轮 / Short slate-gray beveled horizontal capsule behind the first row",
+      "file": "layers/048_loop_02_roi_5_first_row_backplate.png",
+      "bbox": [
+        711,
+        557,
+        158,
+        45
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_03/layers/002_roi_5_first_row_backplate.png",
+      "sha256": "3a4ad40711079f4626114cd63b52b6e71fda331e29eeb831d8bba24feb3474b4"
+    },
+    {
+      "id": "loop_02_roi_5_crown_icon",
+      "name": "第 1 轮 / Pale crown emblem inside the circular control",
+      "file": "layers/049_loop_02_roi_5_crown_icon.png",
+      "bbox": [
+        654,
+        678,
+        51,
+        54
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_04/layers/003_roi_5_crown_icon.png",
+      "sha256": "f089e65ff8e6fc77c065d590db6d91b83fa0de85bc6b8ab7b3c9c973d418af50"
+    },
+    {
+      "id": "loop_02_roi_5_timer_icon",
+      "name": "第 1 轮 / Pale stopwatch emblem inside the circular control",
+      "file": "layers/050_loop_02_roi_5_timer_icon.png",
+      "bbox": [
+        658,
+        621,
+        43,
+        48
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_05/layers/007_roi_5_timer_icon.png",
+      "sha256": "a8ee7be0bc060b20f556ded362b2cee20b9d5a3d40e049c33058e13234de5196"
+    },
+    {
+      "id": "loop_02_roi_5_compass_icon",
+      "name": "第 1 轮 / Pale four-direction compass emblem inside the circular control",
+      "file": "layers/051_loop_02_roi_5_compass_icon.png",
+      "bbox": [
+        655,
+        557,
+        47,
+        47
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_05/layers/004_roi_5_compass_icon.png",
+      "sha256": "02b92647b95367540654607a4b809d580a0a343275263b4f62f012d7c3066c2a"
+    },
+    {
+      "id": "loop_02_roi_5_top_diamond_badge",
+      "name": "第 1 轮 / Copper diamond badge with a small pale four-point emblem",
+      "file": "layers/052_loop_02_roi_5_top_diamond_badge.png",
+      "bbox": [
+        650,
+        444,
+        69,
+        70
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_03/layers/007_roi_5_top_diamond_badge.png",
+      "sha256": "174f2fde25484ceb8075809865316017fea78d21f1b84c0d7bb72e5558702823"
+    },
+    {
+      "id": "loop_02_roi_4_gray_diamond_3",
+      "name": "第 1 轮 / Third silver-gray diamond indicator in the lower footer strip.",
+      "file": "layers/053_loop_02_roi_4_gray_diamond_3.png",
+      "bbox": [
+        524,
+        650,
+        50,
+        50
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_04/layers/005_roi_4_gray_diamond_3.png",
+      "sha256": "5c297871d15c7f5448f04abe45f78201d526e47304b2668b1d6f139ffa926033"
+    },
+    {
+      "id": "loop_02_roi_4_gray_diamond_1",
+      "name": "第 1 轮 / First silver-gray diamond indicator in the lower footer strip.",
+      "file": "layers/054_loop_02_roi_4_gray_diamond_1.png",
+      "bbox": [
+        452,
+        650,
+        49,
+        50
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_04/layers/006_roi_4_gray_diamond_1.png",
+      "sha256": "559f80b6c7e76bb61a6f59a12b60691c38faebdcc2f1146df5286d6723978ec7"
+    },
+    {
+      "id": "loop_02_roi_4_lock_icon",
+      "name": "第 1 轮 / White padlock glyph centered inside the circular lock control.",
+      "file": "layers/055_loop_02_roi_4_lock_icon.png",
+      "bbox": [
+        346,
+        564,
+        55,
+        62
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_04/layers/002_roi_4_lock_icon.png",
+      "sha256": "e3cdb41eb5b84789ed2f6be5cd8180467bcaa6cf559d9015f61f7f431d3ce05b"
+    },
+    {
+      "id": "loop_02_roi_4_lower_badge",
+      "name": "第 1 轮 / Slate hanging badge tab with silver border and centered white diamond emblem.",
+      "file": "layers/056_loop_02_roi_4_lower_badge.png",
+      "bbox": [
+        151,
+        510,
+        72,
+        109
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_03/layers/001_roi_4_lower_badge.png",
+      "sha256": "1b0c786c786cc48d37a98da32d747cc82f2baf83584ba818be9771d15bad0678"
+    },
+    {
+      "id": "loop_02_roi_3_back_arrow",
+      "name": "第 1 轮 / Cream left-pointing arrow icon with its complete visible silhouette.",
+      "file": "layers/057_loop_02_roi_3_back_arrow.png",
+      "bbox": [
+        1577,
+        50,
+        46,
+        41
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_06/layers/004_roi_3_back_arrow.png",
+      "sha256": "229e514a906281cbc548b41fcaf9c200741fb30eeaffb39e03c115bdfca29693"
+    },
+    {
+      "id": "loop_02_roi_2_central_corner_ornament",
+      "name": "第 1 轮 / Gold ornamental curled corner and adjoining trim at the upper-left corner of the large central HUD panel.",
+      "file": "layers/058_loop_02_roi_2_central_corner_ornament.png",
+      "bbox": [
+        559,
+        214,
+        84,
+        72
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_03/layers/005_roi_2_central_corner_ornament.png",
+      "sha256": "ca54b474addccd63d0e73859610cc5a3d76598cf02264a504708cd297214d0fc"
+    },
+    {
+      "id": "loop_02_roi_2_top_diamond_control",
+      "name": "第 1 轮 / Small pale diamond-shaped control with a dark center and light outline on the upper HUD strip.",
+      "file": "layers/059_loop_02_roi_2_top_diamond_control.png",
+      "bbox": [
+        562,
+        157,
+        31,
+        33
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_07/layers/002_roi_2_top_diamond_control.png",
+      "sha256": "88ede668a3d6267c15870f4a2c8c0e1abfb79539f88c746b3a88becb8a31493c"
+    },
+    {
+      "id": "loop_02_roi_1_side_diamond",
+      "name": "第 1 轮 / Small glowing diamond marker below the lantern control",
+      "file": "layers/060_loop_02_roi_1_side_diamond.png",
+      "bbox": [
+        106,
+        446,
+        30,
+        37
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_07/layers/001_roi_1_side_diamond.png",
+      "sha256": "e3493a08707800b5b1eac8db76e42387ae67338bcd8ec198247bdafad7f569f5"
+    },
+    {
+      "id": "loop_02_roi_1_side_lantern",
+      "name": "第 1 轮 / Glowing hanging lantern control along the left vertical rail",
+      "file": "layers/061_loop_02_roi_1_side_lantern.png",
+      "bbox": [
+        83,
+        325,
+        48,
+        121
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_03/layers/006_roi_1_side_lantern.png",
+      "sha256": "2ca89478925eb4a04cac02ee6aadf1bcaadca854c5f41946345519b43a4c4cdf"
+    },
+    {
+      "id": "loop_02_roi_1_feature_card",
+      "name": "第 1 轮 / Large ornate orange framed card with an illustrated inset and lower control strip",
+      "file": "layers/062_loop_02_roi_1_feature_card.png",
+      "bbox": [
+        147,
+        300,
+        442,
+        197
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_01/layers/001_roi_1_feature_card.png",
+      "sha256": "ecd13f30022f142b9d7bad8844ce2f51e106d23bf1e1d9229cf9336161bb5ae2"
+    },
+    {
+      "id": "loop_02_roi_1_side_circle_button",
+      "name": "第 1 轮 / Gray circular control with a light inner ring",
+      "file": "layers/063_loop_02_roi_1_side_circle_button.png",
+      "bbox": [
+        87,
+        242,
+        43,
+        43
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_06/layers/005_roi_1_side_circle_button.png",
+      "sha256": "dc3a16e91e2c3b4890f80c5c144a54e24e65da625cd3041db4aa98676af34e64"
+    },
+    {
+      "id": "loop_02_roi_1_side_label_plate",
+      "name": "第 1 轮 / Empty gray beveled label plate near the upper left of the main HUD panel",
+      "file": "layers/064_loop_02_roi_1_side_label_plate.png",
+      "bbox": [
+        131,
+        243,
+        262,
+        44
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_02/layers/005_roi_1_side_label_plate.png",
+      "sha256": "9ebda65cde9f95558f8476021537d98b5ba48353839862492b6ac5a5f0587b33"
+    },
+    {
+      "id": "loop_02_roi_1_top_label_plate",
+      "name": "第 1 轮 / Empty gray beveled label plate in the upper HUD",
+      "file": "layers/065_loop_02_roi_1_top_label_plate.png",
+      "bbox": [
+        216,
+        115,
+        220,
+        46
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_02/layers/006_roi_1_top_label_plate.png",
+      "sha256": "1b983fd1c86b517cdfe882ae7c488aa6598c780467619554ea7de3ebde89825c"
+    },
+    {
+      "id": "loop_02_roi_1_top_medallion",
+      "name": "第 1 轮 / Circular gold ring enclosing a moonlit mountain illustration",
+      "file": "layers/066_loop_02_roi_1_top_medallion.png",
+      "bbox": [
+        50,
+        46,
+        166,
+        169
+      ],
+      "source": "art/workbench/ui_level_select_v01_20261102_run06/loop_02/cutouts/batch_02/layers/001_roi_1_top_medallion.png",
+      "sha256": "76ae5ff3ac5e7f4a7c0bfb116a838c0f9642fca1ccbca2c46345a93b69c89fcb"
+    }
+  ],
+  "user_resource_review": {
+    "status": "approved",
+    "date": "2026-11-04",
+    "feedback": "审核通过了，继续吧"
+  }
+}

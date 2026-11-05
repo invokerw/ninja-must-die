@@ -1,0 +1,17 @@
+{
+  "status": "needs_review",
+  "runtime_ready": false,
+  "source": "art/concepts/ui/level_select/v01.png",
+  "workbench": "art/workbench/ui_level_select_v01_20261031_run03",
+  "extraction_status": "failed_after_partial_extraction",
+  "extraction_error": "All selected bboxes are already empty; no extraction progress",
+  "structural_verification": "not_checked",
+  "fidelity_status": "not_checked",
+  "layer_count": 67,
+  "generated_at": "2026-10-31",
+  "notes": [
+    "候选图层来自拆层流程第 1-7 轮的成功返回。",
+    "未生成 PSD，未通过结构校验；不得直接接入运行时。",
+    "需人工检查边缘、遮挡、比例和动态字段留白后再决定是否进入 generated。"
+  ]
+}

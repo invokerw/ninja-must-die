@@ -50,7 +50,7 @@ func _ready() -> void:
 	add_child(preview)
 	equip_button = _button("装备", Rect2(1010, 420, 200, 52), _equip_selected)
 	status = _label("", Rect2(44, 504, 1192, 32), 18, Color("d8b56a"))
-	full_button = _button("完整关卡", Rect2(44, 550, 380, 46), _launch.bind("res://scenes/main.tscn"))
+	full_button = _button("关卡选择", Rect2(44, 550, 380, 46), _open_level_select)
 	_button("首领练习", Rect2(450, 550, 380, 46), _launch.bind("res://scenes/boss_practice.tscn"))
 	_button("跑酷练习", Rect2(856, 550, 380, 46), _launch.bind("res://scenes/practice.tscn"))
 	var modes := [&"full", &"boss_practice", &"parkour_practice"]
@@ -145,6 +145,14 @@ func _launch(path: String) -> void:
 	if RunNavigation.launch(get_tree(), path, profile.resolve(character)) != OK:
 		_launching = false
 		status.text = "暂时无法进入关卡，请重试。"
+
+func _open_level_select() -> void:
+	if _launching:
+		return
+	_launching = true
+	if RunNavigation.open_level_select(get_tree(), profile.resolve(character)) != OK:
+		_launching = false
+		status.text = "暂时无法打开关卡选择，请重试。"
 
 func _label(text: String, rect: Rect2, font_size: int, color: Color = Color("dde7e7")) -> Label:
 	var label := Label.new()

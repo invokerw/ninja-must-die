@@ -15,6 +15,7 @@
 | 身法、角色、武器 | [角色身法](docs/MOBILITY.md)、[角色与技能](docs/CHARACTER_SKILL_DESIGN.md)、[角色与武器](docs/CHARACTER_WEAPON_DESIGN.md) |
 | 关卡与首领 | [关卡编辑](data/levels/README.md)、[首领战斗](docs/BOSS_COMBAT_DESIGN.md)、[首领流程](docs/BOSS_ENCOUNTER.md) |
 | 输入、布局、反馈 | [触屏操作](docs/TOUCH_CONTROLS.md)、[反馈系统](docs/FEEDBACK.md) |
+| UI 设计与资源接入 | [UI 界面设计与开发工作流](docs/UI_DESIGN_WORKFLOW.md)、[美术方向](docs/ART_DIRECTION.md)、[美术流水线](docs/ART_PIPELINE.md) |
 | 存档、美术、发布 | [存档](docs/SAVE_SYSTEM.md)、[美术方向](docs/ART_DIRECTION.md)、[美术流水线](docs/ART_PIPELINE.md)、[打包发布](docs/BUILD_RELEASE.md) |
 
 ## 项目结构与实现边界
@@ -105,6 +106,7 @@ python3 -m unittest discover -s tests -p test_ci_export.py
 - 成绩按关卡和模式隔离；重复终点信号、重试保存、失败或中途退出不能重复记录完成或发放奖励。后续经济 / 奖励修改遵循实现拆分中的事务和去重要求。
 - 美术按 `art/concepts/` → `art/layered/` → `art/generated/` 管理来源和版本，`art/workbench/` 留作被忽略的原始工作目录，`art/validation/` 保存必要验收证据。清理测试场景不等于删除原始素材和证据。
 - 候选素材按清单记录来源、尺寸、透明边界和验收状态；未经对应验收的候选资源不直接覆盖正式贴图，不修改报告制造通过状态。
+- 每个新 UI 界面先参考当前界面生成概念图，用户审核通过后才进入抠图 / 分层和 Godot 拼装；概念审核、自动回归、截图检查、用户视觉审核和 Android 实机审核分开记录，具体顺序见 [UI 界面设计与开发工作流](docs/UI_DESIGN_WORKFLOW.md)。
 - 动态文字、冷却、生命和进度交给 Godot 绘制；资源接入检查透明边缘、缩放、图集边界和实际画面。无显示测试无法证明视觉效果或 Android 手感。
 - 私有模型配置、密钥、签名文件及本地产物不进入仓库；导出和签名流程见打包文档。
 

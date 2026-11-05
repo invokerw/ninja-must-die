@@ -1,0 +1,22 @@
+{
+  "status": "needs_review",
+  "reviewed_at": "2026-11-03T23:10:46.347139+00:00",
+  "reviewer": "assistant",
+  "scope": "760px whole-scene original/composite comparison, first-round raw atlas and transparent medallion layer; no user or Android acceptance",
+  "findings": [
+    {
+      "severity": "visual_difference",
+      "description": "右侧大插图的月亮位置和山景轮廓被模型重绘，与原图不同。"
+    },
+    {
+      "severity": "visual_difference",
+      "description": "部分指标图标、按钮圆环和面板纹理、透明度存在重绘差异。"
+    }
+  ],
+  "runtime_ready": false,
+  "user_resource_review": {
+    "status": "approved",
+    "date": "2026-11-04",
+    "feedback": "审核通过了，继续吧"
+  }
+}
