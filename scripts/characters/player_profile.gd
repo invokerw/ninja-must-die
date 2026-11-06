@@ -88,14 +88,19 @@ func select_scroll(scroll_id: StringName) -> bool:
 	return save_profile()
 
 func _growth_unlocked(growth_id: StringName) -> bool:
+	return growth_unlock_requirement(growth_id).is_empty()
+
+func growth_unlock_requirement(growth_id: StringName) -> String:
 	var completed_first := not history.get_record(LevelCatalog.FOG_RIDGE_ID, &"full").is_empty()
 	var completed_second := not history.get_record(LevelCatalog.WIND_BAMBOO_ID, &"full").is_empty()
 	if growth_id == &"weapon_training":
 		var level := get_growth_level(growth_id)
-		return completed_first if level == 0 else completed_second
+		if level == 0:
+			return "" if completed_first else "完成雾岭断桥后开放"
+		return "" if completed_second else "完成风竹渡后开放下一档"
 	if growth_id == &"body_training":
-		return completed_second
-	return false
+		return "" if completed_second else "完成风竹渡后开放"
+	return "该成长尚未开放"
 
 func select_item(item_id: StringName) -> bool:
 	if not _can_change_economy():
@@ -126,18 +131,18 @@ func consume_selected_item(run_id: String) -> bool:
 	return save_profile()
 
 func _can_change_economy() -> bool:
-	last_error = ""
+	last_error = economy_block_reason()
+	return last_error.is_empty()
+
+func economy_block_reason() -> String:
 	if ProfileStore.is_newer(_document):
-		last_error = "存档版本较新，暂不能消费铜钱或更换配置。"
-		return false
+		return "存档版本较新，暂不能消费铜钱或更换配置。"
 	if _transaction_failed or (not _pending_transaction.is_empty() and _pending_transaction.kind != "migration"):
-		last_error = "上次交易尚未保存，请先重试保存。"
-		return false
+		return "上次交易尚未保存，请先重试保存。"
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree != null and not tree.get_nodes_in_group("run_sessions").is_empty():
-		last_error = "本局配置已固定，请返回准备页购买或更换。"
-		return false
-	return true
+		return "本局配置已固定，请返回准备页购买或更换。"
+	return ""
 
 func can_start_formal_run() -> bool:
 	if ProfileStore.is_newer(_document):

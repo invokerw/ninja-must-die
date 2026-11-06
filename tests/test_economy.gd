@@ -39,8 +39,12 @@ func _run() -> void:
 	_test_backup_recovery()
 	await _test_runtime()
 	await _test_start_lifecycle()
+	await _test_shop_ui()
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--capture-dir="):
+			await _capture_shop(argument.trim_prefix("--capture-dir="))
 	if failures == 0:
-		print("ECONOMY_PASS (prices/caps, duplicate IDs, JSON reload, malformed/future data, atomic failures, runtime supply/health)")
+		print("ECONOMY_PASS (prices/caps, duplicate IDs, JSON reload, malformed/future data, atomic failures, runtime supply/health, standalone shop/touch/keyboard/confirmation)")
 	quit(0 if failures == 0 else 1)
 
 func _test_limits_and_validation() -> void:
@@ -191,6 +195,190 @@ func _test_start_lifecycle() -> void:
 	main.queue_free()
 	await process_frame
 	scope.close()
+
+
+func _test_shop_ui() -> void:
+	paused = false
+	var scope := TestProfileScope.new("shop-ui")
+	var profile := scope.profile
+	_check(profile.save_profile(), "Shop scope establishes starter balance without a formal save")
+	var setup := (load("res://scenes/ui/character_setup.tscn") as PackedScene).instantiate()
+	root.add_child(setup)
+	current_scene = setup
+	await _ui_frames(2)
+	var entry := _shop_button(setup, "山路行商")
+	_check(entry != null, "Preparation exposes the standalone shop entry")
+	_check(profile.try_equip(PlayerProfile.CHARACTERS[&"shadow_runner"], &"star_lance") and profile.save_profile(), "Set equipment before visiting the shop")
+	await _shop_tap(entry)
+	await _ui_frames(3)
+	var shop := current_scene as Control
+	_check(shop != null and shop.scene_file_path == RunNavigation.SHOP_SCENE, "Shop entry opens an independent formal scene")
+	if shop == null or shop.scene_file_path != RunNavigation.SHOP_SCENE:
+		if current_scene != null:
+			current_scene.free()
+		scope.close()
+		return
+	_check(shop.primary_action.disabled and shop.detail_status.text.contains("雾岭断桥"), "Locked growth shows its concrete prerequisite")
+	for button: Button in shop.product_buttons.values():
+		for icon in button.get_parent().find_children("*", "TextureRect", true, false):
+			_check(button.get_parent().get_global_rect().encloses(icon.get_global_rect()), "Product icons must fit their cards after texture minimum-size calculation")
+	profile._reward_state.coins = 2000
+	profile.history.record_completion(LevelCatalog.FOG_RIDGE_ID, &"full", RunResult.calculate(60.0, 60.0, 0, 50, 50, 0, 0))
+	profile.history.record_completion(LevelCatalog.WIND_BAMBOO_ID, &"full", RunResult.calculate(85.0, 85.0, 0, 50, 50, 0, 0))
+	shop._refresh_profile()
+	await _shop_tap(shop.primary_action)
+	_check(shop.confirmation != null and profile.coins == 2000, "Touching upgrade opens confirmation without spending")
+	await _shop_key(KEY_TAB)
+	_check(root.gui_get_focus_owner() != null and root.gui_get_focus_owner().text == "取消", "Keyboard focus stays within the purchase confirmation")
+	await _shop_key(KEY_ENTER)
+	_check(shop.confirmation == null and profile.coins == 2000, "Keyboard accept can cancel without spending")
+	await _shop_tap(shop.primary_action)
+	await _shop_tap(_shop_button(shop.confirmation, "取消"))
+	_check(shop.confirmation == null and profile.coins == 2000, "Cancelling preserves wallet and growth")
+	await _shop_tap(shop.primary_action)
+	await _shop_tap(shop.confirm_button)
+	shop._confirm_purchase()
+	_check(profile.coins == 1820 and profile.get_growth_level(&"weapon_training") == 1, "Confirming twice charges exactly once")
+	_check(shop.detail_price.text.contains("360") and shop.detail_body.text.contains("+8%") and shop.detail_body.text.contains("+12%"), "Growth refreshes next price, next effect and cap")
+	shop._primary_action()
+	profile._economy_state.growth.weapon_training = 2
+	shop._confirm_purchase()
+	_check(profile.coins == 1820 and shop.status.text.contains("状态已更新"), "Stale tier confirmation cannot apply to another tier")
+	shop._primary_action()
+	profile._reward_state.coins += 1
+	shop._confirm_purchase()
+	_check(profile.coins == 1821 and profile.get_growth_level(&"weapon_training") == 2, "Changed wallet requires a fresh confirmation of the remaining balance")
+	profile._reward_state.coins -= 1
+	profile._economy_state.growth.weapon_training = 3
+	shop._refresh_profile()
+	_check(shop.primary_action.disabled and shop.primary_action.text == "已满级", "Capped growth disables further spending")
+	await _shop_tap(shop.tab_buttons[&"scrolls"])
+	await _shop_tap(shop.primary_action)
+	await _shop_tap(shop.confirm_button)
+	_check("light_scroll" in profile.economy_state().scroll_ids and profile.coins == 1640, "Scroll purchase unlocks once without silently equipping")
+	await _shop_tap(shop.primary_action)
+	_check(profile.economy_state().selected_scroll_id == "light_scroll" and profile.coins == 1640, "Owned scroll equips free of charge")
+	await _shop_tap(shop.primary_action)
+	_check(profile.economy_state().selected_scroll_id.is_empty(), "Equipped scroll can be removed")
+	await _shop_tap(shop.tab_buttons[&"supplies"])
+	await _shop_tap(shop.primary_action)
+	ProfileStore.write_guard = func(stage: String) -> bool: return stage != "replace"
+	await _shop_tap(shop.confirm_button)
+	_check(profile.coins == 1600 and profile.get_inventory(&"guard_charm") == 1 and profile.save_pending, "Failed shop save retains one complete transaction draft")
+	_check(shop.save_retry.visible and shop.primary_action.disabled and shop.secondary_action.disabled, "Failed transaction exposes retry and freezes further mutations")
+	await _shop_tap(shop.primary_action)
+	_check(profile.coins == 1600 and profile.get_inventory(&"guard_charm") == 1, "Disabled touch cannot repeat a failed purchase")
+	ProfileStore.write_guard = Callable()
+	await _shop_tap(shop.save_retry)
+	_check(not profile.save_pending and profile.coins == 1600 and profile.get_inventory(&"guard_charm") == 1, "Save retry persists the draft without another charge")
+	await _shop_tap(shop.secondary_action)
+	_check(profile.economy_state().selected_item_id == "guard_charm" and profile.get_inventory(&"guard_charm") == 1, "Choosing supply does not consume inventory")
+	await _shop_tap(shop.secondary_action)
+	_check(profile.economy_state().selected_item_id.is_empty(), "Supply can be explicitly cleared")
+	profile._economy_state.item_inventory.guard_charm = 9
+	shop._refresh_profile()
+	_check(shop.primary_action.disabled and shop.primary_action.text == "库存已满", "Full stock cannot be purchased")
+	profile._reward_state.coins = 0
+	await _shop_tap(shop.product_buttons[&"spring_potion"])
+	_check(shop.primary_action.disabled and shop.detail_status.text.contains("还差 30"), "Insufficient funds show the exact shortage")
+	await _shop_tap(shop.tab_buttons[&"cosmetics"])
+	_check(not shop.detail.visible and shop.product_buttons.is_empty(), "Unavailable cosmetics show an empty state without fake products")
+	await _shop_tap(shop.tab_buttons[&"supplies"])
+	profile._reward_state.coins = 2000
+	shop._select_product(&"spring_potion")
+	shop._primary_action()
+	var escape := InputEventKey.new()
+	escape.keycode = KEY_ESCAPE
+	escape.pressed = true
+	shop._unhandled_key_input(escape)
+	_check(shop.confirmation == null and current_scene == shop, "Escape cancels confirmation before leaving the shop")
+	profile._document.version = ProfileStore.VERSION + 1
+	shop._refresh_profile()
+	_check(shop.primary_action.disabled and shop.status.text.contains("较新"), "Future saves keep shop read-only")
+	shop._unhandled_key_input(escape)
+	await _ui_frames(4)
+	_check(current_scene != null and current_scene.scene_file_path == RunNavigation.SETUP_SCENE, "Escape returns to the preparation page")
+	_check(profile.get_equipped_weapon(PlayerProfile.CHARACTERS[&"shadow_runner"]).weapon_id == &"star_lance", "Shop navigation preserves the equipped weapon")
+	if current_scene != null:
+		current_scene.free()
+	scope.close()
+
+func _capture_shop(output: String) -> void:
+	if DisplayServer.get_name() == "headless":
+		_check(false, "Shop capture needs a graphical renderer")
+		return
+	_check(DirAccess.make_dir_recursive_absolute(output) == OK, "Shop screenshot directory is writable")
+	for spec in [[1280, "initial"], [1280, "growth"], [1280, "scrolls"], [1600, "supplies"], [1600, "safe"], [1280, "confirm"], [1280, "save_failure"]]:
+		var scope := TestProfileScope.new("shop-capture")
+		var viewport := SubViewport.new()
+		viewport.size = Vector2i(spec[0], 720)
+		viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		root.add_child(viewport)
+		var shop := (load(RunNavigation.SHOP_SCENE) as PackedScene).instantiate()
+		shop.profile = scope.profile
+		viewport.add_child(shop)
+		if spec[1] != "initial":
+			scope.profile._reward_state.coins = 720
+			scope.profile.history.record_completion(LevelCatalog.FOG_RIDGE_ID, &"full", RunResult.calculate(60.0, 60.0, 0, 50, 50, 0, 0))
+			shop._refresh_profile()
+		if spec[1] == "scrolls":
+			shop._select_tab(&"scrolls")
+		if spec[1] in ["supplies", "safe"]:
+			scope.profile.purchase(&"guard_charm")
+			shop._select_tab(&"supplies")
+		if spec[1] in ["confirm", "save_failure"]:
+			shop._primary_action()
+		if spec[1] == "save_failure":
+			ProfileStore.write_guard = func(stage: String) -> bool: return stage != "replace"
+			shop._confirm_purchase()
+			ProfileStore.write_guard = Callable()
+		var safe := Rect2(60, 24, spec[0] - 120, 648) if spec[1] == "safe" else Rect2(Vector2.ZERO, viewport.size)
+		ScreenLayout.fit_control(shop, safe)
+		await _ui_frames(3)
+		await RenderingServer.frame_post_draw
+		for button in shop.find_children("*", "Button", true, false):
+			if button.is_visible_in_tree():
+				_check(safe.encloses(button.get_global_rect()), "Shop hit areas and confirmations fit the design safe frame")
+		var target := output.path_join("shop_%s_%s.png" % spec)
+		_check(viewport.get_texture().get_image().save_png(target) == OK, "Shop screenshot saves successfully")
+		print("SHOP_CAPTURE ", target)
+		viewport.free()
+		scope.close()
+
+func _shop_button(node: Node, text: String) -> Button:
+	for button in node.find_children("*", "Button", true, false):
+		if button.text == text:
+			return button as Button
+	return null
+
+func _shop_tap(button: Button) -> void:
+	if button == null:
+		_check(false, "Shop touch target must exist")
+		return
+	var point := button.get_global_transform_with_canvas() * (button.size * 0.5)
+	for pressed in [true, false]:
+		var event := InputEventScreenTouch.new()
+		event.index = 0
+		event.position = root.get_screen_transform() * point
+		event.pressed = pressed
+		Input.parse_input_event(event)
+		Input.flush_buffered_events()
+		await _ui_frames(2)
+
+func _shop_key(key: Key) -> void:
+	for pressed in [true, false]:
+		var event := InputEventKey.new()
+		event.keycode = key
+		event.physical_keycode = key
+		event.pressed = pressed
+		Input.parse_input_event(event)
+		Input.flush_buffered_events()
+		await _ui_frames(2)
+
+func _ui_frames(count: int) -> void:
+	for index in range(count):
+		await physics_frame
+		await process_frame
 
 func _check(condition: bool, message: String) -> void:
 	if not condition:

@@ -3,6 +3,7 @@ extends RefCounted
 
 const SETUP_SCENE := "res://scenes/ui/character_setup.tscn"
 const LEVEL_SELECT_SCENE := "res://scenes/ui/level_select.tscn"
+const SHOP_SCENE := "res://scenes/ui/shop.tscn"
 static var _pending: RunLoadout
 static var _pending_path := ""
 static var _pending_level_id: StringName = &""
@@ -37,6 +38,14 @@ static func open_level_select(tree: SceneTree, loadout: RunLoadout) -> Error:
 		_pending_level_id = &""
 		_pending_mode = &""
 	return error
+
+static func open_shop(tree: SceneTree) -> Error:
+	_pending = null
+	_pending_path = ""
+	_pending_level_id = &""
+	_pending_mode = &""
+	tree.paused = false
+	return tree.change_scene_to_file(SHOP_SCENE)
 
 static func launch_level(tree: SceneTree, path: String, loadout: RunLoadout, level_id: StringName) -> Error:
 	if path.ends_with("/main.tscn") and not PlayerProfile.current().can_start_formal_run():

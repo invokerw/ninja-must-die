@@ -1,0 +1,222 @@
+{
+  "date": "2026-11-06",
+  "scope": "local Godot 4.7; sequential; isolated test profiles",
+  "full_regressions": [
+    {
+      "suite": "rope_landing",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "ROPE_LANDING_PASS (8 scenarios)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-rope_landing.log"
+    },
+    {
+      "suite": "rope_pickups",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "ROPE_PICKUPS_PASS (26 top, 24 bottom; correct and opposite sides)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-rope_pickups.log"
+    },
+    {
+      "suite": "level_route",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "LEVEL_ROUTE_PASS (data validation, 4 practice runs, 3 characters / 4 boss clears, pause/reload, lower finish)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-level_route.log"
+    },
+    {
+      "suite": "mobility",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "MOBILITY_PASS (three validated resources, legacy migration, snapshots, third-jump edges, same-frame priority, bounded glide, burst cooldown/protection, queued flips, pause/focus/stop/retry, shared sandbox entries)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-mobility.log"
+    },
+    {
+      "suite": "combat",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "COMBAT_PASS (character data, cooldown, same-tick immunity, range/damage, 2/3 jumps, pause/stop, encounters, results)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-combat.log"
+    },
+    {
+      "suite": "projectiles",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "PROJECTILES_PASS (screen anchor, fixed direction, parallel volleys/gaps, full flight, single contact, protection, swept hits, pause/reload/finish)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-projectiles.log"
+    },
+    {
+      "suite": "boss",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "BOSS_PASS (entry, 3 readable attacks, half-health enrage, double volley, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-boss.log"
+    },
+    {
+      "suite": "feedback",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "FEEDBACK_PASS (PCM assets, action cues, readable warnings, particles/voice bounds, render-only impact, independent toggles, pause/result/reload)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-feedback.log"
+    },
+    {
+      "suite": "weapons",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "WEAPONS_PASS (character equipment, save/reload, setup/retry, 2 weapons, real flight/impact, pickups, pause/cancel, 3 kill sources, loadout replays)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-weapons.log"
+    },
+    {
+      "suite": "save",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "SAVE_PASS (independent records/modes, legacy fields, validated settings, backup recovery, failed-save retry, real completion/death/exit, preparation UI)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-save.log"
+    },
+    {
+      "suite": "stars_records",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "STARS_RECORDS_PASS (integer thresholds, independent flawless, whole-run/config snapshots, character records, v1 migration, v2 persistence/retry/dedupe, real formal/practice/failure, map views)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-stars_records.log"
+    },
+    {
+      "suite": "reward_transactions",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "REWARD_TRANSACTIONS_PASS (starter/clear/star/flawless/milestones, v1/v2 migration, atomic I/O boundaries, pending lock/retry, backup/future/corrupt, actual finish/practice/UI)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-reward_transactions.log"
+    },
+    {
+      "suite": "economy",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "ECONOMY_PASS (prices/caps, duplicate IDs, JSON reload, malformed/future data, atomic failures, runtime supply/health, standalone shop/touch/confirmation)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-economy.log"
+    },
+    {
+      "suite": "touch_controls",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-touch_controls.log"
+    },
+    {
+      "suite": "player_art",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "PLAYER_ART_PASS (8 run frames, 8 actions, rope anchors, real boss core states, pause, stop, collision invariance)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-player_art.log"
+    },
+    {
+      "suite": "ui_art_preview",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-ui_art_preview.log"
+    },
+    {
+      "suite": "level_select",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "LEVEL_SELECT_PASS (preparation entry, lock requirement, selected loadout, level data launch)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-level_select.log"
+    },
+    {
+      "suite": "wind_bamboo",
+      "exit_code": 0,
+      "passed": true,
+      "markers": [
+        "WIND_BAMBOO_PASS (3 characters x 2 weapons x base/mobility routes, bamboo phases/pause, selected-level retry)"
+      ],
+      "errors": [],
+      "log": "/tmp/ninja-shop-final-wind_bamboo.log"
+    },
+    {
+      "suite": "persistence_write",
+      "exit_code": 0,
+      "passed": true,
+      "output": "Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org\n\nPROFILE_WRITE_PASS\n"
+    },
+    {
+      "suite": "persistence_read",
+      "exit_code": 0,
+      "passed": true,
+      "output": "Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org\n\nPROFILE_RELOAD_PASS\n"
+    },
+    {
+      "suite": "ci_export",
+      "exit_code": 0,
+      "passed": true,
+      "output": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.007s\n\nOK\n"
+    }
+  ],
+  "final_shop_checks": {
+    "headless_log": "/tmp/ninja-shop-final-economy.log",
+    "graphical_log": "/tmp/ninja-shop-final-graphical.log",
+    "result": "ECONOMY_PASS",
+    "exit_code": 0,
+    "errors": [],
+    "captures": "art/validation/ui/shop/v02/runtime/",
+    "extra_checks": [
+      "keyboard modal focus/cancel",
+      "changed balance invalidates quote",
+      "texture icon card bounds",
+      "1600x720 inset safe frame"
+    ]
+  },
+  "user_concept_review": "approved: 通过，按 v02 制作",
+  "user_runtime_visual_review": "pending",
+  "android": "pending",
+  "remote_ci": "not run"
+}

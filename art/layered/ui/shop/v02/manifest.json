@@ -1,0 +1,164 @@
+{
+  "concept": "art/concepts/ui/shop/v02.png",
+  "concept_review": "approved",
+  "approved_on": "2026-11-06",
+  "prompt": "art/prompts/ui/shop/v02_icons.prompt.md",
+  "workflow": "native image_gen transparent atlas; unmodified RGBA; Godot AtlasTexture grid regions",
+  "source": "art/layered/ui/shop/v02/item_icons.png",
+  "runtime": "art/generated/ui/shop/v02/item_icons.png",
+  "sha256": "bf4c8b6a7c304ab87c5af62288f31533c3b60fdced9180a6540d86e3744d8dd1",
+  "runtime_byte_identical": true,
+  "size": [
+    1536,
+    1024
+  ],
+  "mode": "RGBA",
+  "alpha_range": [
+    0,
+    254
+  ],
+  "fully_transparent_fraction": 0.6736176808675131,
+  "cells": [
+    {
+      "id": "weapon_training",
+      "region": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_nonzero_bbox": [
+        17,
+        9,
+        512,
+        512
+      ],
+      "alpha_above_128_bbox": [
+        97,
+        61,
+        434,
+        473
+      ],
+      "max_cell_edge_alpha": 1
+    },
+    {
+      "id": "body_training",
+      "region": [
+        512,
+        0,
+        512,
+        512
+      ],
+      "alpha_nonzero_bbox": [
+        0,
+        3,
+        512,
+        512
+      ],
+      "alpha_above_128_bbox": [
+        73,
+        44,
+        435,
+        465
+      ],
+      "max_cell_edge_alpha": 1
+    },
+    {
+      "id": "light_scroll",
+      "region": [
+        1024,
+        0,
+        512,
+        512
+      ],
+      "alpha_nonzero_bbox": [
+        0,
+        20,
+        506,
+        512
+      ],
+      "alpha_above_128_bbox": [
+        47,
+        96,
+        449,
+        412
+      ],
+      "max_cell_edge_alpha": 1
+    },
+    {
+      "id": "guard_scroll",
+      "region": [
+        0,
+        512,
+        512,
+        512
+      ],
+      "alpha_nonzero_bbox": [
+        23,
+        0,
+        512,
+        488
+      ],
+      "alpha_above_128_bbox": [
+        63,
+        93,
+        465,
+        413
+      ],
+      "max_cell_edge_alpha": 1
+    },
+    {
+      "id": "guard_charm",
+      "region": [
+        512,
+        512,
+        512,
+        512
+      ],
+      "alpha_nonzero_bbox": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alpha_above_128_bbox": [
+        126,
+        38,
+        359,
+        474
+      ],
+      "max_cell_edge_alpha": 1
+    },
+    {
+      "id": "spring_potion",
+      "region": [
+        1024,
+        512,
+        512,
+        512
+      ],
+      "alpha_nonzero_bbox": [
+        0,
+        0,
+        511,
+        492
+      ],
+      "alpha_above_128_bbox": [
+        113,
+        70,
+        411,
+        435
+      ],
+      "max_cell_edge_alpha": 1
+    }
+  ],
+  "assistant_review": "passed: source alpha, 1280/1600 runtime edge/scaling/atlas checks",
+  "user_visual_review": "pending",
+  "android_review": "pending",
+  "runtime_ready": false,
+  "notes": [
+    "概念通过后直接生成原生透明图集，未从概念图栅格文字提取；无需 PSD。此网格、源图哈希和实际截图构成可复核拆分记录。",
+    "单元边缘存在至多 1/255 的低 alpha 尾迹；filter_clip 阻止采样邻格；有效主体不触边，实际背景未见杂边。",
+    "面板、按钮、文字、数值和状态由 Godot 原生绘制，背景复用现有 PaintedBackdrop。"
+  ]
+}
