@@ -31,6 +31,10 @@ func _initialize() -> void:
 			push_error("Cross-process star snapshot write failed")
 			quit(1)
 			return
+		if not profile.upgrade_growth(&"weapon_training") or not profile.purchase(&"guard_charm") or not profile.purchase(&"guard_charm") or not profile.select_item(&"guard_charm") or not profile.consume_selected_item("cross-process-supply"):
+			push_error("Cross-process economy write failed")
+			quit(1)
+			return
 		print("PROFILE_WRITE_PASS")
 	else:
 		FeedbackSettings.apply(profile.feedback_settings)
@@ -52,8 +56,16 @@ func _initialize() -> void:
 			push_error("A reloaded run ID was recorded twice")
 			quit(1)
 			return
-		if profile.coins != 476 or profile.reward_summary("cross-process-formal").get("total") != 356 or not profile.pending_transaction.is_empty():
+		if profile.coins != 216 or profile.reward_summary("cross-process-formal").get("total") != 356 or not profile.pending_transaction.is_empty():
 			push_error("A fresh process did not restore one atomic wallet/reward-ledger generation")
+			quit(1)
+			return
+		if profile.get_growth_level(&"weapon_training") != 1 or profile.get_inventory(&"guard_charm") != 1 or not profile.economy_state().selected_item_id.is_empty() or profile.economy_state().economy_ledger.get("consumptions", {}).get("cross-process-supply") != "guard_charm":
+			push_error("A fresh process did not restore growth, inventory and consumption ledger")
+			quit(1)
+			return
+		if not profile.consume_selected_item("cross-process-supply") or profile.get_inventory(&"guard_charm") != 1:
+			push_error("A reloaded consumption ID deducted another supply")
 			quit(1)
 			return
 		for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:

@@ -51,6 +51,8 @@ var _fast_falling := false
 var _queued_rope_side := 0
 var _queued_fast_fall := false
 var _motion_sweep: ShapeCast2D
+var _guard_charm_used := false
+var _spring_potion_used := false
 
 const ROPE_FLIP_FEEDBACK_DURATION := 0.24
 
@@ -62,6 +64,7 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if tuning == null:
 		tuning = load("res://data/control_tuning.tres")
+	tuning = tuning.duplicate(true)
 	if character == null:
 		character = load("res://data/characters/shadow_runner.tres")
 	if run_loadout == null:
@@ -92,6 +95,10 @@ func _ready() -> void:
 	_motion_sweep.collision_mask = 4 | 16 | 32
 	_motion_sweep.max_results = 64
 	add_child(_motion_sweep)
+	var body_level := int(run_loadout.growth_snapshot.get("body_training", 0))
+	tuning.max_health += body_level
+	if String(run_loadout.item_snapshot.get("selected_scroll_id", "")) == "guard_scroll":
+		tuning.hurt_immunity = 1.0
 	health = tuning.max_health
 	_snap_to_rope()
 	previous_physics_position = global_position
@@ -298,12 +305,25 @@ func take_damage(amount: int = 1) -> void:
 	mobility.release()
 	run_input.cancel_action(&"mobility")
 	damage_count += 1
+	var item_id := String(run_loadout.item_snapshot.get("consumed_item_id", ""))
+	if item_id == "guard_charm" and not _guard_charm_used:
+		_guard_charm_used = true
+		immunity_remaining = tuning.hurt_immunity
+		health_changed.emit(health, tuning.max_health)
+		emit_feedback(&"hit")
+		return
 	health = maxi(health - amount, 0)
+	if item_id == "spring_potion" and not _spring_potion_used and health == 1:
+		_spring_potion_used = true
+		health = mini(health + 1, tuning.max_health)
 	immunity_remaining = tuning.hurt_immunity
 	health_changed.emit(health, tuning.max_health)
 	emit_feedback(&"hit")
 	if health == 0:
 		fail("生命耗尽")
+
+func get_max_health() -> int:
+	return tuning.max_health if tuning != null else 0
 
 func fail(reason: String) -> void:
 	if not active:

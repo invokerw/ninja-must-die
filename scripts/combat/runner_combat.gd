@@ -28,6 +28,7 @@ var dart_groups := 0
 var _attack_sequence := 0
 var _dart_remaining := 0
 var _dart_delay := 0.0
+var _damage_remainders := {&"skill": 0.0, &"weapon": 0.0}
 
 const MAX_FRIENDLY_PROJECTILES := 32
 
@@ -117,9 +118,10 @@ func _strike() -> void:
 		if not (target is RopeSentry or target is RopeBoss) or _hit_ids.has(target.get_instance_id()):
 			continue
 		_hit_ids[target.get_instance_id()] = true
+		var scale := _damage_scale()
 		if target is RopeBoss:
-			resolve_boss_attack(target, _new_attack(&"skill", skill.skill_id, skill.boss_damage))
-		elif target.take_hit(skill.damage):
+			resolve_boss_attack(target, _new_attack(&"skill", skill.skill_id, _scaled_damage(&"skill", skill.boss_damage, scale)))
+		elif target.take_hit(_scaled_damage(&"skill", skill.damage, scale)):
 			kills += 1
 			_add_combo()
 			_set_feedback("月蚀斩 · 击破哨兵")
@@ -160,8 +162,18 @@ func try_weapon() -> bool:
 
 func _fire_weapon() -> void:
 	var skill := weapon.data.skill
-	if _spawn_projectile(_new_attack(&"weapon", weapon.data.weapon_id, skill.boss_damage), skill.projectile_speed, skill.turn_speed, skill.projectile_lifetime, skill.effect_id):
+	if _spawn_projectile(_new_attack(&"weapon", weapon.data.weapon_id, _scaled_damage(&"weapon", skill.boss_damage, _damage_scale())), skill.projectile_speed, skill.turn_speed, skill.projectile_lifetime, skill.effect_id):
 		weapon_shots += 1
+
+func _damage_scale() -> float:
+	var level := int(player.run_loadout.growth_snapshot.get("weapon_training", 0))
+	return 1.0 + 0.04 * float(level)
+
+func _scaled_damage(source: StringName, base: int, scale: float) -> int:
+	var exact := float(base) * scale + float(_damage_remainders.get(source, 0.0))
+	var amount := maxi(1, floori(exact))
+	_damage_remainders[source] = exact - float(amount)
+	return amount
 
 func _new_attack(kind: StringName, source: StringName, amount: int) -> CombatAttack:
 	_attack_sequence += 1

@@ -35,12 +35,15 @@ func _test_open_and_lock_state() -> void:
 	if select == null:
 		return
 	_check(select.level_buttons.size() == 2, "Chapter one map must list the first two catalog levels")
+	_check(select._card_visuals[LevelCatalog.FOG_RIDGE_ID].unlocked and select._card_visuals[LevelCatalog.FOG_RIDGE_ID].selected, "The initial unlocked selection must use the red/gold card")
+	_check(not select._card_visuals[LevelCatalog.WIND_BAMBOO_ID].unlocked, "The unavailable second card must use the locked artwork")
 	await _tap_button(select.level_buttons[LevelCatalog.WIND_BAMBOO_ID])
 	_check(select.selected_level_id == LevelCatalog.WIND_BAMBOO_ID, "A real touch must select the second card")
 	_check(select.start_button.disabled and select.practice_button.disabled, "The second level must disable start and practice until the first clear")
 	_check(select.status.text.contains("雾岭断桥"), "The locked second level must show its concrete prerequisite")
 	_check(select.level_buttons[LevelCatalog.WIND_BAMBOO_ID].button_pressed, "The selected locked card must remain highlighted")
 	_check(select._lock_art[0].visible, "The locked card must display its lock art")
+	_check(not select._card_visuals[LevelCatalog.FOG_RIDGE_ID].selected and select._card_visuals[LevelCatalog.WIND_BAMBOO_ID].selected and not select._card_visuals[LevelCatalog.WIND_BAMBOO_ID].unlocked, "Selecting a locked card must clear the old highlight while keeping locked artwork")
 	_check(select.detail_record.text.contains("尚无纪录"), "Empty records must not display concept ratings")
 	await _tap_button(select.start_button)
 	_check(current_scene == select, "Touching a disabled action must not launch a locked level")
@@ -57,6 +60,12 @@ func _test_unlocked_launch() -> void:
 	select._select_level(LevelCatalog.WIND_BAMBOO_ID)
 	_check(not select.start_button.disabled and not select.practice_button.disabled, "The first clear must unlock the second level actions")
 	_check(not select._lock_art[0].visible, "Unlocking a level must hide both lock layers")
+	_check(select._card_visuals[LevelCatalog.WIND_BAMBOO_ID].unlocked and select._card_visuals[LevelCatalog.WIND_BAMBOO_ID].selected, "The second unlocked selection must receive the red/gold artwork")
+	_check(select._card_visuals[LevelCatalog.FOG_RIDGE_ID].unlocked and not select._card_visuals[LevelCatalog.FOG_RIDGE_ID].selected, "The first unlocked card must become neutral when selecting the second")
+	await _tap_button(select.level_buttons[LevelCatalog.FOG_RIDGE_ID])
+	_check(select._card_visuals[LevelCatalog.FOG_RIDGE_ID].selected and select._card_visuals[LevelCatalog.WIND_BAMBOO_ID].unlocked and not select._card_visuals[LevelCatalog.WIND_BAMBOO_ID].selected, "Touching the first card must leave the second in its unlocked neutral state")
+	_check(not select.art.get_node("loop_02_roi_4_lower_badge").visible, "Unlocked second card must not retain the gray locked badge")
+	await _tap_button(select.level_buttons[LevelCatalog.WIND_BAMBOO_ID])
 	select._start_level(true)
 	await _frames(5)
 	var run := current_scene as Node2D
@@ -99,7 +108,7 @@ func _capture_states(output: String) -> void:
 		_check(false, "Capture requires the graphical renderer")
 		return
 	_check(DirAccess.make_dir_recursive_absolute(output) == OK, "Capture directory must be writable")
-	for spec in [[1280, "first"], [1280, "locked"], [1600, "unlocked"], [1280, "record"]]:
+	for spec in [[1280, "first"], [1280, "locked"], [1280, "unlocked"], [1600, "unlocked"], [1280, "record"], [1600, "record"]]:
 		var viewport := SubViewport.new()
 		viewport.size = Vector2i(spec[0], 720)
 		viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS

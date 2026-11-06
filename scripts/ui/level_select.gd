@@ -12,11 +12,13 @@ var status: Label
 var start_button: Button
 var practice_button: Button
 const ART := preload("res://scenes/ui/level_select_art.tscn")
+const CARD_VISUAL := preload("res://scripts/ui/level_card_visual.gd")
 
 var _launching := false
 var art: Control
 var _card_titles: Dictionary = {}
 var _card_records: Dictionary = {}
+var _card_visuals: Dictionary = {}
 var _lock_art: Array[Control] = []
 var _record_rows: Array[Label] = []
 var record_character_only := false
@@ -46,6 +48,14 @@ func _ready() -> void:
 	for index in range(entries.size()):
 		var entry: Dictionary = entries[index]
 		var top := 230.0 + index * 164.0
+		var card := CARD_VISUAL.new()
+		card.position = Vector2(114, top)
+		card.size = Vector2(338, 145)
+		card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		art.add_child(card)
+		# Keep the existing lock/badge layers above the card artwork.
+		art.move_child(card, art.get_node("loop_05_roi_4_locked_card_backplate").get_index())
+		_card_visuals[entry.level_id] = card
 		# Opaque Godot captions cover concept ratings; only real records are shown.
 		_caption_panel(Rect2(120, top + 105, 325, 39))
 		_card_titles[entry.level_id] = _label("", Rect2(130, top + 108, 300, 29), 21)
@@ -53,6 +63,8 @@ func _ready() -> void:
 		var button := _button("", Rect2(114, top, 338, 145), _select_level.bind(entry.level_id))
 		button.toggle_mode = true
 		level_buttons[entry.level_id] = button
+	for node_name in ["loop_02_roi_1_feature_card", "loop_05_roi_4_locked_card_backplate", "loop_04_roi_4_lower_footer"]:
+		art.get_node(NodePath(node_name)).hide()
 	for node_name in ["loop_02_roi_4_lock_icon", "loop_03_roi_4_lock_backplate"]:
 		_lock_art.append(art.get_node(NodePath(node_name)))
 	detail_title = _label("", Rect2(550, 345, 272, 42), 22, Color("f3dfb6"))
@@ -113,10 +125,12 @@ func _select_level(level_id: StringName) -> void:
 		var record := _get_record(id)
 		button.tooltip_text = "%s · %s" % [item.title, "已解锁" if item_unlocked else "未解锁"]
 		button.set_pressed_no_signal(id == selected_level_id)
+		_card_visuals[id].set_state(item_unlocked, id == selected_level_id)
 		_card_titles[id].text = "%s%s" % [item.title, "" if item_unlocked else " · 未解锁"]
 		_card_records[id].text = _record_short_text(record)
 	for lock in _lock_art:
 		lock.visible = not LevelCatalog.is_unlocked(entries_second_id(), completed)
+	art.get_node("loop_02_roi_4_lower_badge").visible = not LevelCatalog.is_unlocked(entries_second_id(), completed)
 	if not unlocked:
 		for requirement: StringName in entry.requires:
 			status.text = "需要先完成：%s" % LevelCatalog.get_level(requirement).get("title", String(requirement))

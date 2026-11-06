@@ -26,6 +26,7 @@ var _document: Dictionary = {}
 var _reward_state: Dictionary = {}
 var _pending_transaction: Dictionary = {}
 var _transaction_failed := false
+var _economy_state: Dictionary = {}
 var coins: int:
 	get: return int(_reward_state.get("coins", 0))
 var pending_transaction: Dictionary:
@@ -38,6 +39,105 @@ func reward_summary(run_id: String) -> Dictionary:
 
 func reward_state() -> Dictionary:
 	return _reward_state.duplicate(true)
+
+func economy_state() -> Dictionary:
+	return _economy_state.duplicate(true)
+
+func get_growth_level(id: StringName) -> int:
+	return int(_economy_state.get("growth", {}).get(String(id), 0))
+
+func get_inventory(id: StringName) -> int:
+	return int(_economy_state.get("item_inventory", {}).get(String(id), 0))
+
+func purchase(item_id: StringName) -> bool:
+	if not _can_change_economy():
+		return false
+	var tx := EconomyService.purchase(_economy_state, coins, item_id, "purchase:%s:%s" % [item_id, Time.get_ticks_usec()])
+	if tx.is_empty():
+		last_error = "铜钱不足、商品已拥有或库存已满。"
+		return false
+	_economy_state = tx.state
+	_reward_state.coins = tx.coins
+	_pending_transaction = {"id": "economy:%s" % tx.item_id, "kind": "economy"}
+	save_pending = true
+	return save_profile()
+
+func upgrade_growth(growth_id: StringName) -> bool:
+	if not _can_change_economy():
+		return false
+	if not _growth_unlocked(growth_id):
+		last_error = "该成长尚未开放，请先完成对应关卡。"
+		return false
+	var tx := EconomyService.upgrade_growth(_economy_state, coins, growth_id, "growth:%s:%s" % [growth_id, Time.get_ticks_usec()])
+	if tx.is_empty():
+		last_error = "当前成长已达上限或铜钱不足。"
+		return false
+	_economy_state = tx.state
+	_reward_state.coins = tx.coins
+	_pending_transaction = {"id": "economy:%s" % tx.growth_id, "kind": "economy"}
+	save_pending = true
+	return save_profile()
+
+func select_scroll(scroll_id: StringName) -> bool:
+	if not _can_change_economy():
+		return false
+	if not scroll_id.is_empty() and (not EconomyService.ITEMS.has(scroll_id) or EconomyService.ITEMS[scroll_id].kind != "scroll" or String(scroll_id) not in _economy_state.scroll_ids):
+		return false
+	_economy_state.selected_scroll_id = String(scroll_id)
+	save_pending = true
+	return save_profile()
+
+func _growth_unlocked(growth_id: StringName) -> bool:
+	var completed_first := not history.get_record(LevelCatalog.FOG_RIDGE_ID, &"full").is_empty()
+	var completed_second := not history.get_record(LevelCatalog.WIND_BAMBOO_ID, &"full").is_empty()
+	if growth_id == &"weapon_training":
+		var level := get_growth_level(growth_id)
+		return completed_first if level == 0 else completed_second
+	if growth_id == &"body_training":
+		return completed_second
+	return false
+
+func select_item(item_id: StringName) -> bool:
+	if not _can_change_economy():
+		return false
+	if not item_id.is_empty() and (not EconomyService.ITEMS.has(item_id) or EconomyService.ITEMS[item_id].kind != "item" or get_inventory(item_id) <= 0):
+		return false
+	_economy_state.selected_item_id = String(item_id)
+	save_pending = true
+	return save_profile()
+
+func consume_selected_item(run_id: String) -> bool:
+	if ProfileStore.is_newer(_document) or _transaction_failed or run_id.is_empty():
+		last_error = "补给事务尚未保存或存档不可写，请先重试保存。"
+		return false
+	if _economy_state.economy_ledger.get("consumptions", {}).has(run_id):
+		return true
+	var selected := StringName(_economy_state.get("selected_item_id", ""))
+	if selected.is_empty():
+		return true
+	var tx := EconomyService.consume_item(_economy_state, selected, run_id)
+	if tx.is_empty():
+		last_error = "所选补给库存不足，请重新选择。"
+		return false
+	_economy_state = tx.state
+	_economy_state.selected_item_id = ""
+	_pending_transaction = {"id": run_id, "kind": "consumption"}
+	save_pending = true
+	return save_profile()
+
+func _can_change_economy() -> bool:
+	last_error = ""
+	if ProfileStore.is_newer(_document):
+		last_error = "存档版本较新，暂不能消费铜钱或更换配置。"
+		return false
+	if _transaction_failed or (not _pending_transaction.is_empty() and _pending_transaction.kind != "migration"):
+		last_error = "上次交易尚未保存，请先重试保存。"
+		return false
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree != null and not tree.get_nodes_in_group("run_sessions").is_empty():
+		last_error = "本局配置已固定，请返回准备页购买或更换。"
+		return false
+	return true
 
 func can_start_formal_run() -> bool:
 	if ProfileStore.is_newer(_document):
@@ -61,6 +161,7 @@ static func current() -> PlayerProfile:
 func _init(path: String = "user://save.json") -> void:
 	save_path = path
 	_reward_state = RewardService.initial_state({}, history)
+	_economy_state = EconomyService.initial_state({})
 	_pending_transaction = {"id": "rewards-migration-v3", "kind": "migration"}
 	save_pending = true
 
@@ -79,11 +180,13 @@ func load_profile() -> void:
 	_transaction_failed = false
 	if not ProfileStore.is_newer(_document):
 		_reward_state = RewardService.initial_state(_document, history)
+		_economy_state = EconomyService.initial_state(_document)
 		if int(_document.get("version", 0)) < 3:
 			_pending_transaction = {"id": "rewards-migration-v3", "kind": "migration"}
 			save_pending = true
 	else:
 		_reward_state = {}
+		_economy_state = EconomyService.initial_state({})
 	feedback_settings = FeedbackSettings.defaults()
 	var settings: Variant = _document.get("settings", {})
 	if settings is Dictionary:
@@ -168,7 +271,12 @@ func try_equip(character: CharacterData, weapon_id: StringName) -> bool:
 func resolve(character: CharacterData = null) -> RunLoadout:
 	if character == null:
 		character = CHARACTERS[selected_character_id]
-	return RunLoadout.capture(character, get_equipped_weapon(character))
+	var loadout := RunLoadout.capture(character, get_equipped_weapon(character))
+	if int(_economy_state.growth.get("weapon_training", 0)) > 0 or int(_economy_state.growth.get("body_training", 0)) > 0:
+		loadout.growth_snapshot = _economy_state.growth.duplicate(true)
+	if not String(_economy_state.selected_scroll_id).is_empty() or not String(_economy_state.get("selected_item_id", "")).is_empty():
+		loadout.item_snapshot = {"selected_scroll_id": _economy_state.selected_scroll_id, "selected_item_id": _economy_state.get("selected_item_id", "")}
+	return loadout
 
 func save_profile() -> bool:
 	last_error = ""
@@ -185,6 +293,8 @@ func save_profile() -> bool:
 	document["level_progress"] = history.progress_to_dictionary()
 	for field in RewardService.FIELDS:
 		document[field] = _reward_state[field]
+	for field in ["growth", "scroll_ids", "selected_scroll_id", "selected_item_id", "item_inventory", "economy_ledger"]:
+		document[field] = _economy_state[field]
 	document["pending_transaction"] = null
 	var settings: Variant = document.get("settings", {})
 	if not settings is Dictionary:

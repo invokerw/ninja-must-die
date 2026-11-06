@@ -80,7 +80,7 @@ Android / Windows 自动打包已配置为推送 tag、发布 Release 或手动�
 
 正式主线成功通关后，按收集与受击计算 1～3 星，独立记录无伤印、最高分单局快照、最快单局及各角色纪录。分数为 `1000 + floor(1000 × 收集数 / 总数) + max(0, 1000 - 150 × 受击次数)`，2200 分起二星、2600 分起三星；40/50 影晶、受击 1 次为 2650 分三星，无伤印另要求 0 受击。时间、击破、连击不影响主线星级。
 
-关卡选择页可切换全角色 / 当前角色纪录。旧版评级、分数与装备保留，旧纪录显示“星级待挑战”，不伪造星级或无伤印；练习仍单独记录，不改变主线星级或解锁。失败、中途重试或返回准备不生成通关纪录。新存档为 v3：起始赠送 120，正式通关发放基础 / 收集 / 首通 / 新星 / 首次无伤 / 章节星数奖励，金额与领取账本、成绩和解锁一起保存。结算支持触摸查看奖励明细，准备页与地图显示余额。成长、商店及消费仍待实现，详见 [成绩与存档](docs/SAVE_SYSTEM.md)。
+关卡选择页可切换全角色 / 当前角色纪录。旧版评级、分数与装备保留，旧纪录显示“星级待挑战”，不伪造星级或无伤印；练习仍单独记录，不改变主线星级或解锁。失败、中途重试或返回准备不生成通关纪录。新存档为 v3：起始赠送 120，正式通关发放基础 / 收集 / 首通 / 新星 / 首次无伤 / 章节星数奖励，金额与领取账本、成绩和解锁一起保存。结算支持触摸查看奖励明细，准备页与地图显示余额。准备页已接入成长商店与补给携带的功能占位，当前可用范围与后续缺口见 [成长与消费](docs/ECONOMY.md)，事务规则见 [成绩与存档](docs/SAVE_SYSTEM.md)。
 
 保存失败时，本次成绩和设置仍在内存有效，准备页、地图、设置面板与结算页提供“重试保存”；有未保存奖励时暂不开始新正式局，仍可免费练习。写入使用临时文件替换并保留上一份有效备份；主文件损坏或缺失时尝试恢复备份，均不可用时回退默认配置。旧版装备存档兼容，未知字段保留，较新版本不覆盖。详细规则见 [成绩、设置与存档](docs/SAVE_SYSTEM.md)。
 
@@ -125,7 +125,7 @@ Android / Windows 自动打包已配置为推送 tag、发布 Release 或手动�
 ```powershell
 $godotPath = 'D:\Godot_v4.7\Godot_v4.7-stable_mono_win64_console.exe'
 & $godotPath --headless --path . --editor --import --quit
-foreach ($suite in @('rope_landing', 'rope_pickups', 'level_route', 'mobility', 'combat', 'projectiles', 'boss', 'feedback', 'weapons', 'save', 'stars_records', 'reward_transactions', 'touch_controls', 'player_art', 'ui_art_preview', 'level_select', 'wind_bamboo')) {
+foreach ($suite in @('rope_landing', 'rope_pickups', 'level_route', 'mobility', 'combat', 'projectiles', 'boss', 'feedback', 'weapons', 'save', 'stars_records', 'reward_transactions', 'economy', 'touch_controls', 'player_art', 'ui_art_preview', 'level_select', 'wind_bamboo')) {
     & $godotPath --headless --path . --fixed-fps 60 --script "res://tests/test_$suite.gd"
     if ($LASTEXITCODE -ne 0) { throw "Regression failed: $suite" }
 }

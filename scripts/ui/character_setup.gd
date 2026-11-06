@@ -17,6 +17,7 @@ var save_retry: Button
 var _launching := false
 var _equipment_save_pending := false
 var wallet: Label
+var shop_panel: Panel
 
 func _ready() -> void:
 	PaintedTheme.apply_font(self)
@@ -62,6 +63,7 @@ func _ready() -> void:
 		history_labels[modes[index]] = _label("", Rect2(left + 16, 610, 348, 94), 17)
 	save_retry = _button("重试保存", Rect2(914, 42, 150, 42), profile.save_profile)
 	_button("设置 F2", Rect2(1086, 42, 150, 42), _toggle_settings)
+	_button("成长商店", Rect2(914, 92, 150, 42), _toggle_shop)
 	feedback_menu = FeedbackSettingsPanel.new()
 	feedback_menu.profile = profile
 	feedback_menu.position = Vector2(900, 100)
@@ -72,6 +74,91 @@ func _ready() -> void:
 	_refresh_profile()
 	get_viewport().size_changed.connect(_layout_ui)
 	_layout_ui()
+
+func _toggle_shop() -> void:
+	if shop_panel != null:
+		shop_panel.queue_free()
+		shop_panel = null
+		return
+	shop_panel = Panel.new()
+	shop_panel.position = Vector2(470, 92)
+	shop_panel.size = Vector2(766, 650)
+	shop_panel.z_index = 20
+	shop_panel.add_theme_stylebox_override("panel", _shop_style())
+	add_child(shop_panel)
+	var title := Label.new()
+	title.text = "山路行商 · 成长与补给"
+	title.position = Vector2(24, 18)
+	title.size = Vector2(700, 38)
+	title.add_theme_font_size_override("font_size", 26)
+	title.add_theme_color_override("font_color", Color("d8b56a"))
+	shop_panel.add_child(title)
+	_shop_row("共修·兵刃", "全角色 J / K 伤害 +4%（当前 %d / 3）" % profile.get_growth_level(&"weapon_training"), 180, Vector2(24, 78), func() -> void:
+		if profile.upgrade_growth(&"weapon_training"):
+			_refresh_profile()
+		_toggle_shop())
+	_shop_row("共修·护体", "最大生命 +1（当前 %d / 1）" % profile.get_growth_level(&"body_training"), 420, Vector2(24, 148), func() -> void:
+		if profile.upgrade_growth(&"body_training"):
+			_refresh_profile()
+		_toggle_shop())
+	_shop_row("拾光卷", "影晶吸取范围 +15% · 当前：%s" % ("已装备" if profile.economy_state().selected_scroll_id == "light_scroll" else ("已解锁" if "light_scroll" in profile.economy_state().scroll_ids else "未解锁")), 180, Vector2(24, 218), func() -> void:
+		if "light_scroll" in profile.economy_state().scroll_ids:
+			profile.select_scroll(&"light_scroll")
+		elif profile.purchase(&"light_scroll"):
+			_refresh_profile()
+		_toggle_shop())
+	_shop_row("护行卷", "受击保护延长至 1.0 秒 · 当前：%s" % ("已装备" if profile.economy_state().selected_scroll_id == "guard_scroll" else ("已解锁" if "guard_scroll" in profile.economy_state().scroll_ids else "未解锁")), 180, Vector2(24, 288), func() -> void:
+		if "guard_scroll" in profile.economy_state().scroll_ids:
+			profile.select_scroll(&"guard_scroll")
+		elif profile.purchase(&"guard_scroll"):
+			_refresh_profile()
+		_toggle_shop())
+	_shop_row("护身符 × 1", "挡住本局第一次有效伤害，仍计受击", 40, Vector2(24, 358), func() -> void:
+		if profile.purchase(&"guard_charm"):
+			_refresh_profile()
+		_toggle_shop())
+	_shop_row("回春药 × 1", "生命首次降至 1 且存活时恢复 1 点", 30, Vector2(24, 428), func() -> void:
+		if profile.purchase(&"spring_potion"):
+			_refresh_profile()
+		_toggle_shop())
+	_shop_row("不携带补给", "正式局免费出战；当前：%s" % ("已选择" if String(profile.economy_state().get("selected_item_id", "")).is_empty() else "未选择"), 0, Vector2(24, 498), func() -> void:
+		profile.select_item(&"")
+		_toggle_shop())
+	_shop_row("携带护身符", "库存 %d · 挡第一次有效伤害，仍计一次受击" % profile.get_inventory(&"guard_charm"), 0, Vector2(24, 548), func() -> void:
+		if profile.get_inventory(&"guard_charm") > 0:
+			profile.select_item(&"guard_charm")
+		_toggle_shop())
+	_shop_row("携带回春药", "库存 %d · 生命首次降至 1 且存活时恢复 1 点" % profile.get_inventory(&"spring_potion"), 0, Vector2(24, 598), func() -> void:
+		if profile.get_inventory(&"spring_potion") > 0:
+			profile.select_item(&"spring_potion")
+		_toggle_shop())
+
+func _shop_row(name: String, description: String, price: int, at: Vector2, callback: Callable) -> void:
+	var label := Label.new()
+	label.text = "%s\n%s%s" % [name, description, (" · %d 铜钱" % price) if price > 0 else ""]
+	label.position = at
+	label.size = Vector2(520, 58)
+	label.add_theme_font_size_override("font_size", 17)
+	shop_panel.add_child(label)
+	var buy := Button.new()
+	buy.text = "购买" if price > 0 else "选择"
+	buy.position = at + Vector2(585, 4)
+	buy.size = Vector2(130, 44)
+	buy.add_theme_font_size_override("font_size", 18)
+	PaintedTheme.style_button(buy)
+	buy.pressed.connect(callback)
+	shop_panel.add_child(buy)
+
+func _shop_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("172233", 0.98)
+	style.border_color = Color("d8b56a", 0.75)
+	style.set_border_width_all(2)
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	return style
 
 func _layout_ui() -> void:
 	ScreenLayout.configure_window(get_viewport(), TouchControls.is_requested())

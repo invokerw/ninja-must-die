@@ -93,3 +93,19 @@
 ```
 
 提交前独立检查（2026-11-05）：使用暂存区内容导出临时快照，串行运行 `rope_landing`、`rope_pickups`、`level_route`、`mobility`、`combat`、`projectiles`、`boss`、`feedback`、`weapons`、`save`、`touch_controls`、`player_art`、`ui_art_preview`、`level_select`、`wind_bamboo`，全部获得对应 PASS 且退出 0；5 项 Python 导出测试和独立进程 `PROFILE_WRITE_PASS` / `PROFILE_RELOAD_PASS` 通过。该检查不包含远端 CI 或 Android 实机。
+
+## 卡片解锁与选中状态修复 · 2026-11-06
+
+用户反馈第二关已有通关纪录，卡片仍为灰色。实际原因是原拼装固定给第一关红金贴图、第二关灰色贴图，解锁只隐藏锁标，没有更新卡片本体。
+
+- 正式页改用 `scripts/ui/level_card_visual.gd` 统一绘制关卡卡片：未解锁使用灰色底图及锁标；已解锁未选中显示彩色插图与中性细边；已解锁且选中显示红金框与红色徽章。
+- 红金状态随实际选择在两关间切换；选中未解锁关卡仍保留灰色与锁标，并继续禁止挑战 / 练习。已解锁卡片隐藏旧的灰色徽章。
+- 复用已审核的运行时贴图，中性卡片由 Godot 读取插图区域并绘制细边，不修改原始 PNG / PSD，不新增位图或测试场景。名称和真实纪录仍由 Godot 绘制。
+- 回归扩展了真实触摸切回、两关的锁定 / 解锁 / 选中状态、解锁后灰色徽章消隐。`level_select` 无显示及真实 OpenGL 截图运行均退出 0、输出 `LEVEL_SELECT_PASS`；`touch_controls`、`ui_art_preview` 串行通过（均输出 `TOUCH_PASS`）。
+- 最新截图：`card_state_fix/` 内的 1280×720 首次进入、锁定、选中第二关及切回第一关（`record`），以及 1600×720 两关选择画面。助手已检查彩色普通卡、移动红金高亮、锁标、真实文字与宽屏居中；用户对本次修复的视觉审核及 Android 实机仍待进行。
+
+复现（图形截图不要加 `--headless`，置顶用于避免 macOS 遮挡窗口后停止绘制）：
+
+```sh
+/Applications/Godot_mono.app/Contents/MacOS/Godot --always-on-top --path . --fixed-fps 60 --log-file /tmp/ninja-card-state-capture.log --script res://tests/test_level_select.gd -- --capture-dir=res://art/validation/ui/level_select/v01/card_state_fix
+```

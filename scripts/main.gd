@@ -110,6 +110,17 @@ func _ready() -> void:
 		_show_result("请先保存奖励", PlayerProfile.current().last_error)
 		_update_save_status()
 		return
+	if get_run_mode() == &"full":
+		var profile := PlayerProfile.current()
+		if not profile.consume_selected_item(run_id):
+			_show_result("补给无法出战", profile.last_error)
+			_update_save_status()
+			return
+		run_loadout.item_snapshot = run_loadout.item_snapshot.duplicate(true)
+		run_loadout.item_snapshot.erase("consumed_item_id")
+		var consumed: String = profile.economy_state().get("economy_ledger", {}).get("consumptions", {}).get(run_id, "")
+		if not consumed.is_empty():
+			run_loadout.item_snapshot["consumed_item_id"] = consumed
 	player.active = true
 	if start_at_boss and level.boss_data != null:
 		for shooter in level.shooters:
@@ -564,13 +575,13 @@ func _update_status() -> void:
 		painted_progress.progress = progress
 	var progress_title := "首领练习" if start_at_boss else ("关卡进度" if level.boss_data != null else "终点进度")
 	progress_label.text = "%s  %d%%" % [progress_title, roundi(progress * 100.0)]
-	health_text.text = "%d / %d" % [player.health, player.tuning.max_health]
-	health_fill.size.x = health_fill.get_parent().size.x * clampf(float(player.health) / float(player.tuning.max_health), 0.0, 1.0)
+	health_text.text = "%d / %d" % [player.health, player.get_max_health()]
+	health_fill.size.x = health_fill.get_parent().size.x * clampf(float(player.health) / float(player.get_max_health()), 0.0, 1.0)
 	health_fill.color = Color("f07868") if player.health > 1 else Color("e04f5f")
 	crystal_text.text = "%d / %d" % [player.crystals, level.pickup_positions.size()]
 	time_text.text = "%.1fs" % _elapsed_time
 	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [
-		player.health, player.tuning.max_health, player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
+		player.health, player.get_max_health(), player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
 	]
 	hint_text.text = "左侧翻绳 · 右侧跳跃 / 身法 / 武器 / 忍术 · 顶部暂停" if is_instance_valid(touch_controls) and touch_controls.enabled else "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：身法 · Esc：暂停 · R：重来"
 	var skill := player.character.active_skill

@@ -20,7 +20,7 @@ static func is_newer(document: Dictionary) -> bool:
 	return float(document.get("version", VERSION)) > VERSION
 
 static func write(path: String, document: Dictionary) -> bool:
-	if int(document.get("version", 0)) == VERSION and not RewardService.valid_state(document):
+	if int(document.get("version", 0)) == VERSION and (not RewardService.valid_state(document) or not EconomyService.valid_state(EconomyService.initial_state(document))):
 		return false
 	var primary := _read_file(path)
 	if primary.valid and is_newer(primary.document):
@@ -71,6 +71,8 @@ static func _read_file(path: String) -> Dictionary:
 	if not (version is int or version is float) or not is_finite(float(version)) or float(version) < 0.0 or float(version) != floorf(float(version)):
 		return invalid
 	if int(version) == VERSION and (not RewardService.valid_state(parsed) or parsed.get("pending_transaction") != null):
+		return invalid
+	if int(version) == VERSION and not EconomyService.valid_state(EconomyService.initial_state(parsed)):
 		return invalid
 	return {"valid": true, "document": parsed}
 
