@@ -15,7 +15,7 @@
 | 身法、角色、武器 | [角色身法](docs/MOBILITY.md)、[角色与技能](docs/CHARACTER_SKILL_DESIGN.md)、[角色与武器](docs/CHARACTER_WEAPON_DESIGN.md) |
 | 关卡与首领 | [关卡编辑](data/levels/README.md)、[首领战斗](docs/BOSS_COMBAT_DESIGN.md)、[首领流程](docs/BOSS_ENCOUNTER.md) |
 | 输入、布局、反馈 | [触屏操作](docs/TOUCH_CONTROLS.md)、[反馈系统](docs/FEEDBACK.md) |
-| UI 设计与资源接入 | [UI 界面设计与开发工作流](docs/UI_DESIGN_WORKFLOW.md)、[美术方向](docs/ART_DIRECTION.md)、[美术流水线](docs/ART_PIPELINE.md) |
+| UI 设计与资源接入 | [通用 UI 设计系统](docs/UI_DESIGN_SYSTEM.md)、[UI 界面设计与开发工作流](docs/UI_DESIGN_WORKFLOW.md)、[美术方向](docs/ART_DIRECTION.md)、[美术流水线](docs/ART_PIPELINE.md) |
 | 存档、美术、发布 | [存档](docs/SAVE_SYSTEM.md)、[美术方向](docs/ART_DIRECTION.md)、[美术流水线](docs/ART_PIPELINE.md)、[打包发布](docs/BUILD_RELEASE.md) |
 
 ## 项目结构与实现边界
@@ -27,6 +27,7 @@
 - 开局通过 `RunLoadout` 固定本局配置并深拷贝嵌套资源；局内和暂停时只读，重试保留配置、重新创建运行状态。不得将冷却和临时效果写回共享 `.tres`。
 - 输入沿用 `RunInput`，触屏与键盘共用玩法语义；处理短点按、按住 / 松开、多指、暂停、失焦、失败和场景切换。当前 `dash` 是 `mobility` 的迁移别名，不再增加独立共享冲刺行为。
 - 布局遵循 1280×720 设计坐标和 `ScreenLayout` 安全区，兼顾宽屏和移动设备。美术调整适配既有判定；玩法规则变化需作为明确的功能修改处理。
+- 后续 UI 必须优先复用或扩展 [通用 UI 设计系统](docs/UI_DESIGN_SYSTEM.md) 的基础控件、组合控件与模板，不在页面内另做一套按钮、面板、色板和状态。该体系 v01 已于 2026-11-06 获用户概念审核通过，优先使用 `UITokens`、`PaintedTheme` 和 `scripts/ui/components/` 已实现控件；其余类型按切片建设，具体覆盖和运行时验收状态以规范为准。
 - 新增资源校验必要字段、范围和非有限数。移动、伤害和碰撞变化检查物理帧边界、高速穿透、重复命中及保护结束时刻。
 - 移动或删除资源前搜索代码、场景、工具和文档引用；保留 Godot 管理的 `.uid` / `.import` 对应关系，不手工篡改 UID 或提交 `.godot/` 缓存。
 
@@ -72,7 +73,7 @@ godot_bin=/Applications/Godot_mono.app/Contents/MacOS/Godot
 | 身法、输入和生命周期 | `mobility`、`touch_controls`；影响路线时加 `level_route` |
 | 战斗、弹体、首领、武器 | 按影响选择 `combat`、`projectiles`、`boss`、`weapons` |
 | 档案、成绩、设置、重试装备 | `save`、`stars_records`、`reward_transactions`、`weapons`，并执行跨进程存档写入 / 读取 |
-| 触屏、HUD、角色美术、反馈 | 按影响选择 `touch_controls`、`ui_art_preview`、`player_art`、`feedback`；布局与视觉变化补实际图形检查 |
+| 触屏、HUD、角色美术、反馈 | 按影响选择 `ui_components`、`touch_controls`、`ui_art_preview`、`player_art`、`feedback`；布局与视觉变化补实际图形检查 |
 | 导出元数据和打包配置 | Python 导出测试，核对两个导出预设及资源排除规则 |
 | 仅修改文档 | 核对引用、路径、命令及状态描述，并运行 `git diff --check` |
 
@@ -86,7 +87,7 @@ suite=mobility
 修改共通基础设施或准备发布时运行完整回归；套件清单随测试演进维护，发布要求以工作流为准，美术预览另按影响补测：
 
 ```sh
-for suite in rope_landing rope_pickups level_route mobility combat projectiles boss feedback weapons save stars_records reward_transactions touch_controls player_art ui_art_preview level_select wind_bamboo; do
+for suite in rope_landing rope_pickups level_route mobility combat projectiles boss feedback weapons save stars_records reward_transactions economy ui_components touch_controls player_art ui_art_preview level_select wind_bamboo; do
     "$godot_bin" --headless --path . --fixed-fps 60 --log-file "/tmp/ninja-$suite.log" --script "res://tests/test_$suite.gd" || exit $?
 done
 python3 -m unittest discover -s tests -p test_ci_export.py

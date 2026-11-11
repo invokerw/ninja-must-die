@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "id": "moon_ink_gold",
+  "version": "v01",
+  "status": "approved",
+  "runtime_ready": false,
+  "design_only": true,
+  "source_of_truth": "docs/UI_DESIGN_SYSTEM.md",
+  "colors": {
+    "ink": "#111827",
+    "surface": "#192536",
+    "surface_raised": "#233448",
+    "text_primary": "#DDE7E7",
+    "text_secondary": "#9AAEB8",
+    "accent": "#D8B56A",
+    "accent_light": "#F0D39B",
+    "danger": "#B24B4B",
+    "danger_text": "#F1AAA1",
+    "disabled": "#73818D",
+    "border_neutral": "#526372"
+  },
+  "font": {
+    "path": "res://fonts/NotoSansCJKsc-Regular.otf",
+    "sizes": {
+      "brand": 40,
+      "page_title": 34,
+      "section_title": 26,
+      "action": 22,
+      "body": 20,
+      "secondary": 18,
+      "caption": 16,
+      "metric": 32
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48
+  ],
+  "geometry": {
+    "design_size": [
+      1280,
+      720
+    ],
+    "page_margin": 48,
+    "panel_padding": 24,
+    "section_gap": 24,
+    "corner_radius": 6,
+    "decorative_corner_cut": 8,
+    "border": 1,
+    "focus_border": 2,
+    "button_primary": [
+      216,
+      56
+    ],
+    "button_secondary": [
+      160,
+      52
+    ],
+    "touch_target_min": [
+      48,
+      48
+    ],
+    "combat_action_base": [
+      96,
+      96
+    ],
+    "rope_y": 490
+  },
+  "motion_ms": {
+    "press": 80,
+    "state_change": 120,
+    "modal": 160,
+    "toast": 2400
+  },
+  "components": {
+    "primitives": [
+      "action_button",
+      "icon_button",
+      "tab_bar",
+      "category_rail",
+      "select_field",
+      "toggle_row",
+      "check_row",
+      "radio_group",
+      "slider_row",
+      "stepper",
+      "text_field",
+      "scroll_list",
+      "page_control",
+      "section_header",
+      "surface_panel",
+      "divider",
+      "status_chip",
+      "value_pair",
+      "linear_meter",
+      "radial_meter",
+      "star_rating",
+      "flawless_seal",
+      "progress_rail",
+      "portrait"
+    ],
+    "composites": [
+      "screen_header",
+      "action_footer",
+      "character_card",
+      "equipment_card",
+      "inventory_slot",
+      "level_card",
+      "product_row",
+      "detail_panel",
+      "ability_row",
+      "record_list",
+      "run_snapshot",
+      "stats_group",
+      "damage_breakdown",
+      "reward_row",
+      "milestone_track",
+      "loadout_summary",
+      "carry_picker",
+      "combat_action",
+      "passive_item_chip",
+      "boss_status",
+      "threat_notice"
+    ],
+    "overlays_and_states": [
+      "modal_shell",
+      "confirm_dialog",
+      "leave_run_dialog",
+      "settings_dialog",
+      "pause_panel",
+      "detail_drawer",
+      "tooltip",
+      "toast",
+      "section_announcement",
+      "unlock_notice",
+      "empty_state",
+      "loading_state",
+      "save_notice",
+      "validation_notice",
+      "dialogue_box",
+      "tutorial_callout"
+    ]
+  },
+  "component_type_count": 61,
+  "template_family_count": 12,
+  "runtime_implementation": "foundation and preparation slices visual_review_pending; remaining types planned",
+  "concept_review": {
+    "status": "approved",
+    "date": "2026-11-06",
+    "timezone": "Asia/Shanghai",
+    "reviewer": "user",
+    "feedback": "可以审核通过按照这个来吧",
+    "scope": "通用UI概念方向与后续复用/扩展；不包含运行时视觉或Android验收"
+  }
+}

@@ -1,0 +1,13 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+OpenGL API 4.1 Metal - 83.1 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/components_1280.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/setup_1280.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/shop_1280.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/confirmation_1280.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/safe_1600.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/settings_1280.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/settings_error_1280.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/pause_1280.png
+UI_COMPONENTS_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/common/v01/runtime/foundation/hud_1280.png
+UI_COMPONENTS_PASS (busy input, toggle semantics, modal blocking/cancel/focus/long content, token contract, safe layouts)

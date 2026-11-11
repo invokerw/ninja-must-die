@@ -1,0 +1,293 @@
+{
+  "design_id": "ui_common",
+  "version": "v01",
+  "date": "2026-11-06",
+  "timezone": "Asia/Shanghai",
+  "status": "approved",
+  "runtime_ready": false,
+  "workflow": "built-in image_gen.imagegen",
+  "model": "not_reported_by_tool",
+  "transparent_background": false,
+  "original_pixels_modified": false,
+  "prompt_file": "art/prompts/ui/common/v01/generation.prompt.md",
+  "concepts": [
+    {
+      "id": "01_foundations",
+      "title": "基础控件",
+      "group": "控件体系",
+      "description": "按钮、导航、表单、字级与色彩。",
+      "file": "art/concepts/ui/common/v01/01_foundations.png",
+      "source_filename": "call_zHkTXlaUYZBCDCgCvAz3o4Dt.png",
+      "prompt_heading": "01_foundations",
+      "references": [
+        "art/validation/ui/common/v01/baseline/shop_1280.png",
+        "art/validation/ui/common/v01/baseline/setup_1280.png",
+        "art/concepts/ui/shop/v02.png",
+        "art/validation/ui/common/v01/baseline/hud_1280.png"
+      ],
+      "review_note": "朱砂值与普通返回样式以规范为准。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 1767399,
+      "sha256": "aa7f8b0803777e5eab483951451ce51ca0b6708c8b1253052c25901e72a8b64d",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "02_composites",
+      "title": "组合组件",
+      "group": "控件体系",
+      "description": "角色、装备、关卡、商品、纪录、奖励与背包。",
+      "file": "art/concepts/ui/common/v01/02_composites.png",
+      "source_filename": "call_SYctEwFas4G6qP2f15IkFv25.png",
+      "prompt_heading": "02_composites",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/map_1280.png",
+        "art/validation/ui/common/v01/baseline/shop_1280.png"
+      ],
+      "review_note": "成长与库存示例分别绑定对应商品类型；星形需加强填充辨识。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 1860080,
+      "sha256": "80fc74128d47cd2fed173be9dba8ce7ca7ae7b2e252c8b9a486d2325443fb369",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "03_preparation",
+      "title": "行前准备",
+      "group": "完整界面",
+      "description": "角色选择、能力与装备详情，预览和装备分开。",
+      "file": "art/concepts/ui/common/v01/03_preparation.png",
+      "source_filename": "call_rmGpkXtKtadUK28dtvPsvaCi.png",
+      "prompt_heading": "03_preparation",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/setup_1280.png",
+        "art/validation/ui/common/v01/baseline/hud_1280.png"
+      ],
+      "review_note": "角色选择与专属立绘为后续模板；武器文字取实际配置。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 1882196,
+      "sha256": "59c4df4d7691810c14772b7f32a198d51de8e0c70a7e87e7f73be5f3507ced77",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "04_journey",
+      "title": "章节与关卡",
+      "group": "完整界面",
+      "description": "驿灯路线、关卡状态、纪录与挑战入口。",
+      "file": "art/concepts/ui/common/v01/04_journey.png",
+      "source_filename": "call_C9weF4Sy6ljcGViYYTW0f0Xo.png",
+      "prompt_heading": "04_journey",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/map_1280.png"
+      ],
+      "review_note": "3/6 是可达示意，章节目标仍为15；总目标从目录读取。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 2169946,
+      "sha256": "6ee02594e15eabe15941d28c5bca55ce7d17b9d0aaaa2a929f731f722c1327dd",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "05_shop",
+      "title": "山路行商",
+      "group": "完整界面",
+      "description": "共修、秘卷、补给、详情与携带摘要。",
+      "file": "art/concepts/ui/common/v01/05_shop.png",
+      "source_filename": "call_DLopoUQkja4OrDHcB4q6YtAW.png",
+      "prompt_heading": "05_shop",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/shop_1280.png",
+        "art/concepts/ui/shop/v02.png"
+      ],
+      "review_note": "按真实档位、余额、库存、所有权显示；外观保持待开放。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 1978550,
+      "sha256": "e09e4b7021d9ca7e5914983a9681a9efe48e35f333c25518b473f11fb72c9b0f",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "06_combat",
+      "title": "战斗与首领 HUD",
+      "group": "完整界面",
+      "description": "悬浮信息、一左四右、冷却与被动道具。",
+      "file": "art/concepts/ui/common/v01/06_combat.png",
+      "source_filename": "call_Qj7PiDOydhqUZCu3JPAxu7iY.png",
+      "prompt_heading": "06_combat",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/hud_1280.png"
+      ],
+      "review_note": "几何按既有ScreenLayout；首领弱点与攻击预警为分开的状态示例。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 2107917,
+      "sha256": "16a4c0eaa2b01a5d571148b2f220659b1b039221dbb3d0eb0581d7233e1a0885",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "07_overlays",
+      "title": "弹层与设置",
+      "group": "状态与叙事",
+      "description": "暂停、四项设置、购买确认、保存异常。",
+      "file": "art/concepts/ui/common/v01/07_overlays.png",
+      "source_filename": "call_WNtkz87iDDnHDff2mDjuAgC8.png",
+      "prompt_heading": "07_overlays",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/pause_1280.png",
+        "art/validation/ui/common/v01/baseline/settings_1280.png"
+      ],
+      "review_note": "购买确认只在商店；模型错字由Godot原生文案替换。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 1755771,
+      "sha256": "9563231811d906feffeec990feeb69224e764a94b757d3dfb236e78dd73d06b6",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "08_results",
+      "title": "结算与重试",
+      "group": "完整界面",
+      "description": "三星与独立无伤、成绩、奖励、失败与免费重试。",
+      "file": "art/concepts/ui/common/v01/08_results.png",
+      "source_filename": "call_WeUYRUdWAwVJCEmhsY9deW7P.png",
+      "prompt_heading": "08_results",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/result_1280.png"
+      ],
+      "review_note": "奖励金额为排版示例；再次携带为后续功能，未实现不启用。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 1818725,
+      "sha256": "6ab1b89e98ce93cad949f30cd89d7f8df2cdcd763951d2bbba697e374ab841fc",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "09_story_help",
+      "title": "标题、剧情与手册",
+      "group": "状态与叙事",
+      "description": "启程、对话、操作教学、图鉴与帮助模板。",
+      "file": "art/concepts/ui/common/v01/09_story_help.png",
+      "source_filename": "call_5QXDKm8vDnng1fQXp5QiRphm.png",
+      "prompt_heading": "09_story_help",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png",
+        "art/validation/ui/common/v01/baseline/hud_1280.png"
+      ],
+      "review_note": "本板为后续模板；教学的障碍侧别必须与指引对应。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 2137069,
+      "sha256": "fb79c4dd3362a03c46c4f4cb5e91cde91b59ae99c85f25f3776fb0ea9c7bd0ae",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "id": "10_feedback_states",
+      "title": "状态与轻反馈",
+      "group": "状态与叙事",
+      "description": "空态、加载、保存、提示、解锁、校验与安全区。",
+      "file": "art/concepts/ui/common/v01/10_feedback_states.png",
+      "source_filename": "call_4ZzIpG9VD0awJbRlxunOBMiX.png",
+      "prompt_heading": "10_feedback_states",
+      "references": [
+        "art/concepts/ui/common/v01/01_foundations.png"
+      ],
+      "review_note": "无真实进度时使用不定条；缩略图装饰摇杆不纳入本游戏。",
+      "width": 1672,
+      "height": 941,
+      "color_mode": "RGB",
+      "bytes": 1877176,
+      "sha256": "7aeac810cda1608f2edcb8a3caae27b800bf82a4442b9c6da598eb10d7ee9f69",
+      "png_crc_and_scanlines_valid": true
+    }
+  ],
+  "baseline": [
+    {
+      "file": "art/validation/ui/common/v01/baseline/hud_1280.png",
+      "width": 1280,
+      "height": 720,
+      "color_mode": "RGBA",
+      "bytes": 1212729,
+      "sha256": "8504c08d93fa4e74ce48e2f462a77b14ce83d604efc790fba2a5cd091f683671",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "file": "art/validation/ui/common/v01/baseline/map_1280.png",
+      "width": 1280,
+      "height": 720,
+      "color_mode": "RGBA",
+      "bytes": 1592415,
+      "sha256": "d390a0dfffc6e0eb1e5c15b2152522a277c40042e05d6536c534f3c69aa001ab",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "file": "art/validation/ui/common/v01/baseline/pause_1280.png",
+      "width": 1280,
+      "height": 720,
+      "color_mode": "RGBA",
+      "bytes": 680409,
+      "sha256": "25be21761818afc7ff176add137a40445fcd0caff99aeff32278dfa54b74de28",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "file": "art/validation/ui/common/v01/baseline/result_1280.png",
+      "width": 1280,
+      "height": 720,
+      "color_mode": "RGBA",
+      "bytes": 661596,
+      "sha256": "811a30263495d1a14e1f3719e255bc5ca2df27f06fcd16edbae173a8dea6f6d0",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "file": "art/validation/ui/common/v01/baseline/settings_1280.png",
+      "width": 1280,
+      "height": 720,
+      "color_mode": "RGBA",
+      "bytes": 686671,
+      "sha256": "e232453327b1ed16a5ea2cdde87bb1f5db36ae46c68529d3dbeafb721cfdf7b8",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "file": "art/validation/ui/common/v01/baseline/setup_1280.png",
+      "width": 1280,
+      "height": 720,
+      "color_mode": "RGBA",
+      "bytes": 717340,
+      "sha256": "3a15d32259a66ebd5ffaae92d9fe5ad243950fc5d8d90ec217da596220e8301e",
+      "png_crc_and_scanlines_valid": true
+    },
+    {
+      "file": "art/validation/ui/common/v01/baseline/shop_1280.png",
+      "width": 1280,
+      "height": 720,
+      "color_mode": "RGBA",
+      "bytes": 791950,
+      "sha256": "0544bb84ca11d6cd46960b5cb542b9447ffbc91e7be96d10e8bb50b24e6b5dce",
+      "png_crc_and_scanlines_valid": true
+    }
+  ],
+  "concept_review": {
+    "status": "approved",
+    "date": "2026-11-06",
+    "timezone": "Asia/Shanghai",
+    "reviewer": "user",
+    "feedback": "可以审核通过按照这个来吧",
+    "scope": "通用UI概念方向与后续复用/扩展；不包含运行时视觉或Android验收"
+  }
+}

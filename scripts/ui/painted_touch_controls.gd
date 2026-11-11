@@ -1,128 +1,56 @@
 class_name PaintedTouchControls
 extends TouchControls
 
-var skin := TouchControlSkin.new()
-const PAUSE_ICON := preload("res://art/generated/ui/pause_icon.png")
-var _counters: Dictionary = {}
-var _status_kinds: Dictionary = {}
-var _status_styles: Dictionary = {}
+# The optional legacy skin is only used by the retained art-review scenes.
+var skin: TouchControlSkin
+var action_views: Dictionary = {}
 
 func _ready() -> void:
-	_setup_status_styles()
-	for action in ACTIONS:
-		if action == &"pause":
-			continue
-		var counter := Label.new()
-		counter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		counter.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		counter.add_theme_color_override("font_shadow_color", Color("111827"))
-		counter.add_theme_constant_override("shadow_offset_x", 0)
-		counter.add_theme_constant_override("shadow_offset_y", 1)
-		counter.add_theme_color_override("font_outline_color", Color("101a29"))
-		counter.add_theme_constant_override("outline_size", 1)
-		counter.add_theme_color_override("font_color", Color("f5ead0"))
-		counter.z_index = 1
-		add_child(counter)
-		_counters[action] = counter
 	super._ready()
-
-func _setup_status_styles() -> void:
-	var boss := StyleBoxFlat.new()
-	boss.bg_color = Color("101a29", 0.94)
-	boss.border_color = Color("d8b56a", 0.65)
-	boss.set_border_width_all(1)
-	boss.set_corner_radius_all(5)
-	_status_styles[&"boss"] = boss
-	var disabled := StyleBoxFlat.new()
-	disabled.bg_color = Color("101a29", 0.94)
-	disabled.border_color = Color("a99b7a", 0.5)
-	disabled.set_border_width_all(1)
-	disabled.set_corner_radius_all(5)
-	_status_styles[&"disabled"] = disabled
+	for action in ACTIONS:
+		var view := UICombatAction.new()
+		view.legacy_art = skin != null and action != &"pause"
+		add_child(view)
+		action_views[action] = view
+	_layout()
+	sync_state()
 
 func _layout() -> void:
 	super._layout()
-	for action in _counters:
+	for action in action_views:
+		var view: UICombatAction = action_views[action]
 		var rect := get_action_rect(action)
-		var caption: Label = _labels[action]
-		caption.position = rect.position + Vector2(0, rect.size.y * 0.97)
-		caption.size = Vector2(rect.size.x, rect.size.y * 0.16)
-		caption.position.y = minf(caption.position.y, _safe.end.y - caption.size.y - 2.0)
-		caption.add_theme_font_size_override("font_size", maxi(10, roundi(rect.size.x * 0.13)))
-		caption.add_theme_color_override("font_shadow_color", Color("111827"))
-		caption.add_theme_constant_override("shadow_offset_y", 1)
-		var counter: Label = _counters[action]
-		counter.position = rect.position
-		# Status and cooldown text share the circle's center.
-		counter.size = rect.size
+		# The pause glyph is compact; its original 96px hit target stays intact.
+		view.position = rect.position
+		view.size = rect.size
+		view.caption.position.y = minf(view.size.y, _safe.end.y - rect.position.y - view.caption.size.y - 2)
 
 func visual_state(action: StringName) -> Dictionary:
 	action = _canonical_action(action)
-	var remaining := 0.0
-	var duration := 1.0
-	match action:
-		&"mobility":
-			remaining = player.dash_cooldown
-			duration = maxf(player.mobility.data.cooldown_seconds, 0.01)
-		&"weapon":
-			remaining = combat.weapon.cooldown_remaining
-			duration = combat.weapon.data.skill.cooldown_seconds
-		&"skill":
-			remaining = combat.skill_cooldown_remaining
-			duration = player.character.active_skill.cooldown_seconds
-	return {"available": _is_available(action), "pressed": _fingers.values().has(action), "remaining": remaining, "cooldown": clampf(remaining / duration, 0, 1), "weapon_id": combat.weapon.data.weapon_id, "rope_mode": ("down" if player.rope_side == PlayerController.ROPE_TOP else "up") if player.on_rope else "fall"}
+	return BattleHUDPresenter.action_snapshot(action, player, combat, _is_available(action), _fingers.values().has(action))
 
 func sync_state() -> void:
+	var safe := safe_area_override if safe_area_override.has_area() else ScreenLayout.safe_rect(get_viewport())
+	if safe != _safe:
+		_layout()
 	super.sync_state()
-	if _labels.has(&"pause"):
-		_labels[&"pause"].hide()
-	for action in _counters:
-		var label: Label = _labels[action]
-		var counter: Label = _counters[action]
-		counter.visible = label.visible
-		if not label.visible:
+	# Keyboard players see the same live actions; only enabled touch previews
+	# own finger/mouse input. No second input path is introduced by the views.
+	visible = true
+	for label: Label in _labels.values():
+		label.hide()
+	for action in action_views:
+		var view: UICombatAction = action_views[action]
+		view.visible = (enabled and not finished and not blocked) if action == &"pause" else _can_play()
+		if not view.visible:
 			continue
-		var state := visual_state(action)
-		match action:
-			&"mobility": label.text = player.mobility.data.display_name
-			&"weapon": label.text = combat.weapon.data.display_name
-			&"skill": label.text = player.character.active_skill.display_name
-		counter.text = ""
-		if action == &"mobility" and player.mobility.data.input_mode == MobilityData.InputMode.HOLD and not player.on_rope:
-			counter.text = "%.1f" % player.mobility.air_time_remaining
-		_status_kinds[action] = &""
-		if state["remaining"] > 0.00001:
-			counter.text = "%.1f" % maxf(0.1, state["remaining"])
-		elif not state["available"]:
-			if action == &"weapon":
-				counter.text = "首领战"
-				_status_kinds[action] = &"boss"
-			elif action == &"mobility":
-				counter.text = player.mobility.remaining_text(player._mobility_context()).replace("先二段跳", "先用完\n二段跳").replace("下落可用", "下落\n可用")
-				_status_kinds[action] = &"disabled"
-			else:
-				counter.text = "禁用"
-				_status_kinds[action] = &"disabled"
-		var status: StringName = _status_kinds[action]
-		counter.add_theme_font_size_override("font_size", roundi(get_action_rect(action).size.x * (0.18 if status != &"" else 0.23)))
-		counter.add_theme_color_override("font_color", Color("f5ead0") if status == &"boss" else (Color("d7cfbd") if status == &"disabled" else Color("edf1f3")))
+		view.set_state(visual_state(action), not enabled)
+		var rect := get_action_rect(action)
+		view.caption.position.y = minf(view.size.y, _safe.end.y - rect.position.y - view.caption.size.y - 2)
 
 func _draw() -> void:
-	for action in ACTIONS:
-		if (action == &"pause" and finished) or (action != &"pause" and not _can_play()):
-			continue
-		if action == &"pause":
-			var rect := get_action_rect(action)
-			var center := rect.get_center()
-			var radius := rect.size.x * 0.22
-			draw_arc(center, radius, -PI * 0.48, PI * 1.47, 56, Color("d8b56a"), 1.2, true)
-			draw_texture_rect(PAUSE_ICON, Rect2(center - rect.size * 0.13, rect.size * 0.26), false)
-		else:
+	if skin == null:
+		return
+	for action in RIGHT_ACTIONS + LEFT_ACTIONS:
+		if _can_play():
 			skin.draw_button(self, action, get_action_rect(action), visual_state(action))
-		var status: StringName = _status_kinds.get(action, &"")
-		if status != &"":
-			var rect := get_action_rect(action)
-			var badge_size := rect.size * Vector2(0.78 if status == &"boss" else 0.62, 0.30)
-			var badge := Rect2(rect.get_center() - badge_size * 0.5, badge_size)
-			draw_style_box(_status_styles[status], badge)

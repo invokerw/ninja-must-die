@@ -1,0 +1,205 @@
+{
+  "date": "2026-11-07",
+  "scope": "common UI third batch level selection migration",
+  "suites": [
+    {
+      "name": "rope_landing",
+      "exit_code": 0,
+      "expected_marker": "ROPE_LANDING_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.66,
+      "log": "/tmp/ninja-level-select-v02-full-rope_landing.log"
+    },
+    {
+      "name": "rope_pickups",
+      "exit_code": 0,
+      "expected_marker": "ROPE_PICKUPS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 1.25,
+      "log": "/tmp/ninja-level-select-v02-full-rope_pickups.log"
+    },
+    {
+      "name": "level_route",
+      "exit_code": 0,
+      "expected_marker": "LEVEL_ROUTE_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 12.37,
+      "log": "/tmp/ninja-level-select-v02-full-level_route.log"
+    },
+    {
+      "name": "mobility",
+      "exit_code": 0,
+      "expected_marker": "MOBILITY_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 1.15,
+      "log": "/tmp/ninja-level-select-v02-full-mobility.log"
+    },
+    {
+      "name": "combat",
+      "exit_code": 0,
+      "expected_marker": "COMBAT_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.96,
+      "log": "/tmp/ninja-level-select-v02-full-combat.log"
+    },
+    {
+      "name": "projectiles",
+      "exit_code": 0,
+      "expected_marker": "PROJECTILES_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.77,
+      "log": "/tmp/ninja-level-select-v02-full-projectiles.log"
+    },
+    {
+      "name": "boss",
+      "exit_code": 0,
+      "expected_marker": "BOSS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 13.67,
+      "log": "/tmp/ninja-level-select-v02-full-boss.log"
+    },
+    {
+      "name": "feedback",
+      "exit_code": 0,
+      "expected_marker": "FEEDBACK_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 1.85,
+      "log": "/tmp/ninja-level-select-v02-full-feedback.log"
+    },
+    {
+      "name": "weapons",
+      "exit_code": 0,
+      "expected_marker": "WEAPONS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 8.34,
+      "log": "/tmp/ninja-level-select-v02-full-weapons.log"
+    },
+    {
+      "name": "save",
+      "exit_code": 0,
+      "expected_marker": "SAVE_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.95,
+      "log": "/tmp/ninja-level-select-v02-full-save.log"
+    },
+    {
+      "name": "stars_records",
+      "exit_code": 0,
+      "expected_marker": "STARS_RECORDS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.86,
+      "log": "/tmp/ninja-level-select-v02-full-stars_records.log"
+    },
+    {
+      "name": "reward_transactions",
+      "exit_code": 0,
+      "expected_marker": "REWARD_TRANSACTIONS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.98,
+      "log": "/tmp/ninja-level-select-v02-full-reward_transactions.log"
+    },
+    {
+      "name": "economy",
+      "exit_code": 0,
+      "expected_marker": "ECONOMY_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.96,
+      "log": "/tmp/ninja-level-select-v02-full-economy.log"
+    },
+    {
+      "name": "ui_components",
+      "exit_code": 0,
+      "expected_marker": "UI_COMPONENTS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.67,
+      "log": "/tmp/ninja-level-select-v02-full-ui_components.log"
+    },
+    {
+      "name": "touch_controls",
+      "exit_code": 0,
+      "expected_marker": "TOUCH_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 2.44,
+      "log": "/tmp/ninja-level-select-v02-full-touch_controls.log"
+    },
+    {
+      "name": "player_art",
+      "exit_code": 0,
+      "expected_marker": "PLAYER_ART_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.65,
+      "log": "/tmp/ninja-level-select-v02-full-player_art.log"
+    },
+    {
+      "name": "ui_art_preview",
+      "exit_code": 0,
+      "expected_marker": "TOUCH_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 2.55,
+      "log": "/tmp/ninja-level-select-v02-full-ui_art_preview.log"
+    },
+    {
+      "name": "level_select",
+      "exit_code": 0,
+      "expected_marker": "LEVEL_SELECT_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.88,
+      "log": "/tmp/ninja-level-select-v02-full-level_select.log"
+    },
+    {
+      "name": "wind_bamboo",
+      "exit_code": 0,
+      "expected_marker": "WIND_BAMBOO_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 16.52,
+      "log": "/tmp/ninja-level-select-v02-full-wind_bamboo.log"
+    }
+  ],
+  "persistence": [
+    {
+      "name": "profile_write",
+      "exit_code": 0,
+      "expected_marker": "PROFILE_WRITE_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.37,
+      "log": "/tmp/ninja-level-select-v02-full-profile_write.log"
+    },
+    {
+      "name": "profile_read",
+      "exit_code": 0,
+      "expected_marker": "PROFILE_RELOAD_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.37,
+      "log": "/tmp/ninja-level-select-v02-full-profile_read.log"
+    }
+  ],
+  "remote_ci": "not_run",
+  "android": "not_run",
+  "python_export": {
+    "exit_code": 0,
+    "output": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.008s\n\nOK\n",
+    "passed": true
+  },
+  "all_passed": true
+}

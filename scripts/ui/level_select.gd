@@ -1,5 +1,9 @@
 extends Control
 
+const BACKGROUND := preload("res://art/generated/ui/level_select/v01/background_final.png")
+const ILLUSTRATION := preload("res://art/generated/ui/level_select/v01/loop_04_overview_wide_illustration_panel.png")
+const LANTERN := preload("res://art/generated/ui/level_select/v01/loop_02_roi_1_side_lantern.png")
+
 var profile: PlayerProfile
 var run_loadout: RunLoadout
 var selected_level_id: StringName = LevelCatalog.FOG_RIDGE_ID
@@ -11,20 +15,19 @@ var detail_score: Label
 var status: Label
 var start_button: Button
 var practice_button: Button
-const ART := preload("res://scenes/ui/level_select_art.tscn")
-const CARD_VISUAL := preload("res://scripts/ui/level_card_visual.gd")
-
-var _launching := false
-var art: Control
-var _card_titles: Dictionary = {}
-var _card_records: Dictionary = {}
-var _card_visuals: Dictionary = {}
-var _lock_art: Array[Control] = []
-var _record_rows: Array[Label] = []
 var record_character_only := false
-var _record_view_buttons: Array[Button] = []
+var record_tabs: UITabBar
 var wallet: Label
+var chapter_stars: Label
 var save_retry: Button
+var save_badge: UIStatusChip
+var route: UIJourneyRoute
+var snapshot_button: Button
+var snapshot_dialog: UIConfirmDialog
+var _launching := false
+var _record_rows: Array[Label] = []
+var _record_view_buttons: Array[Button] = []
+var _selected_record: Dictionary = {}
 
 func _enter_tree() -> void:
 	run_loadout = RunNavigation.take_pending(scene_file_path)
@@ -35,70 +38,105 @@ func _ready() -> void:
 		profile = PlayerProfile.current()
 	if run_loadout == null:
 		run_loadout = profile.resolve()
-	art = ART.instantiate()
-	add_child(art)
-	_label("第一章 · 驿灯路线", Rect2(168, 88, 250, 28), 18, Color("e8d5a4"))
-	_label("沿山上行", Rect2(104, 185, 190, 32), 19)
-	wallet = _label("", Rect2(560, 82, 400, 40), 22, Color("e8d5a4"))
-	save_retry = _button("重试保存", Rect2(1000, 82, 168, 48), profile.save_profile)
+	_build_shell()
+	_build_levels()
+	_build_detail()
 	profile.save_status_changed.connect(func() -> void: _select_level(selected_level_id))
-	var back := _button("", Rect2(1184, 16, 80, 64), _return_to_setup)
-	back.tooltip_text = "返回角色与武器"
-	var entries := LevelCatalog.list_levels(&"chapter_01")
-	for index in range(entries.size()):
-		var entry: Dictionary = entries[index]
-		var top := 230.0 + index * 164.0
-		var card := CARD_VISUAL.new()
-		card.position = Vector2(114, top)
-		card.size = Vector2(338, 145)
-		card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		art.add_child(card)
-		# Keep the existing lock/badge layers above the card artwork.
-		art.move_child(card, art.get_node("loop_05_roi_4_locked_card_backplate").get_index())
-		_card_visuals[entry.level_id] = card
-		# Opaque Godot captions cover concept ratings; only real records are shown.
-		_caption_panel(Rect2(120, top + 105, 325, 39))
-		_card_titles[entry.level_id] = _label("", Rect2(130, top + 108, 300, 29), 21)
-		_card_records[entry.level_id] = _label("", Rect2(120, top + 146, 330, 25), 16, Color("bdcbd2"))
-		var button := _button("", Rect2(114, top, 338, 145), _select_level.bind(entry.level_id))
-		button.toggle_mode = true
-		level_buttons[entry.level_id] = button
-	for node_name in ["loop_02_roi_1_feature_card", "loop_05_roi_4_locked_card_backplate", "loop_04_roi_4_lower_footer"]:
-		art.get_node(NodePath(node_name)).hide()
-	for node_name in ["loop_02_roi_4_lock_icon", "loop_03_roi_4_lock_backplate"]:
-		_lock_art.append(art.get_node(NodePath(node_name)))
-	detail_title = _label("", Rect2(550, 345, 272, 42), 22, Color("f3dfb6"))
-	detail_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	detail_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_caption_panel(Rect2(510, 210, 670, 103), Color(0.04, 0.07, 0.11, 0.72))
-	detail_body = _label("", Rect2(526, 218, 640, 90), 19)
-	detail_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	# Each row shares the center of its icon, independent of font line height.
-	for center_y in [444, 493, 542]:
-		var row := _label("", Rect2(552, center_y - 18, 275, 36), 18, Color("e8e1d0"))
-		row.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		_record_rows.append(row)
-	detail_record = _record_rows[0]
-	var goal_title := _label("挑战目标", Rect2(852, 424, 340, 40), 21, Color("e8d5a4"))
-	goal_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	goal_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	for index in range(2):
-		var view := _button("全角色最高" if index == 0 else "当前角色", Rect2(850 + index * 178, 344, 170, 48), _set_record_view.bind(index == 1))
-		view.toggle_mode = true
-		_record_view_buttons.append(view)
-	var goals := _label("收集与受击决定星级\n无伤印独立记录\n练习不改主线星级", Rect2(852, 460, 340, 80), 17)
-	goals.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	goals.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	detail_score = _label("", Rect2(852, 548, 340, 28), 17, Color("bdcbd2"))
-	detail_score.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	detail_score.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status = _label("", Rect2(48, 672, 1180, 32), 18, Color("e8d5a4"))
-	start_button = _action_button("开始挑战", Rect2(562, 570, 260, 88), 112, _start_level.bind(false))
-	practice_button = _action_button("进入练习", Rect2(826, 570, 190, 88), 88, _start_level.bind(true))
-	_action_button("重看剧情", Rect2(1020, 570, 205, 88), 94, _replay_story)
 	_select_level(selected_level_id)
 	get_viewport().size_changed.connect(_layout_ui)
 	_layout_ui()
+
+func _build_shell() -> void:
+	# Full viewport scenery stays behind the safe, fitted design frame.
+	var backdrop := CanvasLayer.new()
+	backdrop.layer = -10
+	add_child(backdrop)
+	var background := TextureRect.new()
+	background.texture = BACKGROUND
+	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.add_child(background)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var veil := ColorRect.new()
+	veil.color = Color(UITokens.INK, 0.25)
+	veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.add_child(veil)
+	veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_panel(Rect2(0, 0, 1280, 80))
+	_button("返回准备", Rect2(48, 16, 144, 48), _return_to_setup, &"quiet")
+	_label("第一章 · 灯火将熄", Rect2(216, 18, 440, 48), 30, UITokens.ACCENT_LIGHT)
+	chapter_stars = _label("", Rect2(720, 25, 264, 32), 20)
+	wallet = _label("", Rect2(1000, 25, 232, 32), 20, UITokens.ACCENT_LIGHT)
+	wallet.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	save_badge = UIStatusChip.new()
+	save_badge.position = Vector2(490, 100)
+	save_badge.size = Vector2(150, 34)
+	add_child(save_badge)
+	save_retry = _button("重试保存", Rect2(490, 142, 150, 48), profile.save_profile)
+	_panel(Rect2(0, 632, 1280, 88))
+	_label("当前出战：%s · %s" % [run_loadout.character.display_name, run_loadout.weapon.display_name], Rect2(48, 640, 480, 32), 20, UITokens.ACCENT_LIGHT)
+	status = _label("", Rect2(48, 675, 480, 42), 16)
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	start_button = _button("开始挑战", Rect2(552, 648, 240, 56), _start_level.bind(false), &"primary")
+	practice_button = _button("进入练习", Rect2(808, 648, 184, 56), _start_level.bind(true))
+	var story := _button("重看剧情 · 暂未开放", Rect2(1008, 648, 224, 56), _replay_story, &"quiet")
+	story.tooltip_text = "剧情尚未开放"
+
+func _build_levels() -> void:
+	var panel := _detail(Rect2(48, 96, 416, 516), "驿灯路线")
+	panel.content.add_theme_constant_override("separation", 12)
+	for entry: Dictionary in LevelCatalog.list_levels(&"chapter_01"):
+		var card := UILevelCard.new()
+		card.configure(entry.level_id, entry.title, "", _illustration())
+		card.pressed.connect(_select_level.bind(entry.level_id))
+		panel.content.add_child(card)
+		level_buttons[entry.level_id] = card
+	route = UIJourneyRoute.new()
+	route.lantern_texture = LANTERN
+	route.position = Vector2(488, 96)
+	route.size = Vector2(256, 516)
+	route.level_selected.connect(_select_level)
+	add_child(route)
+	var caption := _label("沿山上行 · 点亮驿灯", Rect2(488, 556, 256, 32), 18, UITokens.ACCENT_LIGHT)
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+func _build_detail() -> void:
+	var panel := _detail(Rect2(768, 96, 464, 516), "")
+	panel.content.add_theme_constant_override("separation", 4)
+	detail_title = panel.title_label
+	detail_title.show()
+	detail_body = panel.body_label
+	var image := TextureRect.new()
+	image.texture = _illustration()
+	image.custom_minimum_size = Vector2(0, 68)
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.content.add_child(image)
+	panel.content.move_child(image, 0)
+	detail_body.show()
+	detail_body.add_theme_font_size_override("font_size", 16)
+	record_tabs = UITabBar.new()
+	record_tabs.custom_minimum_size = Vector2(0, 48)
+	record_tabs.set_entries([
+		{"id": &"overall", "title": "全角色最高"},
+		{"id": &"character", "title": "当前角色"},
+	], &"overall")
+	record_tabs.selection_changed.connect(func(id: StringName) -> void: _set_record_view(id == &"character"))
+	panel.content.add_child(record_tabs)
+	_record_view_buttons.append(record_tabs.buttons[&"overall"])
+	_record_view_buttons.append(record_tabs.buttons[&"character"])
+	detail_record = _column_label(panel.content, 18, UITokens.ACCENT_LIGHT)
+	detail_score = _column_label(panel.content, 18)
+	for index in range(2):
+		_record_rows.append(_column_label(panel.content, 18))
+	snapshot_button = UIActionButton.new()
+	snapshot_button.text = "查看出战快照"
+	snapshot_button.custom_minimum_size = Vector2(0, 48)
+	snapshot_button.pressed.connect(_open_snapshot)
+	panel.content.add_child(snapshot_button)
+	_label("收集与受击决定星级 · 无伤印独立记录", Rect2(768, 610, 464, 24), 16, UITokens.TEXT_SECONDARY)
 
 func _layout_ui() -> void:
 	ScreenLayout.configure_window(get_viewport(), TouchControls.is_requested())
@@ -107,54 +145,82 @@ func _layout_ui() -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
 		get_viewport().set_input_as_handled()
-		_return_to_setup()
+		if snapshot_dialog != null:
+			_close_snapshot()
+		else:
+			_return_to_setup()
 
 func _select_level(level_id: StringName) -> void:
 	var entry := LevelCatalog.get_level(level_id)
-	if entry.is_empty():
+	if entry.is_empty() or snapshot_dialog != null:
 		return
 	selected_level_id = LevelCatalog.canonicalize(level_id)
-	wallet.text = "铜钱 %d%s" % [profile.coins, " · 待保存" if not profile.pending_transaction.is_empty() else ""]
-	save_retry.visible = profile.save_pending
+	wallet.text = "铜钱 %d" % profile.coins
+	save_badge.visible = profile.save_pending or profile.is_read_only()
+	save_badge.set_status(&"readonly" if profile.is_read_only() else (&"pending" if profile.save_pending else &"saved"))
+	save_retry.visible = profile.save_pending and not profile.is_read_only()
 	var completed := _completed_level_ids()
 	var unlocked := LevelCatalog.is_unlocked(selected_level_id, completed)
-	for id in level_buttons:
-		var button := level_buttons[id] as Button
+	var total_stars := 0
+	var route_entries: Array[Dictionary] = []
+	for id: StringName in level_buttons:
+		var card := level_buttons[id] as UILevelCard
 		var item := LevelCatalog.get_level(id)
 		var item_unlocked := LevelCatalog.is_unlocked(id, completed)
 		var record := _get_record(id)
-		button.tooltip_text = "%s · %s" % [item.title, "已解锁" if item_unlocked else "未解锁"]
-		button.set_pressed_no_signal(id == selected_level_id)
-		_card_visuals[id].set_state(item_unlocked, id == selected_level_id)
-		_card_titles[id].text = "%s%s" % [item.title, "" if item_unlocked else " · 未解锁"]
-		_card_records[id].text = _record_short_text(record)
-	for lock in _lock_art:
-		lock.visible = not LevelCatalog.is_unlocked(entries_second_id(), completed)
-	art.get_node("loop_02_roi_4_lower_badge").visible = not LevelCatalog.is_unlocked(entries_second_id(), completed)
+		total_stars += int(record.get("best_stars", 0))
+		card.set_progress(item_unlocked, id == selected_level_id, record)
+		card.tooltip_text = "%s · %s" % [item.title, "已解锁" if item_unlocked else "未解锁"]
+		route_entries.append({"level_id": id, "order": item.order, "title": item.title, "unlocked": item_unlocked, "selected": id == selected_level_id, "completed": id in completed})
+	route.set_entries(route_entries)
+	chapter_stars.text = "章节星数 %d / %d" % [total_stars, level_buttons.size() * 3]
+	var blocked := profile.is_read_only() or (not profile.pending_transaction.is_empty() and not profile.last_error.is_empty())
+	start_button.disabled = not unlocked or blocked
+	practice_button.disabled = not unlocked
 	if not unlocked:
+		var requirements := PackedStringArray()
 		for requirement: StringName in entry.requires:
-			status.text = "需要先完成：%s" % LevelCatalog.get_level(requirement).get("title", String(requirement))
-		start_button.disabled = true
-		practice_button.disabled = true
+			requirements.append(LevelCatalog.get_level(requirement).get("title", String(requirement)))
+		status.text = "需要先完成：%s" % "、".join(requirements)
+	elif profile.is_read_only():
+		status.text = "当前存档只读，可进入免费练习。"
+	elif blocked:
+		status.text = "奖励尚未保存，请重试保存；免费练习可用。"
 	else:
-		status.text = "当前出战：%s · %s" % [run_loadout.character.display_name, run_loadout.weapon.display_name]
-		start_button.disabled = false
-		practice_button.disabled = false
-		if not profile.pending_transaction.is_empty() and not profile.last_error.is_empty():
-			status.text = "奖励仅在内存中，请先重试保存；可进入免费练习。"
-	for node_name in ["loop_02_roi_5_runner_control_composite", "loop_04_roi_5_runner_footer_plate", "loop_02_roi_6_left_control_composite", "loop_03_roi_6_left_footer_plate"]:
-		art.get_node(NodePath(node_name)).modulate = Color.WHITE if unlocked else Color(0.45, 0.48, 0.52)
-	detail_title.text = entry.title + ("  · 已解锁" if unlocked else "  · 未解锁")
+		status.text = "练习不改变主线星级，不消耗补给。"
+	detail_title.text = entry.title
 	detail_body.text = _description(entry)
-	var selected_record := profile.history.get_record(selected_level_id, &"full", run_loadout.character.character_id if record_character_only else &"")
-	for index in range(_record_view_buttons.size()):
-		_record_view_buttons[index].set_pressed_no_signal(record_character_only == (index == 1))
-	var record_lines := _record_text(selected_record).split("\n")
+	_selected_record = profile.history.get_record(selected_level_id, &"full", run_loadout.character.character_id if record_character_only else &"")
+	# Overall legacy clears remain visible without fabricating per-character records.
+	if _selected_record.is_empty() and not record_character_only:
+		_selected_record = _get_record(selected_level_id)
+	record_tabs.select(&"character" if record_character_only else &"overall", false)
+	var record_lines := _record_text(_selected_record).split("\n")
+	detail_record.text = record_lines[0]
 	for index in range(_record_rows.size()):
-		_record_rows[index].text = record_lines[index]
-	detail_score.text = "最高分    尚无纪录" if selected_record.is_empty() else "最高分    %d" % selected_record.best_score
-	detail_score.tooltip_text = _snapshot_text(selected_record)
+		_record_rows[index].text = record_lines[index + 1]
+	detail_score.text = "最高分    尚无纪录" if _selected_record.is_empty() else "最高分    %d" % _selected_record.best_score
+	snapshot_button.disabled = _selected_record.is_empty()
+	snapshot_button.text = "尚无出战快照" if _selected_record.is_empty() else "查看出战快照"
+	detail_score.tooltip_text = _snapshot_text(_selected_record)
 	detail_record.tooltip_text = detail_score.tooltip_text
+
+func _open_snapshot() -> void:
+	if snapshot_dialog != null or _selected_record.is_empty():
+		return
+	snapshot_dialog = UIConfirmDialog.new()
+	snapshot_dialog.configure("%s · %s" % [detail_title.text, "当前角色纪录" if record_character_only else "全角色纪录"], _snapshot_text(_selected_record), "返回纪录", snapshot_button)
+	snapshot_dialog.cancel_button.text = "关闭"
+	snapshot_dialog.confirmed.connect(_close_snapshot)
+	snapshot_dialog.cancelled.connect(_close_snapshot)
+	add_child(snapshot_dialog)
+
+func _close_snapshot() -> void:
+	if snapshot_dialog == null:
+		return
+	var dialog := snapshot_dialog
+	snapshot_dialog = null
+	dialog.queue_free()
 
 func _set_record_view(character_only: bool) -> void:
 	record_character_only = character_only
@@ -165,14 +231,29 @@ func _snapshot_text(record: Dictionary) -> String:
 		return "旧版纪录缺少单局快照，星级待重新挑战。" if not record.is_empty() else "当前视图尚无正式纪录。"
 	var snapshot: Dictionary = record.best_score_snapshot
 	var fastest: Dictionary = record.fastest_snapshot
-	var text := "最高分单局：%s · %s\n%d / %d 影晶 · 受击 %d 次 · %.2f 秒\n最快单局：%s · %s" % [_character_name(snapshot.character_id), _weapon_name(snapshot.weapon_id), snapshot.collected, snapshot.collectible_total, snapshot.damage_count, snapshot.time_seconds, _character_name(fastest.character_id), _weapon_name(fastest.weapon_id)]
+	var text := "最高分单局\n%s\n\n最快单局\n%s" % [_snapshot_run_text(snapshot), _snapshot_run_text(fastest)]
 	if record.flawless:
-		var stamp: Dictionary = record.flawless_snapshot
-		text += "\n首次无伤：%s UTC · %s · %s" % [stamp.completed_at, _character_name(stamp.character_id), _weapon_name(stamp.weapon_id)]
+		text += "\n\n首次无伤\n%s" % _snapshot_run_text(record.flawless_snapshot)
 	if not record.get("legacy_record", {}).is_empty():
 		var legacy: Dictionary = record.legacy_record
 		text += "\n旧版：%s · %d 分 · 最快 %.2f 秒 · %d 次通关\n旧版成绩未换算为星级。" % [legacy.best_rank, legacy.best_score, legacy.best_time, legacy.completions]
 	return text
+
+func _snapshot_run_text(snapshot: Dictionary) -> String:
+	var text := "%s · %s\n%d 分 · %d 星 · %d / %d 影晶\n受击 %d 次 · %.2f 秒" % [_character_name(snapshot.character_id), _weapon_name(snapshot.weapon_id), snapshot.score, snapshot.stars, snapshot.collected, snapshot.collectible_total, snapshot.damage_count, snapshot.time_seconds]
+	var growth: Dictionary = snapshot.get("growth_snapshot", {})
+	text += "\n共修：武器 %d 级 · 体魄 %d 级" % [growth.weapon_training, growth.body_training] if growth.has("weapon_training") and growth.has("body_training") else "\n共修：未记录"
+	var items: Dictionary = snapshot.get("item_snapshot", {})
+	text += "\n秘卷：%s" % _snapshot_item_name(items, "selected_scroll_id")
+	text += "\n补给：%s" % _snapshot_item_name(items, "consumed_item_id")
+	text += "\n%s UTC · 星级规则 %d" % [snapshot.completed_at, snapshot.score_rule_version]
+	return text
+
+func _snapshot_item_name(items: Dictionary, field: String) -> String:
+	if not items.has(field):
+		return "未记录"
+	var id := StringName(items[field])
+	return EconomyService.ITEMS.get(id, {}).get("name", String(id)) if not id.is_empty() else "未携带"
 
 func _character_name(id: String) -> String:
 	var character := CharacterRegistry.get_character(StringName(id))
@@ -190,7 +271,10 @@ func _description(entry: Dictionary) -> String:
 	return description
 
 func _start_level(practice: bool) -> void:
-	if _launching or not LevelCatalog.is_unlocked(selected_level_id, _completed_level_ids()):
+	if _launching or snapshot_dialog != null or not LevelCatalog.is_unlocked(selected_level_id, _completed_level_ids()):
+		return
+	if not practice and not profile.can_start_formal_run():
+		_select_level(selected_level_id)
 		return
 	_launching = true
 	var entry := LevelCatalog.get_level(selected_level_id)
@@ -200,7 +284,7 @@ func _start_level(practice: bool) -> void:
 		status.text = profile.last_error if not profile.last_error.is_empty() else "暂时无法进入关卡，请重试。"
 
 func _return_to_setup() -> void:
-	if _launching:
+	if _launching or snapshot_dialog != null:
 		return
 	_launching = true
 	if RunNavigation.return_to_setup(get_tree()) != OK:
@@ -229,13 +313,6 @@ func _get_record(level_id: StringName) -> Dictionary:
 			record = profile.history.get_record(legacy, &"full")
 	return record
 
-func _record_short_text(record: Dictionary) -> String:
-	if record.is_empty():
-		return "尚无正式纪录"
-	if record.has("best_stars"):
-		return "最高 %d 星 · %s" % [record.best_stars, "无伤印" if record.flawless else "尚无无伤印"]
-	return "旧版 %s · 星级待挑战" % record.best_rank
-
 func _record_text(record: Dictionary) -> String:
 	if record.is_empty():
 		return "星级    尚无纪录\n用时    尚无纪录\n收集    尚无纪录"
@@ -244,58 +321,51 @@ func _record_text(record: Dictionary) -> String:
 		return "最高 %d 星 · %s\n最快    %.2f 秒\n最高分局 %d/%d · 受击 %d 次" % [record.best_stars, "无伤印" if record.flawless else "尚无无伤印", record.best_time, snapshot.collected, snapshot.collectible_total, snapshot.damage_count]
 	return "旧版 %s · 星级待挑战\n最快    %.2f 秒\n收集    %d / %d" % [record.best_rank, record.best_time, record.best_collected, record.collectible_total]
 
-func _label(text: String, rect: Rect2, font_size: int, color: Color = Color("dde7e7")) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.position = rect.position
-	label.size = rect.size
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(label)
-	return label
+func _illustration() -> AtlasTexture:
+	var texture := AtlasTexture.new()
+	texture.atlas = ILLUSTRATION
+	texture.region = Rect2(20, 18, ILLUSTRATION.get_width() - 40, ILLUSTRATION.get_height() - 36)
+	return texture
 
-func entries_second_id() -> StringName:
-	var entries := LevelCatalog.list_levels(&"chapter_01")
-	return entries[1].level_id if entries.size() > 1 else &""
-
-func _caption_panel(rect: Rect2, color: Color = Color("111c29")) -> void:
-	var panel := ColorRect.new()
+func _detail(rect: Rect2, title: String) -> UIDetailPanel:
+	var panel := UIDetailPanel.new()
 	panel.position = rect.position
 	panel.size = rect.size
-	panel.color = color
+	panel.set_description(title, "")
+	add_child(panel)
+	return panel
+
+func _panel(rect: Rect2) -> void:
+	var panel := Panel.new()
+	panel.position = rect.position
+	panel.size = rect.size
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(panel)
 
-func _button(text: String, rect: Rect2, callback: Callable) -> Button:
-	var button := Button.new()
+func _column_label(parent: Control, font_size: int, color: Color = UITokens.TEXT_PRIMARY) -> Label:
+	var label := Label.new()
+	label.custom_minimum_size.y = 28
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(label)
+	return label
+
+func _label(text: String, rect: Rect2, font_size: int, color: Color = UITokens.TEXT_PRIMARY) -> Label:
+	var label := _column_label(self, font_size, color)
+	label.text = text
+	label.position = rect.position
+	label.size = rect.size
+	return label
+
+func _button(text: String, rect: Rect2, callback: Callable, variant: StringName = &"secondary") -> Button:
+	var button := UIActionButton.new()
+	button.variant = variant
 	button.text = text
 	button.position = rect.position
 	button.size = rect.size
-	button.focus_mode = Control.FOCUS_ALL
-	button.add_theme_font_size_override("font_size", 18)
-	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color(0, 0, 0, 0.0)
-		if state in ["hover", "pressed", "focus"]:
-			style.bg_color = Color(0.9, 0.7, 0.3, 0.12)
-			style.border_color = Color("d8b56a")
-			style.set_border_width_all(2)
-		button.add_theme_stylebox_override(state, style)
-	button.add_theme_color_override("font_color", Color("fff0d0"))
-	button.add_theme_color_override("font_disabled_color", Color("8c9aab"))
+	button.custom_minimum_size = rect.size.max(UITokens.TOUCH_MIN)
+	button.add_theme_font_size_override("font_size", 20)
 	button.pressed.connect(callback)
 	add_child(button)
-	return button
-
-func _action_button(text: String, rect: Rect2, icon_space: float, callback: Callable) -> Button:
-	var button := _button(text, rect, callback)
-	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var style := button.get_theme_stylebox(state).duplicate() as StyleBoxFlat
-		style.content_margin_left = icon_space
-		style.content_margin_right = 12
-		style.content_margin_top = 0
-		style.content_margin_bottom = 0
-		button.add_theme_stylebox_override(state, style)
 	return button

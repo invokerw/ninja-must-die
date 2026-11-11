@@ -228,6 +228,9 @@ func _test_shop_ui() -> void:
 	shop._refresh_profile()
 	await _shop_tap(shop.primary_action)
 	_check(shop.confirmation != null and profile.coins == 2000, "Touching upgrade opens confirmation without spending")
+	_check(root.gui_get_focus_owner() == shop.confirmation.cancel_button, "Purchase confirmation starts on the safe cancel action")
+	await _shop_key(KEY_TAB)
+	_check(root.gui_get_focus_owner() == shop.confirm_button, "Tab advances to the confirmation action within the modal")
 	await _shop_key(KEY_TAB)
 	_check(root.gui_get_focus_owner() != null and root.gui_get_focus_owner().text == "取消", "Keyboard focus stays within the purchase confirmation")
 	await _shop_key(KEY_ENTER)
@@ -293,8 +296,10 @@ func _test_shop_ui() -> void:
 	shop._unhandled_key_input(escape)
 	_check(shop.confirmation == null and current_scene == shop, "Escape cancels confirmation before leaving the shop")
 	profile._document.version = ProfileStore.VERSION + 1
+	profile.save_pending = true
 	shop._refresh_profile()
 	_check(shop.primary_action.disabled and shop.status.text.contains("较新"), "Future saves keep shop read-only")
+	_check(shop.save_badge.status == &"readonly" and not shop.save_retry.visible, "Read-only archives show a persistent badge without offering a save overwrite")
 	shop._unhandled_key_input(escape)
 	await _ui_frames(4)
 	_check(current_scene != null and current_scene.scene_file_path == RunNavigation.SETUP_SCENE, "Escape returns to the preparation page")

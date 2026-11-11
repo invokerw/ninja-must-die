@@ -144,6 +144,9 @@ func economy_block_reason() -> String:
 		return "本局配置已固定，请返回准备页购买或更换。"
 	return ""
 
+func is_read_only() -> bool:
+	return ProfileStore.is_newer(_document)
+
 func can_start_formal_run() -> bool:
 	if ProfileStore.is_newer(_document):
 		last_error = "存档版本较新，暂不能开始正式挑战；可进入免费练习。"

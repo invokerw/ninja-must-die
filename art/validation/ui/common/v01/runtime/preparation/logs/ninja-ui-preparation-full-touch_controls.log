@@ -1,0 +1,4 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+
+TOUCH_BOSS_REPLAY 36.10s, 0 hits, { &"skill": 72, &"weapon": 60, &"pickup": 48 }
+TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)

@@ -1,0 +1,18 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+OpenGL API 4.1 Metal - 83.1 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_first.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_locked.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_unlocked.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1600_unlocked.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_record.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1600_record.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1600_safe.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_readonly.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_wallet_max.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_legacy.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_snapshot.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1600_snapshot.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_character_empty.png
+LEVEL_SELECT_CAPTURE res://art/validation/ui/level_select/v03/runtime/level_select_1280_save_error.png
+LEVEL_SELECT_PASS (preparation entry, lock requirement, selected loadout, level data launch)

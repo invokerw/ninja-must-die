@@ -6,19 +6,27 @@ var candidate_rail: Control
 
 func _ready() -> void:
 	super._ready()
-	painted_progress.hide()
+	battle_hud.progress.hide()
 	# This scene is a review surface; completing it must not write a ranked run.
 	_completion_recorded = true
 	candidate_rail = CandidateRail.new()
 	candidate_rail.position = Vector2(880, 58)
 	candidate_rail.size = Vector2(320, 26)
 	$UI/HUD.add_child(candidate_rail)
-	$UI/HUD/ProgressBack.hide()
 	var badge := _hud_label($UI/HUD, Rect2(400, 118, 450, 28), 18)
 	badge.text = "UI 组件预览 · 候选，待视觉验收"
-	badge.modulate = Color("d8b56a")
-	_hud_button($UI/HUD, "跑酷预览", Rect2(400, 154, 140, 36), _open_preview.bind(false))
-	_hud_button($UI/HUD, "首领预览", Rect2(552, 154, 140, 36), _open_preview.bind(true))
+	badge.modulate = UITokens.ACCENT
+	_preview_button("跑酷预览", Vector2(800, 256), _open_preview.bind(false))
+	_preview_button("首领预览", Vector2(952, 256), _open_preview.bind(true))
+
+func _preview_button(caption: String, location: Vector2, callback: Callable) -> void:
+	var button := UIActionButton.new()
+	button.text = caption
+	button.position = location
+	button.size = Vector2(140, 48)
+	button.add_theme_font_size_override("font_size", 18)
+	button.pressed.connect(callback)
+	$UI/HUD.add_child(button)
 
 func _setup_touch_controls() -> void:
 	touch_controls = CandidateControls.new()
@@ -34,7 +42,7 @@ func _setup_touch_controls() -> void:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if is_instance_valid(candidate_rail):
-		candidate_rail.progress = progress_fill.size.x / maxf(progress_fill.get_parent().size.x, 1.0)
+		candidate_rail.progress = battle_hud.progress.progress
 
 func _open_preview(boss: bool) -> void:
 	if _transitioning:

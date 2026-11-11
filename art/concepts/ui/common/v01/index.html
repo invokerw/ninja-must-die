@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影刃疾行 · 通用 UI 图册 v01</title>
+<style>
+:root { color-scheme:dark; --ink:#111827; --surface:#192536; --moon:#dde7e7; --muted:#9aaeb8; --gold:#d8b56a; --line:#526372; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--ink); color:var(--moon); font:16px/1.65 system-ui,"PingFang SC",sans-serif; }
+main { max-width:1600px; margin:auto; padding:48px; }
+a { color:var(--gold); text-underline-offset:4px; }
+button { color:var(--moon); font:inherit; cursor:pointer; border:1px solid var(--line); background:var(--surface); border-radius:6px; min-height:48px; padding:8px 20px; }
+button:hover { border-color:var(--gold); background:#233448; }
+button:focus-visible,a:focus-visible { outline:2px solid #f0d39b; outline-offset:4px; }
+.eyebrow { color:var(--gold); font-size:14px; letter-spacing:2px; }
+h1 { font:500 clamp(28px,4vw,48px)/1.3 "Songti SC",serif; margin:16px 0; color:#f0d39b; }
+.intro { color:var(--muted); max-width:950px; }
+.status { display:inline-flex; border:1px solid var(--gold); padding:4px 12px; border-radius:4px; font-size:14px; }
+.stats { display:flex; flex-wrap:wrap; gap:32px; margin:32px 0; padding:24px 0; border-block:1px solid #52637280; }
+.stats strong { display:block; color:#f0d39b; font-size:28px; line-height:1.3; }
+.stats span { font-size:14px; color:var(--muted); }
+.links { display:flex; gap:24px; flex-wrap:wrap; margin:16px 0 32px; }
+nav { display:flex; flex-wrap:wrap; gap:12px; margin:32px 0 24px; }
+nav button[aria-pressed=true] { background:var(--gold); border-color:var(--gold); color:var(--ink); }
+.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+article { border:1px solid #52637280; background:#19253690; border-radius:8px; overflow:hidden; }
+article[hidden] { display:none; }
+.image-button { display:block; padding:0; min-height:0; border:0; border-radius:0; width:100%; background:#111827; }
+.image-button img { display:block; width:100%; height:auto; aspect-ratio:1672/941; object-fit:contain; }
+.body { padding:24px; }
+.row { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+h2 { font-size:22px; font-weight:500; margin:0; }
+.num { color:var(--gold); margin-right:12px; font-size:15px; }
+.tag { color:var(--muted); white-space:nowrap; font-size:13px; }
+.description { margin:12px 0 16px; color:var(--muted); }
+details { margin:16px 0 0; border-top:1px solid #52637260; padding-top:12px; }
+summary { cursor:pointer; font-size:14px; color:var(--gold); }
+details p { color:var(--muted); font-size:14px; margin-bottom:0; }
+.note { background:#192536; border-left:2px solid var(--gold); padding:20px 24px; margin-top:40px; color:var(--muted); }
+footer { color:var(--muted); font-size:14px; margin-top:32px; }
+dialog { width:96vw; max-width:none; height:94vh; padding:0; border:1px solid var(--gold); border-radius:8px; color:var(--moon); background:var(--ink); }
+dialog::backdrop { background:#050a13e8; }
+.toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:80px; padding:12px 20px; border-bottom:1px solid var(--line); }
+.toolbar-actions { display:flex; gap:8px; flex-wrap:wrap; }
+#viewer-title { margin:0; font-size:18px; }
+.stage { overflow:auto; height:calc(100% - 80px); display:grid; place-items:start center; padding:16px; }
+.stage img { display:block; max-width:100%; max-height:calc(94vh - 116px); width:auto; height:auto; object-fit:contain; margin:auto; }
+.stage.zoom { display:block; }
+.stage.zoom img { max-width:none; max-height:none; margin:0; }
+@media(min-width:1450px) { .grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:850px) { main { padding:24px 16px; } .grid { grid-template-columns:1fr; } .body { padding:20px; } .toolbar { align-items:flex-start; flex-direction:column; } .stage { height:calc(100% - 144px); } .toolbar-actions button { padding:6px 12px; } }
+</style>
+<main>
+  <header>
+    <div class="eyebrow">影刃疾行 / 设计系统 / v01</div>
+    <h1>月下墨金 · 通用 UI</h1>
+    <span class="status">概念审核通过 · 控件与准备页待运行时审核</span>
+    <p class="intro">以月夜雾岭、墨蓝面板、月白信息与克制暖金统一界面。后续 UI 开发优先复用这些通用类型，再通过组合和变体扩展。点击图片查看完整原图，可用方向键翻页。</p>
+    <div class="stats">
+      <div><strong>10</strong><span>原始概念板</span></div>
+      <div><strong>61</strong><span>控件设计类型</span></div>
+      <div><strong>12</strong><span>界面模板族</span></div>
+      <div><strong>1280 × 720</strong><span>设计坐标与安全框</span></div>
+    </div>
+    <div class="links">
+      <a href="../../../../../docs/UI_DESIGN_SYSTEM.md">设计规范</a>
+      <a href="../../../../validation/ui/common/v01/README.md">任务卡与验收边界</a>
+      <a href="../../../../prompts/ui/common/v01/generation.prompt.md">全部生成提示词</a>
+      <a href="design_tokens.json">精确设计参数</a>
+      <a href="manifest.json">原图来源与哈希</a>
+      <a href="../../../../validation/ui/common/v01/runtime/README.md">首批控件截图</a>
+      <a href="../../../../validation/ui/common/v01/runtime/preparation/README.md">行前准备实际截图</a>
+    </div>
+  </header>
+  <nav aria-label="图册分类">
+    <button type="button" aria-pressed="true" data-filter="all">全部 · 10</button>
+    <button type="button" aria-pressed="false" data-filter="控件体系">控件体系</button>
+    <button type="button" aria-pressed="false" data-filter="完整界面">完整界面</button>
+    <button type="button" aria-pressed="false" data-filter="状态与叙事">状态与叙事</button>
+  </nav>
+  <section class="grid" aria-label="概念设计板">
+    <article data-group="控件体系">
+      <button type="button" class="image-button" data-index="0" aria-label="放大基础控件"><img src="01_foundations.png" alt="基础控件概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">01</span>基础控件</h2><span class="tag">控件体系</span></div>
+      <p class="description">按钮、导航、表单、字级与色彩。</p><button type="button" data-index="0">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>朱砂值与普通返回样式以规范为准。</p></details></div>
+    </article>
+    <article data-group="控件体系">
+      <button type="button" class="image-button" data-index="1" aria-label="放大组合组件"><img src="02_composites.png" alt="组合组件概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">02</span>组合组件</h2><span class="tag">控件体系</span></div>
+      <p class="description">角色、装备、关卡、商品、纪录、奖励与背包。</p><button type="button" data-index="1">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>成长与库存示例分别绑定对应商品类型；星形需加强填充辨识。</p></details></div>
+    </article>
+    <article data-group="完整界面">
+      <button type="button" class="image-button" data-index="2" aria-label="放大行前准备"><img src="03_preparation.png" alt="行前准备概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">03</span>行前准备</h2><span class="tag">完整界面</span></div>
+      <p class="description">角色选择、能力与装备详情，预览和装备分开。</p><button type="button" data-index="2">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>角色选择与专属立绘为后续模板；武器文字取实际配置。</p></details></div>
+    </article>
+    <article data-group="完整界面">
+      <button type="button" class="image-button" data-index="3" aria-label="放大章节与关卡"><img src="04_journey.png" alt="章节与关卡概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">04</span>章节与关卡</h2><span class="tag">完整界面</span></div>
+      <p class="description">驿灯路线、关卡状态、纪录与挑战入口。</p><button type="button" data-index="3">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>3/6 是可达示意，章节目标仍为15；总目标从目录读取。</p></details></div>
+    </article>
+    <article data-group="完整界面">
+      <button type="button" class="image-button" data-index="4" aria-label="放大山路行商"><img src="05_shop.png" alt="山路行商概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">05</span>山路行商</h2><span class="tag">完整界面</span></div>
+      <p class="description">共修、秘卷、补给、详情与携带摘要。</p><button type="button" data-index="4">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>按真实档位、余额、库存、所有权显示；外观保持待开放。</p></details></div>
+    </article>
+    <article data-group="完整界面">
+      <button type="button" class="image-button" data-index="5" aria-label="放大战斗与首领 HUD"><img src="06_combat.png" alt="战斗与首领 HUD概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">06</span>战斗与首领 HUD</h2><span class="tag">完整界面</span></div>
+      <p class="description">悬浮信息、一左四右、冷却与被动道具。</p><button type="button" data-index="5">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>几何按既有ScreenLayout；首领弱点与攻击预警为分开的状态示例。</p></details></div>
+    </article>
+    <article data-group="状态与叙事">
+      <button type="button" class="image-button" data-index="6" aria-label="放大弹层与设置"><img src="07_overlays.png" alt="弹层与设置概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">07</span>弹层与设置</h2><span class="tag">状态与叙事</span></div>
+      <p class="description">暂停、四项设置、购买确认、保存异常。</p><button type="button" data-index="6">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>购买确认只在商店；模型错字由Godot原生文案替换。</p></details></div>
+    </article>
+    <article data-group="完整界面">
+      <button type="button" class="image-button" data-index="7" aria-label="放大结算与重试"><img src="08_results.png" alt="结算与重试概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">08</span>结算与重试</h2><span class="tag">完整界面</span></div>
+      <p class="description">三星与独立无伤、成绩、奖励、失败与免费重试。</p><button type="button" data-index="7">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>奖励金额为排版示例；再次携带为后续功能，未实现不启用。</p></details></div>
+    </article>
+    <article data-group="状态与叙事">
+      <button type="button" class="image-button" data-index="8" aria-label="放大标题、剧情与手册"><img src="09_story_help.png" alt="标题、剧情与手册概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">09</span>标题、剧情与手册</h2><span class="tag">状态与叙事</span></div>
+      <p class="description">启程、对话、操作教学、图鉴与帮助模板。</p><button type="button" data-index="8">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>本板为后续模板；教学的障碍侧别必须与指引对应。</p></details></div>
+    </article>
+    <article data-group="状态与叙事">
+      <button type="button" class="image-button" data-index="9" aria-label="放大状态与轻反馈"><img src="10_feedback_states.png" alt="状态与轻反馈概念设计" loading="lazy" width="1672" height="941"></button>
+      <div class="body"><div class="row"><h2><span class="num">10</span>状态与轻反馈</h2><span class="tag">状态与叙事</span></div>
+      <p class="description">空态、加载、保存、提示、解锁、校验与安全区。</p><button type="button" data-index="9">查看原图 ↗</button>
+      <details><summary>制作说明与功能边界</summary><p>无真实进度时使用不定条；缩略图装饰摇杆不纳入本游戏。</p></details></div>
+    </article>
+  </section>
+  <aside class="note">本图册展示概念方向，图片中的数字、文本、角色立绘和状态组合是排版示例。实际规则、章节目标、商品状态、钢索位置与输入布局以项目数据和设计规范为准。每张图的“制作说明”列出已识别的偏差。用户于 2026-11-06 通过概念审核；Godot 组件实现、运行时验证与 Android 验收分别记录。</aside>
+  <footer>2026-11-06 · 内置图片生成工具制作；10 张原始 PNG 未改像素。此图册可离线打开，不加载外部脚本或服务，不写入游戏档案。</footer>
+</main>
+<dialog aria-labelledby="viewer-title">
+  <div class="toolbar">
+    <h2 id="viewer-title"></h2>
+    <div class="toolbar-actions">
+      <button type="button" id="previous" aria-label="上一张设计">← 上一张</button>
+      <button type="button" id="next" aria-label="下一张设计">下一张 →</button>
+      <button type="button" id="zoom" aria-pressed="false">原尺寸</button>
+      <button type="button" id="close">关闭 ×</button>
+    </div>
+  </div>
+  <div class="stage"><img id="large" alt=""></div>
+</dialog>
+<script>
+const cards = [...document.querySelectorAll("article")];
+const modal = document.querySelector("dialog");
+const image = document.querySelector("#large");
+const title = document.querySelector("#viewer-title");
+const stage = document.querySelector(".stage");
+const zoom = document.querySelector("#zoom");
+let active = 0;
+function show(index) {
+  active = (index + cards.length) % cards.length;
+  const card = cards[active], source = card.querySelector("img");
+  image.src = source.getAttribute("src");
+  image.alt = source.alt;
+  title.textContent = card.querySelector("h2").textContent;
+  stage.classList.remove("zoom");
+  stage.scrollTop = 0; stage.scrollLeft = 0;
+  zoom.setAttribute("aria-pressed", "false"); zoom.textContent = "原尺寸";
+  if (!modal.open) modal.showModal();
+}
+document.querySelectorAll("[data-index]").forEach(button => button.addEventListener("click", () => show(Number(button.dataset.index))));
+document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => {
+  document.querySelectorAll("[data-filter]").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+  cards.forEach(card => card.hidden = button.dataset.filter !== "all" && card.dataset.group !== button.dataset.filter);
+}));
+document.querySelector("#previous").addEventListener("click", () => show(active - 1));
+document.querySelector("#next").addEventListener("click", () => show(active + 1));
+document.querySelector("#close").addEventListener("click", () => modal.close());
+zoom.addEventListener("click", () => {
+  const enlarged = stage.classList.toggle("zoom");
+  zoom.setAttribute("aria-pressed", String(enlarged)); zoom.textContent = enlarged ? "适应窗口" : "原尺寸";
+});
+document.addEventListener("keydown", event => {
+  if (!modal.open) return;
+  if (event.key === "ArrowRight") { event.preventDefault(); show(active + 1); }
+  if (event.key === "ArrowLeft") { event.preventDefault(); show(active - 1); }
+});
+</script>
+</html>

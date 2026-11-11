@@ -1,16 +1,16 @@
 # 影刃疾行
 
-Godot 4.7 钢索跑酷原型。当前版本 v0.14 提供约 100 秒的“雾岭断桥”完整流程：60 秒跑酷路线后进入带半血强化的小型首领战，包含键盘 / 多指触屏操作、上下翻绳、二段跳、角色身法、机关预警、影晶、普通哨兵、屏幕右侧远程威胁、角色技能与被动、可更换武器、飞镖球、音效、粒子、连击、结算、历史纪录与重试。
+Godot 4.7 钢索跑酷原型。当前版本 v0.16.0 统一“月下墨金”UI，补齐关卡选择、准备页、战斗 HUD 和暂停 / 结算。约 100 秒的“雾岭断桥”完整流程包含 60 秒跑酷路线和带半血强化的小型首领战，支持键盘 / 多指触屏操作、上下翻绳、二段跳、角色身法、机关预警、影晶、普通哨兵、屏幕右侧远程威胁、角色技能与被动、可更换武器、飞镖球、音效、粒子、连击、结算、历史纪录与重试。
 
 2026-10-30 已接入实现拆分阶段 A：影刃的 **踏影** 改为“跳、跳、身法”发动第三跳，`Shift` 统一调用当前角色身法。岚织 **御风**、烬锋 **雷闪** 通过共用灰盒启动器选择；三人共享基础二段跳。影刃的 K **月蚀斩** 保持 12 秒冷却、2 秒保护。具体规则和阶段边界见 [角色身法](docs/MOBILITY.md)。
 
 阶段 B 已开始：第一章目录、关卡选择页和第二关“风竹渡”灰盒已加入，含五段路线、五十颗影晶和带预警 / 生效 / 退场状态的落竹机关；三角色 × 两武器的基础 / 身法路线已补自动回放，重试保留所选关卡；通关发奖与所有权事务已接入；角色选择、故事入口、固定弹道组合编排和人工 / Android 验收仍待后续切片，详见 [第二关灰盒](data/levels/README.md#第二关灰盒风竹渡)。
 
-关卡选择页已接入审核通过的月夜驿灯分层资源，保留真实纪录、锁定提示与挑战 / 练习入口。F5 进入准备页后点击“关卡选择”查看；Godot 运行时视觉与 Android 实机验收待进行，截图及验证见 [关卡选择 UI 任务卡](art/validation/ui/level_select/v01/README.md)。
+关卡选择页已按审核通过的“月下墨金”关卡模板替换为关卡列表、中央驿灯路线、纪录详情和固定出战底栏，可触摸查看单局快照，保留真实纪录、锁定提示与挑战 / 练习入口。F5 进入准备页后点击“关卡选择”查看；用户运行时视觉与 Android 实机验收待进行，截图及验证见 [关卡选择 UI 任务卡](art/validation/ui/level_select/v03/README.md)。
 
 ## 运行
 
-使用 Godot 打开 `project.godot`，按 F5 进入“角色与武器”准备页。此项目使用 GDScript，不需要 .NET 编译。
+使用 Godot 打开 `project.godot`，按 F5 进入“行前准备”页。此项目使用 GDScript，不需要 .NET 编译。
 
 Windows 本机已检测到 Godot：
 
@@ -19,7 +19,7 @@ $godotPath = 'D:\Godot_v4.7\Godot_v4.7-stable_mono_win64_console.exe'
 & $godotPath --path .
 ```
 
-准备页可预览并装备弦月轮 / 贯星矛，选择自动保存；三种模式入口下显示各自历史最佳纪录，再进入完整关卡、首领练习或跑酷练习。打开 `scenes/main.tscn` 按 F6 可直接运行完整关卡。打开 `scenes/boss_practice.tscn` 按 F6 可直接练习首领；`scenes/practice.tscn` 保留原有 60 秒跑酷练习。命令行也可指定场景：
+准备页使用统一卡片、页签和详情面板，可预览并装备弦月轮 / 贯星矛，装备后自动保存；“秘卷 / 补给”显示真实携带摘要，“纪录”或底部“历史纪录”查看雾岭断桥各模式历史，底部进入关卡选择、首领练习或跑酷练习。正式多角色选择尚未接入。当前实际画面及验收边界见 [准备页 UI 任务卡](art/validation/ui/character_setup/v01/README.md)。打开 `scenes/main.tscn` 按 F6 可直接运行完整关卡。打开 `scenes/boss_practice.tscn` 按 F6 可直接练习首领；`scenes/practice.tscn` 保留原有 60 秒跑酷练习。命令行也可指定场景：
 
 ```powershell
 & $godotPath --path . res://scenes/boss_practice.tscn
@@ -120,12 +120,12 @@ Android / Windows 自动打包已配置为推送 tag、发布 Release 或手动�
 
 首领专项测试覆盖数据校验、上下侧入场、练习入口、三种攻击的预警与躲避、半血单次强化、双波独立预警与安全侧球、忍术 / 雷闪保护、护甲与弱点、单次伤害、击破计分、第二波暂停 / 死亡 / 重试，以及十分钟强化追逐中的节点数量稳定性。通过时输出 `BOSS_PASS`。
 
-反馈专项检查音频导入、实际动作事件、上下侧预警、粒子与声音池上限、开关独立性、暂停 / 重试 / 结算，以及震动开关前后的真实飞弹出生点和速度完全相同。通过时输出 `FEEDBACK_PASS`；去掉 `--headless` 运行可额外验证实际播放、暂停 / 恢复和暂停状态下的结算音。新增武器专项覆盖装备解析、保存失败重试与新版本保护、准备页 / 重试快照、两种武器的真实飞行与护甲倍率、飞镖球、同帧 J / K、暂停与取消、三种致死来源和五种实际输出回放，通过时输出 `WEAPONS_PASS`。存档专项验证各项最佳与模式隔离、旧字段保留、设置类型校验、备份恢复、保存失败重试，以及真实通关 / 死亡 / 返回准备的记录边界，输出 `SAVE_PASS`。Windows 可在项目根目录运行全部十七套回归：
+反馈专项检查音频导入、实际动作事件、上下侧预警、粒子与声音池上限、开关独立性、暂停 / 重试 / 结算，以及震动开关前后的真实飞弹出生点和速度完全相同。通过时输出 `FEEDBACK_PASS`；去掉 `--headless` 运行可额外验证实际播放、暂停 / 恢复和暂停状态下的结算音。新增武器专项覆盖装备解析、保存失败重试与新版本保护、准备页 / 重试快照、两种武器的真实飞行与护甲倍率、飞镖球、同帧 J / K、暂停与取消、三种致死来源和五种实际输出回放，通过时输出 `WEAPONS_PASS`。存档专项验证各项最佳与模式隔离、旧字段保留、设置类型校验、备份恢复、保存失败重试，以及真实通关 / 死亡 / 返回准备的记录边界，输出 `SAVE_PASS`。Windows 可在项目根目录运行以下完整回归：
 
 ```powershell
 $godotPath = 'D:\Godot_v4.7\Godot_v4.7-stable_mono_win64_console.exe'
 & $godotPath --headless --path . --editor --import --quit
-foreach ($suite in @('rope_landing', 'rope_pickups', 'level_route', 'mobility', 'combat', 'projectiles', 'boss', 'feedback', 'weapons', 'save', 'stars_records', 'reward_transactions', 'economy', 'touch_controls', 'player_art', 'ui_art_preview', 'level_select', 'wind_bamboo')) {
+foreach ($suite in @('rope_landing', 'rope_pickups', 'level_route', 'mobility', 'combat', 'projectiles', 'boss', 'feedback', 'weapons', 'save', 'stars_records', 'reward_transactions', 'economy', 'ui_components', 'touch_controls', 'player_art', 'ui_art_preview', 'level_select', 'wind_bamboo')) {
     & $godotPath --headless --path . --fixed-fps 60 --script "res://tests/test_$suite.gd"
     if ($LASTEXITCODE -ne 0) { throw "Regression failed: $suite" }
 }
@@ -158,11 +158,12 @@ foreach ($suite in @('rope_landing', 'rope_pickups', 'level_route', 'mobility', 
 
 已完成控制、60 秒跑酷、基础战斗、投射物与远程威胁、小型首领、首轮音效 / 粒子 / 冲击反馈，以及角色准备页、两把可更换武器、装备持久化和三渠道首领战斗。21 个合成音效由仓库脚本生成，来源与重建方法见 [音效说明](audio/README.md)。2026-10-27 已将触屏按钮、头像、面板、影晶、20 帧角色、三层背景与钢铁尖刺接入默认游戏，并完成首领四状态、哨兵、武器 / 弹体、程序月弧 / 碎屑效果和应用图标首版。当前为正式美术首版待视觉验收，图片来源、检查与待办见 `art/generated/README.md`。武器归角色模块，准备页更换并保存每名角色的装备，局内与暂停时只读；重试沿用本局配置快照，返回准备后可换装。详见 [首领战斗扩展](docs/BOSS_COMBAT_DESIGN.md) 与 [角色模块及可更换武器](docs/CHARACTER_WEAPON_DESIGN.md)。v0.12 已补齐成绩与四个反馈开关的持久化、准备页历史纪录、备份恢复与保存失败重试。v0.13 增加半血强化：生命 ≤50% 时标记强化，后续齐射改为每波完整预警的双波，保留当前招式与 2.6 秒弱点；血条、外环、音效和粒子提示强化。v0.14 已实现多指触屏按钮、冷却反馈、安全区与可触摸的设置 / 暂停 / 重试全流程。后续包括视觉评审后的最终细化、Android 实机验收和性能验证。
 
-结算增加三种输出的伤害统计。HUD 顶部将生命、血条、影晶和时间拆成独立卡片，另显示进度、当前段落、侧别预警、剩余空中跳跃、击破和连击；技能与武器名称、就绪 / 冷却由底部按钮显示，完整介绍统一在暂停界面查看；首领战增加动作倒计时和弱点提示。角色配置在 `data/characters/shadow_runner.tres`，共享移动参数在 `data/control_tuning.tres`。结算保留用时、受击、收集率、击破、最高连击、总分和评级。正式主线采用上述三星与独立无伤印；跑酷练习继续使用旧版评级，以关卡基础时长为基准：S 为 +1 秒内、无伤、收集率 ≥90%；A 为 +10 秒内、受击 ≤1 次、收集率 ≥65%；B 为 +25 秒内、受击 ≤2 次、收集率 ≥35%；其余为 C。普通哨兵击破不是取得 S 的必要条件；首领练习只显示练习结果。
+结算增加三种输出的伤害统计。战斗 HUD 已迁入通用 UI：顶部透明悬浮显示头像、生命、影晶与时间，路线节点来自实际段长；侧别威胁、首领阶段 / 强化、被动补给均读取真实状态。键盘与触屏共用底部动作展示，显示名称、使用条件、冷却或身法额度，完整介绍在暂停查看。截图和验收边界见[战斗 HUD 任务卡](art/validation/ui/battle_hud/v01/README.md)。角色配置在 `data/characters/shadow_runner.tres`，共享移动参数在 `data/control_tuning.tres`。结算保留用时、受击、收集率、击破、最高连击、总分和评级。正式主线采用上述三星与独立无伤印；跑酷练习继续使用旧版评级，以关卡基础时长为基准：S 为 +1 秒内、无伤、收集率 ≥90%；A 为 +10 秒内、受击 ≤1 次、收集率 ≥65%；B 为 +25 秒内、受击 ≤2 次、收集率 ≥35%；其余为 C。普通哨兵击破不是取得 S 的必要条件；首领练习只显示练习结果。
 
 跑酷练习旧版总分 = 通关 1000 + 时间奖励（最高 1000）+ 无伤奖励 500 + 影晶数 ×20 + 击破数 ×150 + 最高连击 ×10。时间奖励按基础时长 / 实际用时递减，最多 1000。
 
 ## 文档
 
+- [通用 UI 设计系统](docs/UI_DESIGN_SYSTEM.md)：月下墨金统一风格、61 类控件设计、12 组模板及复用 / 扩展约定；[10 张概念图册](art/concepts/ui/common/v01/README.md) 已于 2026-11-06 获用户概念审核通过。商店、设置、准备、关卡选择完整布局、暂停 / 结算及完整战斗 HUD 已迁移；当前入口和截图见[战斗 HUD 任务卡](art/validation/ui/battle_hud/v01/README.md)，用户视觉和 Android 另行验收。
 - [UI 界面设计与开发工作流](docs/UI_DESIGN_WORKFLOW.md)：每个界面从当前 UI 基线、概念图审核到资源分层、Godot 拼装、功能接入和分层验收的固定流程。
-- 当前首张 UI 任务卡：[关卡选择页 v01](art/validation/ui/level_select/v01/README.md)。
+- 当前 UI 任务卡：[关卡选择页 v03](art/validation/ui/level_select/v03/README.md)；历史分层与构图记录见 [关卡选择页 v01](art/validation/ui/level_select/v01/README.md)。

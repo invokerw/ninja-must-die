@@ -7,32 +7,18 @@ extends Node2D
 @onready var player: PlayerController = $Player
 @onready var combat: RunnerCombat = $Player/Combat
 @onready var level: RopeLevelController = $Level
-@onready var status_text: Label = $UI/HUD/StatusText
-@onready var health_text: Label = $UI/HUD/HealthCard/HealthText
-@onready var health_fill: ColorRect = $UI/HUD/HealthCard/HealthBack/HealthFill
-@onready var crystal_text: Label = $UI/HUD/CrystalCard/CrystalText
-@onready var time_text: Label = $UI/HUD/TimeCard/TimeText
-@onready var hint_text: Label = $UI/HUD/HintText
-@onready var result_overlay: ColorRect = $UI/HUD/ResultOverlay
+@onready var battle_hud: UIBattleHUD = $UI/HUD
+@onready var result_overlay: UIRunPanel = $UI/HUD/ResultOverlay
 @onready var result_dimmer: ColorRect = $UI/HUD/ResultDimmer
 @onready var result_title: Label = $UI/HUD/ResultOverlay/ResultTitle
 @onready var result_body: Label = $UI/HUD/ResultOverlay/ResultBody
-@onready var threat_text: Label = $UI/HUD/ThreatText
-@onready var progress_fill: ColorRect = $UI/HUD/ProgressBack/ProgressFill
-@onready var progress_label: Label = $UI/HUD/ProgressLabel
-@onready var segment_title: Label = $UI/HUD/SegmentTitle
-@onready var segment_hint: Label = $UI/HUD/SegmentHint
-@onready var character_text: Label = $UI/HUD/CharacterPanel/CharacterText
-@onready var passive_text: Label = $UI/HUD/CharacterPanel/PassiveText
-@onready var combat_text: Label = $UI/HUD/CharacterPanel/CombatText
-@onready var combat_feedback: Label = $UI/HUD/CombatFeedback
-@onready var skill_text: Label = $UI/HUD/SkillPanel/SkillText
-@onready var protection_text: Label = $UI/HUD/SkillPanel/ProtectionText
-@onready var skill_fill: ColorRect = $UI/HUD/SkillPanel/CooldownBack/CooldownFill
-@onready var boss_panel: ColorRect = $UI/HUD/BossPanel
-@onready var boss_name: Label = $UI/HUD/BossPanel/BossName
-@onready var boss_hint: Label = $UI/HUD/BossPanel/BossHint
-@onready var boss_health_fill: ColorRect = $UI/HUD/BossPanel/HealthBack/HealthFill
+@onready var threat_text: Label = battle_hud.threat.label
+@onready var progress_label: Label = battle_hud.progress_label
+@onready var segment_title: Label = battle_hud.segment_title
+@onready var segment_hint: Label = battle_hud.segment_hint
+@onready var boss_panel: UIBossStatus = battle_hud.boss
+@onready var boss_name: Label = battle_hud.boss.title
+@onready var boss_hint: Label = battle_hud.boss.phase_label
 @onready var feedback: RunFeedback = $Player/Feedback
 
 var _elapsed_time := 0.0
@@ -42,9 +28,6 @@ var feedback_menu: PanelContainer
 var feedback_button: Button
 var _feedback_checks: Dictionary = {}
 var run_loadout: RunLoadout
-var weapon_text: Label
-var weapon_hint: Label
-var weapon_fill: ColorRect
 var _transitioning := false
 var _completion_recorded := false
 var save_status: Label
@@ -53,7 +36,6 @@ var touch_controls: TouchControls
 var resume_button: Button
 var _feedback_was_paused := false
 var _feedback_paused_run := false
-var painted_progress: ProgressRail
 var run_mode_override: StringName = &""
 var selected_level_id: StringName = &""
 var run_id := ""
@@ -92,8 +74,7 @@ func _ready() -> void:
 	if not player.configuration_errors.is_empty():
 		_show_result("角色配置无效", "请检查角色主动和被动资源，详细原因见调试输出。")
 		return
-	_setup_equipment_controls()
-	painted_progress = PaintedHUD.install(self)
+	battle_hud.pause_requested.connect(_toggle_pause)
 	_setup_touch_controls()
 	level.segment_changed.connect(_on_segment_changed)
 	level.finish_reached.connect(_on_finish_reached)
@@ -148,6 +129,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_on_feedback_setting(not FeedbackSettings.sound_enabled, "sound")
 		return
 	if event.is_action_pressed("restart"):
+		if feedback_menu.visible or (result_overlay.visible and event is InputEventKey and event.keycode in [KEY_ENTER, KEY_KP_ENTER]):
+			return
 		_restart_run()
 		return
 	if event.is_action_pressed("pause") and not _finished:
@@ -162,22 +145,25 @@ func _toggle_pause() -> void:
 	_raise_modal_layers()
 	get_tree().paused = not get_tree().paused
 	result_dimmer.visible = get_tree().paused
-	result_overlay.visible = get_tree().paused
 	if get_tree().paused:
-		# Reserve the upper-right corner for the resume button so it never sits
-		# over the pause title.
-		result_title.size = Vector2(390, 50)
-		result_body.size = Vector2(390, 208)
-		feedback_button.position = Vector2(440.0, 76.0)
-		feedback_button.show()
+		result_overlay.set_pause_mode(true)
+		result_overlay.loadout_label.text = _loadout_summary()
 		result_title.text = "已暂停 · 技能说明"
-		result_body.add_theme_font_size_override("font_size", 16)
 		result_body.text = _pause_body_text()
-	else:
-		result_body.size = Vector2(576, 220)
-		feedback_button.position = Vector2(440.0, 234.0)
-		feedback_button.hide()
+		_update_save_status()
+	result_overlay.visible = get_tree().paused
 	_sync_touch_controls()
+
+func _loadout_summary() -> String:
+	if run_loadout == null or run_loadout.character == null or run_loadout.weapon == null:
+		return "本局配置无效"
+	var scroll_name := "未装备秘卷"
+	var scroll_id := StringName(run_loadout.item_snapshot.get("selected_scroll_id", ""))
+	if EconomyService.ITEMS.has(scroll_id):
+		scroll_name = EconomyService.ITEMS[scroll_id].name
+	var supply := StringName(run_loadout.item_snapshot.get("consumed_item_id", ""))
+	var supply_name: String = EconomyService.ITEMS[supply].name if EconomyService.ITEMS.has(supply) else "未消耗补给"
+	return "%s · %s · %s · %s" % [run_loadout.character.display_name, run_loadout.weapon.display_name, scroll_name, supply_name]
 
 func _ability_description_text() -> String:
 	var character := player.character
@@ -230,21 +216,21 @@ func _sync_touch_controls() -> void:
 	touch_controls.blocked = feedback_menu.visible
 	touch_controls.finished = _finished
 	touch_controls.sync_state()
-	# Runtime skill and passive details live in the pause panel. The action
-	# buttons remain the single source of cooldown feedback.
-	$UI/HUD/CharacterPanel.hide()
-	$UI/HUD/SkillPanel.hide()
-	if is_instance_valid(weapon_text):
-		weapon_text.get_parent().hide()
+	battle_hud.pause_button.visible = not touch_controls.enabled and not _finished and not get_tree().paused and not feedback_menu.visible
 	resume_button.visible = get_tree().paused and not _finished
 
 func _layout_ui() -> void:
 	var touch := is_instance_valid(touch_controls) and touch_controls.enabled
 	ScreenLayout.configure_window(get_viewport(), touch)
 	ScreenLayout.fit_control($UI/HUD, ScreenLayout.safe_rect(get_viewport()))
-	segment_hint.position = Vector2(44, 354 if touch else 656)
-	segment_hint.add_theme_font_size_override("font_size", 16 if touch else 18)
-	feedback_menu.position = Vector2(472, 186) if touch else Vector2(900, 404)
+	_layout_dimmer()
+
+func _layout_dimmer() -> void:
+	var inverse := ($UI/HUD as Control).get_global_transform_with_canvas().affine_inverse()
+	var bounds := get_viewport().get_visible_rect()
+	result_dimmer.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	result_dimmer.position = inverse * bounds.position
+	result_dimmer.size = inverse.basis_xform(bounds.size)
 
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT, NOTIFICATION_APPLICATION_PAUSED] and is_instance_valid(touch_controls):
@@ -253,14 +239,28 @@ func _notification(what: int) -> void:
 			_toggle_pause()
 
 func _setup_feedback_controls() -> void:
-	feedback_button = Button.new()
-	feedback_button.text = "设置"
-	feedback_button.position = Vector2(440.0, 76.0)
-	feedback_button.size = Vector2(168.0, 34.0)
-	feedback_button.z_index = 140
-	feedback_button.focus_mode = Control.FOCUS_NONE
-	result_overlay.add_child(feedback_button)
-	PaintedTheme.style_button(feedback_button)
+	result_overlay.bind_labels(result_title, result_body)
+	feedback_button = result_overlay.settings_button
+	resume_button = result_overlay.resume_button
+	save_status = result_overlay.save_status
+	save_retry = result_overlay.save_button
+	rewards_button = result_overlay.rewards_button
+	result_dimmer.color = UITokens.MODAL_DIMMER
+	result_overlay.resume_requested.connect(_toggle_pause)
+	result_overlay.retry_requested.connect(_restart_run)
+	result_overlay.setup_requested.connect(_return_to_setup)
+	result_overlay.settings_requested.connect(_toggle_feedback_menu)
+	result_overlay.save_requested.connect(PlayerProfile.current().save_profile)
+	result_overlay.rewards_requested.connect(func() -> void:
+		var showing_details := result_body.text == _reward_details
+		result_body.text = _result_stats if showing_details else _reward_details
+		rewards_button.text = "奖励明细" if showing_details else "返回成绩"
+		result_overlay.reset_scroll()
+	)
+	PlayerProfile.current().save_status_changed.connect(_update_save_status)
+	reward_notice = battle_hud.notice
+	reward_notice.text = "奖励未保存，请返回准备页重试保存"
+	reward_notice.add_theme_color_override("font_color", UITokens.ACCENT_LIGHT)
 	var panel := FeedbackSettingsPanel.new()
 	panel.profile = PlayerProfile.current()
 	panel.feedback = feedback
@@ -272,10 +272,8 @@ func _setup_feedback_controls() -> void:
 	$UI/HUD.add_child(feedback_menu)
 	feedback_menu.visibility_changed.connect(_on_feedback_visibility_changed)
 	_feedback_checks = panel.checks
-	feedback_button.pressed.connect(func() -> void:
-		_toggle_feedback_menu()
-	)
 	_sync_feedback_controls()
+	_update_save_status()
 
 func _toggle_feedback_menu() -> void:
 	if _finished and not get_tree().paused:
@@ -297,8 +295,6 @@ func _on_feedback_visibility_changed() -> void:
 		if _feedback_paused_run:
 			_raise_modal_layers()
 			feedback_menu.move_to_front()
-			if is_instance_valid(feedback_button):
-				feedback_button.move_to_front()
 			get_tree().paused = true
 			result_dimmer.show()
 			result_overlay.hide()
@@ -308,6 +304,8 @@ func _on_feedback_visibility_changed() -> void:
 		_raise_modal_layers()
 		result_dimmer.visible = get_tree().paused
 		result_overlay.visible = get_tree().paused
+		if result_overlay.visible:
+			feedback_button.grab_focus()
 	_sync_touch_controls()
 
 func _on_feedback_setting(enabled: bool, setting: String) -> void:
@@ -365,7 +363,7 @@ func _on_finish_reached() -> void:
 	run_result.completed = true
 	feedback.finish(true)
 	_update_status()
-	progress_fill.size.x = progress_fill.get_parent().size.x
+	battle_hud.progress.progress = 1.0
 	progress_label.text = ("首领练习" if start_at_boss else ("关卡进度" if level.boss_data != null else "终点进度")) + "  100%"
 	var boss_practice := start_at_boss and is_instance_valid(level.boss)
 	if not _completion_recorded:
@@ -385,12 +383,15 @@ func _on_finish_reached() -> void:
 	if not summary.is_empty():
 		body += "\n" + ResultRewards.line(summary)
 	_show_result("%s · 完成" % ("首领练习" if boss_practice else level.data.title), body)
+	if get_run_mode() == &"full":
+		result_overlay.set_rating(run_result.stars, run_result.flawless, run_result.score)
 	if not summary.is_empty():
-		result_body.add_theme_font_size_override("font_size", 18)
 		result_body.tooltip_text = ResultRewards.breakdown(summary)
 		_result_stats = body
 		_reward_details = ResultRewards.details(summary)
 		rewards_button.show()
+		result_overlay.reward_summary.text = "铜钱 +%d · 余额 %d" % [summary.total, summary.balance]
+		result_overlay.reward_summary.show()
 	_update_save_status()
 
 func get_run_mode() -> StringName:
@@ -415,12 +416,10 @@ func _show_result(title: String, body: String) -> void:
 	if player.active:
 		player.stop()
 	result_title.text = title
-	result_title.size = Vector2(576, 50)
-	result_body.size = Vector2(576, 220)
-	result_body.add_theme_font_size_override("font_size", 20)
+	result_overlay.set_pause_mode(false)
+	result_overlay.loadout_label.text = _loadout_summary()
 	result_body.text = body
-	feedback_button.position = Vector2(440.0, 258.0)
-	feedback_button.show()
+	_update_save_status()
 	_raise_modal_layers()
 	result_dimmer.visible = true
 	result_overlay.visible = true
@@ -428,7 +427,7 @@ func _show_result(title: String, body: String) -> void:
 	_sync_touch_controls()
 
 func _restart_run() -> void:
-	if _transitioning:
+	if _transitioning or feedback_menu.visible:
 		return
 	_transitioning = true
 	player.stop()
@@ -441,91 +440,12 @@ func _restart_run() -> void:
 		_transitioning = false
 
 func _return_to_setup() -> void:
-	if _transitioning:
+	if _transitioning or feedback_menu.visible:
 		return
 	_transitioning = true
 	player.stop()
 	if RunNavigation.return_to_setup(get_tree()) != OK:
 		_transitioning = false
-
-func _setup_equipment_controls() -> void:
-	# Keep the full HUD above the boss volley's highest lane (y=396).
-	$UI/HUD/CharacterPanel.size.y = 48.0
-	character_text.position.y = 4.0
-	character_text.size.y = 24.0
-	passive_text.visible = false
-	combat_text.position.y = 28.0
-	combat_text.size.y = 18.0
-	combat_text.add_theme_font_size_override("font_size", 14)
-	$UI/HUD/SkillPanel.position.y = 236.0
-	$UI/HUD/SkillPanel.size.y = 76.0
-	skill_text.position.y = 2.0
-	skill_text.size.y = 30.0
-	skill_text.add_theme_font_size_override("font_size", 20)
-	protection_text.position.y = 32.0
-	protection_text.size.y = 22.0
-	protection_text.add_theme_font_size_override("font_size", 14)
-	$UI/HUD/SkillPanel/CooldownBack.position.y = 64.0
-	$UI/HUD/SkillPanel/CooldownBack.size.y = 4.0
-	skill_fill.size.y = 4.0
-	var panel := ColorRect.new()
-	panel.position = Vector2(880, 324)
-	panel.size = Vector2(356, 60)
-	panel.hide()
-	panel.color = Color(0.067, 0.094, 0.149, 0.94)
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	$UI/HUD.add_child(panel)
-	PaintedTheme.decorate_panel(panel)
-	var icon := WeaponPreview.new()
-	icon.weapon = run_loadout.weapon
-	icon.icon_only = true
-	icon.position = Vector2(8, 6)
-	icon.size = Vector2(40, 40)
-	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(icon)
-	weapon_text = _hud_label(panel, Rect2(54, 2, 294, 28), 18)
-	weapon_hint = _hud_label(panel, Rect2(54, 31, 294, 22), 14)
-	var back := ColorRect.new()
-	back.position = Vector2(18, 54)
-	back.size = Vector2(320, 4)
-	back.color = Color("233142")
-	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(back)
-	weapon_fill = ColorRect.new()
-	weapon_fill.size = back.size
-	weapon_fill.color = Color("d8b56a")
-	weapon_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	back.add_child(weapon_fill)
-	combat_feedback.position = Vector2(60, 318)
-	combat_feedback.size = Vector2(720, 28)
-	result_overlay.position = Vector2(320, 160)
-	result_overlay.size = Vector2(640, 400)
-	result_title.position = Vector2(32, 24)
-	result_title.size = Vector2(576, 50)
-	result_body.position = Vector2(32, 84)
-	result_body.size = Vector2(576, 220)
-	result_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	result_body.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	result_body.add_theme_font_size_override("font_size", 20)
-	save_status = _hud_label(result_overlay, Rect2(32, 304, 400, 23), 15)
-	reward_notice = _hud_label($UI/HUD, Rect2(430, 94, 650, 26), 15)
-	reward_notice.text = "奖励未保存，请返回准备页重试保存"
-	reward_notice.add_theme_color_override("font_color", Color("e8d5a4"))
-	save_retry = _hud_button(result_overlay, "重试保存", Rect2(440, 294, 168, 30), PlayerProfile.current().save_profile)
-	save_retry.hide()
-	rewards_button = _hud_button(result_overlay, "奖励明细", Rect2(32, 258, 168, 42), func() -> void:
-		var showing_details := result_body.text == _reward_details
-		result_body.text = _result_stats if showing_details else _reward_details
-		rewards_button.text = "奖励明细" if showing_details else "返回成绩"
-	)
-	rewards_button.hide()
-	PlayerProfile.current().save_status_changed.connect(_update_save_status)
-	$UI/HUD/ResultOverlay/RetryHint.hide()
-	_hud_button(result_overlay, "重试 R / Enter", Rect2(32, 330, 272, 44), _restart_run)
-	_hud_button(result_overlay, "角色与武器", Rect2(328, 330, 280, 44), _return_to_setup)
-	resume_button = _hud_button(result_overlay, "继续挑战", Rect2(440, 24, 168, 44), _toggle_pause)
-	resume_button.hide()
-	_update_save_status()
 
 func _update_save_status() -> void:
 	if not is_instance_valid(save_status):
@@ -535,23 +455,18 @@ func _update_save_status() -> void:
 	if not profile.pending_transaction.is_empty():
 		save_status.text = "奖励仅在内存中，请先重试保存"
 	reward_notice.visible = not profile.pending_transaction.is_empty() and not profile.last_error.is_empty()
-	save_retry.visible = profile.save_pending
+	result_overlay.save_badge.visible = profile.save_pending or profile.is_read_only() or _completion_recorded
+	result_overlay.save_badge.set_status(&"readonly" if profile.is_read_only() else (&"pending" if profile.save_pending else &"saved"))
+	if profile.is_read_only():
+		save_status.text = "存档版本较新，本次更改不会覆盖原档案。"
+	save_retry.visible = profile.save_pending and not profile.is_read_only()
+	var formal_blocked := get_run_mode() == &"full" and (profile.is_read_only() or (not profile.pending_transaction.is_empty() and not profile.last_error.is_empty()))
+	result_overlay.retry_button.set_available(not formal_blocked, "请先保存奖励，再开始新的正式挑战。" if formal_blocked else "")
+	result_overlay.refresh_action_focus()
 
 func _raise_modal_layers() -> void:
 	result_dimmer.move_to_front()
 	result_overlay.move_to_front()
-
-func _hud_button(parent: Node, text: String, rect: Rect2, callback: Callable) -> Button:
-	var button := Button.new()
-	button.text = text
-	button.position = rect.position
-	button.size = rect.size
-	button.focus_mode = Control.FOCUS_NONE
-	button.add_theme_font_size_override("font_size", 18)
-	PaintedTheme.style_button(button)
-	parent.add_child(button)
-	button.pressed.connect(callback)
-	return button
 
 func _hud_label(parent: Node, rect: Rect2, font_size: int) -> Label:
 	var label := Label.new()
@@ -563,112 +478,10 @@ func _hud_label(parent: Node, rect: Rect2, font_size: int) -> Label:
 	return label
 
 func _update_status() -> void:
-	if not is_instance_valid(player) or player.tuning == null:
+	if not is_instance_valid(player) or player.tuning == null or player.mobility == null:
 		return
-	var progress := clampf(inverse_lerp(level.data.start_x, level.data.get_finish_x(), player.global_position.x), 0.0, 1.0)
-	if level.boss_data != null:
-		progress *= 0.0 if start_at_boss else 0.75
-		if is_instance_valid(level.boss):
-			progress += (1.0 if start_at_boss else 0.25) * (1.0 - float(level.boss.health) / float(level.boss.data.max_health))
-	progress_fill.size.x = progress_fill.get_parent().size.x * progress
-	if is_instance_valid(painted_progress):
-		painted_progress.progress = progress
-	var progress_title := "首领练习" if start_at_boss else ("关卡进度" if level.boss_data != null else "终点进度")
-	progress_label.text = "%s  %d%%" % [progress_title, roundi(progress * 100.0)]
-	health_text.text = "%d / %d" % [player.health, player.get_max_health()]
-	health_fill.size.x = health_fill.get_parent().size.x * clampf(float(player.health) / float(player.get_max_health()), 0.0, 1.0)
-	health_fill.color = Color("f07868") if player.health > 1 else Color("e04f5f")
-	crystal_text.text = "%d / %d" % [player.crystals, level.pickup_positions.size()]
-	time_text.text = "%.1fs" % _elapsed_time
-	status_text.text = "生命 %d / %d    影晶 %d / %d    时间 %.1fs    %s" % [
-		player.health, player.get_max_health(), player.crystals, level.pickup_positions.size(), _elapsed_time, player.get_rope_side_name()
-	]
-	hint_text.text = "左侧翻绳 · 右侧跳跃 / 身法 / 武器 / 忍术 · 顶部暂停" if is_instance_valid(touch_controls) and touch_controls.enabled else "↑ / Space：上翻或跳跃 · ↓：下翻 / 保持下侧 · Shift：身法 · Esc：暂停 · R：重来"
-	var skill := player.character.active_skill
-	var remaining := combat.skill_cooldown_remaining
-	var cooldown_text := "就绪"
-	if remaining > 0.00001:
-		cooldown_text = "%.1fs" % remaining if remaining <= 2.0 else "%ds" % ceili(remaining)
-	skill_text.text = "K  %s  ·  %s" % [skill.display_name, cooldown_text]
-	skill_text.modulate = Color("d8b56a") if remaining <= 0.00001 else Color("91a1ad")
-	skill_fill.size.x = skill_fill.get_parent().size.x * clampf(1.0 - remaining / skill.cooldown_seconds, 0.0, 1.0)
-	protection_text.text = "月光庇护  %.1fs" % player.skill_immunity_remaining if player.skill_immunity_remaining > 0.00001 else "冷却 %.0fs · 释放后无敌 %.0fs" % [skill.cooldown_seconds, skill.invulnerability_seconds]
-	protection_text.modulate = Color("d8b56a") if player.skill_immunity_remaining > 0.00001 else Color("91a1ad")
-	character_text.text = "%s · %s" % [player.character.display_name, player.mobility.data.display_name]
-	passive_text.text = player.get_mobility_text().replace("\n", " · ")
-	combat_text.text = "击破 %d  ·  连击 %d  ·  最高 %d" % [combat.kills, combat.combo, combat.max_combo]
-	combat_feedback.text = combat.feedback
-	var weapon_remaining := combat.weapon.cooldown_remaining
-	var weapon_state := "就绪" if weapon_remaining <= 0.00001 else "%.1fs" % weapon_remaining
-	if not is_instance_valid(level.boss):
-		weapon_state = "首领战启用"
-	elif not level.boss.is_in_combat():
-		weapon_state = "等待交战" if level.boss.alive else "已击破"
-	weapon_text.text = "J  %s · %s" % [run_loadout.weapon.display_name, weapon_state]
-	weapon_text.modulate = Color("d8b56a") if combat.is_weapon_ready() else Color("91a1ad")
-	weapon_hint.text = "%d 枚 × %d 伤害 · 冷却 %.0fs · 无无敌" % [run_loadout.weapon.skill.projectile_count, run_loadout.weapon.skill.boss_damage, run_loadout.weapon.skill.cooldown_seconds]
-	weapon_fill.size.x = 320.0 * clampf(1.0 - weapon_remaining / run_loadout.weapon.skill.cooldown_seconds, 0.0, 1.0)
-	if is_instance_valid(level.boss):
-		var boss := level.boss
-		boss_name.text = "%s%s · %d / %d" % [boss.data.display_name, " · 半血强化" if boss.enraged else "", boss.health, boss.data.max_health]
-		boss_hint.text = boss.get_hint()
-		boss_hint.modulate = Color("f0c36d") if boss.is_vulnerable() else Color("dde7e7")
-		boss_health_fill.color = Color("f08b68") if boss.enraged else Color("b24b4b")
-		boss_health_fill.size.x = boss_health_fill.get_parent().size.x * float(boss.health) / float(boss.data.max_health)
-	_update_threat_hint()
+	battle_hud.render(BattleHUDPresenter.snapshot(player, combat, level, _elapsed_time, start_at_boss, run_result != null and run_result.completed))
 
 func _update_threat_hint() -> void:
-	var nearest_seconds := INF
-	var message := "前方：安全段"
-	var nearest_side := ""
-	var speed := player.get_forward_speed()
-	for hazard in level.hazards:
-		if not is_instance_valid(hazard):
-			continue
-		var distance := hazard.global_position.x - player.global_position.x
-		if distance >= -48.0 and distance <= hazard.warning_distance:
-			var seconds := maxf(distance, 0.0) / maxf(speed, 1.0)
-			if seconds < nearest_seconds:
-				nearest_seconds = seconds
-				nearest_side = hazard.cable_side
-				var side := "上侧" if hazard.cable_side == "top" else "下侧"
-				message = "前方预警  %s机关 · %.1fs" % [side, seconds]
-	for enemy in level.enemies:
-		if not is_instance_valid(enemy) or not enemy.alive:
-			continue
-		var distance := enemy.global_position.x - player.global_position.x
-		if distance < -36.0 or distance > enemy.warning_distance:
-			continue
-		var seconds := maxf(distance, 0.0) / maxf(speed, 1.0)
-		var side := "上侧" if enemy.cable_side == "top" else "下侧"
-		var enemy_message := "%s哨兵 · 翻绳躲避 / K 月蚀斩" % side
-		if seconds < nearest_seconds:
-			nearest_seconds = seconds
-			nearest_side = enemy.cable_side
-			message = enemy_message
-	for shooter in level.shooters:
-		if shooter.attack_state != ScreenShooter.AttackState.WINDUP:
-			continue
-		var seconds := shooter.windup_remaining + shooter.get_flight_seconds()
-		if seconds < nearest_seconds or (shooter.cable_side == nearest_side and seconds <= nearest_seconds + 0.7):
-			nearest_seconds = minf(nearest_seconds, seconds)
-			nearest_side = shooter.cable_side
-			message = "右侧齐射 · %d 枚 · 蓄力 %.1fs" % [shooter.volley_count, shooter.windup_remaining]
-	if is_instance_valid(level.projectile_root):
-		for projectile: EnemyProjectile in level.projectile_root.get_children():
-			var distance := projectile.global_position.x - player.global_position.x
-			if projectile.spent or distance < -26.0:
-				continue
-			var seconds := maxf(distance, 0.0) / maxf(speed - projectile.velocity.x, 1.0)
-			var cable_side := projectile.cable_side
-			if cable_side.is_empty():
-				cable_side = "top" if projectile.global_position.y < player.rope_y else "bottom"
-			if seconds < nearest_seconds or (cable_side == nearest_side and seconds <= nearest_seconds + 0.25):
-				nearest_seconds = minf(nearest_seconds, seconds)
-				nearest_side = cable_side
-				message = "平行飞弹 · %.1fs · 留意间隙" % seconds
-	threat_text.text = message
-	threat_text.modulate = Color("91a1ad") if nearest_seconds == INF else (Color("f08b68") if nearest_seconds <= 0.8 else Color("f0c36d"))
-	if is_instance_valid(level.boss) and level.boss.state in [RopeBoss.State.WINDUP, RopeBoss.State.ACTIVE]:
-		threat_text.text = level.boss.get_hint()
-		threat_text.modulate = Color("f0c36d") if level.boss.state == RopeBoss.State.WINDUP else Color("f08b68")
+	var value := BattleHUDPresenter.threat_snapshot(player, level)
+	battle_hud.threat.set_notice(value.text, value.side, value.urgent, value.active)

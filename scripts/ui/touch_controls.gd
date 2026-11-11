@@ -60,7 +60,7 @@ func sync_state() -> void:
 		_layout()
 	for action in ACTIONS:
 		var label := _labels[action] as Label
-		label.visible = enabled and (not finished if action == &"pause" else _can_play())
+		label.visible = enabled and (not finished and not blocked if action == &"pause" else _can_play())
 		label.text = get_button_text(action)
 		label.modulate = Color("dde7e7") if _is_available(action) else Color("91a1ad")
 	queue_redraw()
@@ -71,7 +71,7 @@ func _can_play() -> bool:
 func _is_available(action: StringName) -> bool:
 	action = _canonical_action(action)
 	if action == &"pause":
-		return not finished
+		return not finished and not blocked
 	if not _can_play():
 		return false
 	match action:
@@ -143,7 +143,7 @@ func _input(event: InputEvent) -> void:
 		_drag_finger(-1, event.position)
 
 func _press_finger(index: int, point: Vector2) -> bool:
-	if not enabled or _fingers.has(index):
+	if not enabled or blocked or _fingers.has(index):
 		return false
 	for action in ACTIONS:
 		if not get_action_rect(action).has_point(point) or (action != &"pause" and not _can_play()) or (action == &"pause" and finished):
@@ -190,7 +190,7 @@ func _exit_tree() -> void:
 
 func _draw() -> void:
 	for action in ACTIONS:
-		if (action == &"pause" and finished) or (action != &"pause" and not _can_play()):
+		if (action == &"pause" and (finished or blocked)) or (action != &"pause" and not _can_play()):
 			continue
 		var style := "disabled" if not _is_available(action) else ("pressed" if _fingers.values().has(action) else "normal")
 		draw_style_box(_styles[style], get_action_rect(action))

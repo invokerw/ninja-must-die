@@ -325,6 +325,10 @@ func take_damage(amount: int = 1) -> void:
 func get_max_health() -> int:
 	return tuning.max_health if tuning != null else 0
 
+func get_consumed_item_state() -> Dictionary:
+	var id := StringName(run_loadout.item_snapshot.get("consumed_item_id", "")) if run_loadout != null else &""
+	return {"id": id, "used": (_guard_charm_used if id == &"guard_charm" else _spring_potion_used if id == &"spring_potion" else false)}
+
 func fail(reason: String) -> void:
 	if not active:
 		return

@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-09",
+  "status": "visual_review_pending",
+  "concept_review": "approved_2026-11-06_common_v01",
+  "graphical_run": {
+    "exit_code": 0,
+    "expected_marker": "LEVEL_SELECT_PASS",
+    "marker_found": true,
+    "script_errors": [],
+    "log": "capture.log",
+    "renderer": "Godot 4.7 / OpenGL Compatibility / Apple M1 Pro"
+  },
+  "assistant_visual_review": {
+    "status": "passed",
+    "checks": [
+      "common buttons and readable native text",
+      "fixed actions outside scrolling descriptions/statistics",
+      "persistent save/read-only states",
+      "1280 / 1600 and simulated safe frame",
+      "no old action icon/text overlap"
+    ],
+    "limitations": [
+      "Screenshots use isolated deterministic fixtures; not a full route or human/device acceptance."
+    ]
+  },
+  "user_runtime_visual_review": "pending",
+  "android": "not_run",
+  "remote_ci": "not_run",
+  "images": [
+    {
+      "path": "runtime/level_select_1280_first.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "f2b2d7bafa70034127c7b8affe8dae83b9f133c5fe940a4467869aee17050e85"
+    },
+    {
+      "path": "runtime/level_select_1280_locked.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "8fdf706692acb64966123f79660419522d039ef0cd48ec84cb674a2d2e61320e"
+    },
+    {
+      "path": "runtime/level_select_1280_readonly.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "a1a52adf1a0c9f12139764e8384d98b05c847ca641d1f2af531819ceb00a220b"
+    },
+    {
+      "path": "runtime/level_select_1280_record.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "6e66c7b313c5de4168fd7fb012d757ce3f8b9f6240ac55e501edd89f36f56050"
+    },
+    {
+      "path": "runtime/level_select_1280_unlocked.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "6dbcb833dc989311b188b4e48952f29cedc542f0c50bc12c437155685fe2c1b0"
+    },
+    {
+      "path": "runtime/level_select_1280_wallet_max.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "8432a3f9c654570955a8b3788891fd1a3957c7f3a1176afa96e71bf78a8f190f"
+    },
+    {
+      "path": "runtime/level_select_1600_record.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "d2af821d4d529c6f07a3f902b01b23260a2eccd9e922887545ca3740a12003f6"
+    },
+    {
+      "path": "runtime/level_select_1600_safe.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "e373cb048f3eabae8d237749c6c336059c521d31b2b13a1c228127986208da1c"
+    },
+    {
+      "path": "runtime/level_select_1600_unlocked.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "99ef91762beeb3e658e6d19081b28148a712fa6d985f5b0b6c067fc70a4993f7"
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "date": "2026-11-09",
+  "scope": "battle HUD complete migration to common UI components",
+  "suites": [
+    {
+      "name": "rope_landing",
+      "exit_code": 0,
+      "expected_marker": "ROPE_LANDING_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.65,
+      "log": "/tmp/ninja-hud-full-rope_landing.log"
+    },
+    {
+      "name": "rope_pickups",
+      "exit_code": 0,
+      "expected_marker": "ROPE_PICKUPS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 2.37,
+      "log": "/tmp/ninja-hud-full-rope_pickups.log"
+    },
+    {
+      "name": "level_route",
+      "exit_code": 0,
+      "expected_marker": "LEVEL_ROUTE_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 30.09,
+      "log": "/tmp/ninja-hud-full-level_route.log"
+    },
+    {
+      "name": "mobility",
+      "exit_code": 0,
+      "expected_marker": "MOBILITY_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.95,
+      "log": "/tmp/ninja-hud-full-mobility.log"
+    },
+    {
+      "name": "combat",
+      "exit_code": 0,
+      "expected_marker": "COMBAT_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.96,
+      "log": "/tmp/ninja-hud-full-combat.log"
+    },
+    {
+      "name": "projectiles",
+      "exit_code": 0,
+      "expected_marker": "PROJECTILES_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.75,
+      "log": "/tmp/ninja-hud-full-projectiles.log"
+    },
+    {
+      "name": "boss",
+      "exit_code": 0,
+      "expected_marker": "BOSS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 32.13,
+      "log": "/tmp/ninja-hud-full-boss.log"
+    },
+    {
+      "name": "feedback",
+      "exit_code": 0,
+      "expected_marker": "FEEDBACK_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 2.62,
+      "log": "/tmp/ninja-hud-full-feedback.log"
+    },
+    {
+      "name": "weapons",
+      "exit_code": 0,
+      "expected_marker": "WEAPONS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 18.75,
+      "log": "/tmp/ninja-hud-full-weapons.log"
+    },
+    {
+      "name": "save",
+      "exit_code": 0,
+      "expected_marker": "SAVE_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 1.03,
+      "log": "/tmp/ninja-hud-full-save.log"
+    },
+    {
+      "name": "stars_records",
+      "exit_code": 0,
+      "expected_marker": "STARS_RECORDS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.85,
+      "log": "/tmp/ninja-hud-full-stars_records.log"
+    },
+    {
+      "name": "reward_transactions",
+      "exit_code": 0,
+      "expected_marker": "REWARD_TRANSACTIONS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.95,
+      "log": "/tmp/ninja-hud-full-reward_transactions.log"
+    },
+    {
+      "name": "economy",
+      "exit_code": 0,
+      "expected_marker": "ECONOMY_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.94,
+      "log": "/tmp/ninja-hud-full-economy.log"
+    },
+    {
+      "name": "ui_components",
+      "exit_code": 0,
+      "expected_marker": "UI_COMPONENTS_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.95,
+      "log": "/tmp/ninja-hud-full-ui_components.log"
+    },
+    {
+      "name": "touch_controls",
+      "exit_code": 0,
+      "expected_marker": "TOUCH_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 3.35,
+      "log": "/tmp/ninja-hud-full-touch_controls.log"
+    },
+    {
+      "name": "player_art",
+      "exit_code": 0,
+      "expected_marker": "PLAYER_ART_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.65,
+      "log": "/tmp/ninja-hud-full-player_art.log"
+    },
+    {
+      "name": "ui_art_preview",
+      "exit_code": 0,
+      "expected_marker": "TOUCH_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 3.54,
+      "log": "/tmp/ninja-hud-full-ui_art_preview.log"
+    },
+    {
+      "name": "level_select",
+      "exit_code": 0,
+      "expected_marker": "LEVEL_SELECT_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.87,
+      "log": "/tmp/ninja-hud-full-level_select.log"
+    },
+    {
+      "name": "wind_bamboo",
+      "exit_code": 0,
+      "expected_marker": "WIND_BAMBOO_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 45.26,
+      "log": "/tmp/ninja-hud-full-wind_bamboo.log"
+    }
+  ],
+  "persistence": [
+    {
+      "name": "profile_write",
+      "exit_code": 0,
+      "expected_marker": "PROFILE_WRITE_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.37,
+      "log": "/tmp/ninja-hud-full-profile_write.log"
+    },
+    {
+      "name": "profile_read",
+      "exit_code": 0,
+      "expected_marker": "PROFILE_RELOAD_PASS",
+      "marker_found": true,
+      "errors": [],
+      "elapsed_seconds": 0.36,
+      "log": "/tmp/ninja-hud-full-profile_read.log"
+    }
+  ],
+  "remote_ci": "not_run",
+  "android": "not_run",
+  "python_export": {
+    "exit_code": 0,
+    "output": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.007s\n\nOK\n",
+    "passed": true
+  },
+  "all_passed": true,
+  "known_environment_diagnostics": [
+    {
+      "message": "get_system_ca_certificates: ret != noErr",
+      "classification": "local macOS system certificate diagnostic; excluded from script failures",
+      "observed_in_logs": 21
+    }
+  ]
+}

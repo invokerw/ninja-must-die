@@ -1,0 +1,130 @@
+{
+  "date": "2026-11-06",
+  "timezone": "Asia/Shanghai",
+  "screen": "character_setup",
+  "concept_review": "approved (common v01, 2026-11-06)",
+  "status": "visual_review_pending",
+  "runtime_ready": false,
+  "implemented_components": [
+    "UISelectCard",
+    "UITabBar",
+    "UIDetailPanel",
+    "UIStatusChip.preview"
+  ],
+  "formal_scene": "res://scenes/ui/character_setup.tscn",
+  "regressions": "preparation_regressions.json",
+  "graphical": {
+    "exit_code": 0,
+    "marker": "UI_COMPONENTS_PASS",
+    "errors": [],
+    "renderer": "OpenGL Compatibility / Apple M1 Pro",
+    "captures": 10,
+    "log": "runtime/preparation/logs/ninja-ui-preparation-render.log",
+    "safe_area": [
+      60,
+      24,
+      1480,
+      648
+    ]
+  },
+  "final_component_followup": {
+    "exit_code": 0,
+    "marker": "UI_COMPONENTS_PASS",
+    "errors": [],
+    "log": "runtime/preparation/logs/ninja-ui-preparation-components-final.log",
+    "coverage": "valid formal record/2650 score and complete final-mode scroll reachability after layout"
+  },
+  "screenshots": [
+    {
+      "file": "runtime/preparation/preparation_equipped.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "ac25595651ca24ae500a337321db4a67f0a2991a49411f99f26d5685ae8dede6"
+    },
+    {
+      "file": "runtime/preparation/preparation_initial.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "20dc65ca3b3d826e2aa98e802edc1444dacb3d4225a444c6fc2ca6087d22665c"
+    },
+    {
+      "file": "runtime/preparation/preparation_preview.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "b845a31d862b7364a659c3676c28d0e492fcfb99b67e6836898c6ad9262ae7d5"
+    },
+    {
+      "file": "runtime/preparation/preparation_readonly.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "75fff9beb42dd879a928e5fb4338051614545e19dd8342c394bd0ea796116c13"
+    },
+    {
+      "file": "runtime/preparation/preparation_records.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "e4f83c1e9dd3d6d250ed7e50cd886029a51df96e220f49bd0a93211d55d28f29"
+    },
+    {
+      "file": "runtime/preparation/preparation_safe.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "93a22c20e0cf1ad402fa2931422ea6f3fd8f8ec9c126580ccc7b003426ec7110"
+    },
+    {
+      "file": "runtime/preparation/preparation_save_failure.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "f6b210544e72363f73d70146f51707fbcf7737254fac5f6bb5ac0fed03c5d70a"
+    },
+    {
+      "file": "runtime/preparation/preparation_scrolls.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "100331804cf794c0344e081f21a5a020de69d80064ce242bf65658aa9cd3eaf7"
+    },
+    {
+      "file": "runtime/preparation/preparation_settings.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "da56f1531394252942043e3d346a0c38d3c33e37bd8b5d84c0b497733c46857b"
+    },
+    {
+      "file": "runtime/preparation/preparation_supplies.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "56e9784cf43beafe69a4f536ef107e405270411c57e5075d0848b14d8bb72ffa"
+    }
+  ],
+  "assistant_visual_review": {
+    "status": "completed",
+    "scope": "native layout, images/badges, independent preview/equipped, readonly/save failure, proper formal record, settings focus, ultrawide safe area",
+    "known_limitations": [
+      "Existing weapon attack demo remains the original abstract simulation.",
+      "Character art uses the existing approved runtime portrait; no new standing art.",
+      "Record panel scrolls; its viewport intentionally clips offscreen text."
+    ]
+  },
+  "acceptance": {
+    "user_runtime_visual": "pending",
+    "android_device": "pending",
+    "remote_ci": "not_run"
+  },
+  "resource_changes": {
+    "new_scenes": 0,
+    "new_raster_assets": 0,
+    "new_global_types": 3,
+    "runtime_depends_on_excluded_art": false
+  },
+  "profile_scope": "TestProfileScope ui-preparation / ui-preparation-capture; original save not accessed",
+  "profile_cleanup_verified": true,
+  "task_card": "art/validation/ui/character_setup/v01/README.md",
+  "source_hashes": {
+    "scripts/ui/character_setup.gd": "ab416fabf383075068c81e287cce640a34b767a9f95c9403717c781f7bdf1354",
+    "scripts/ui/components/ui_select_card.gd": "f6e20e133253f9000490b2a9547433f4d2203019ef002fc1b307eea5a9d7dc6a",
+    "scripts/ui/components/ui_tab_bar.gd": "ad392b2c69c7edfff04a35b5197f14d972730c62812831fd24fb8f22e9114aa7",
+    "scripts/ui/components/ui_detail_panel.gd": "4c890081ea04b3d4f22c9d46ef706fc1e745b6e7588bf41b331d9c839e31741e",
+    "scripts/ui/feedback_settings_panel.gd": "dff935a579663b27ee675a9bf941528bc73ea81edfa931a7d11c3eacd28973c5",
+    "tests/test_ui_components.gd": "7f5f76c4295294649b11ae04ce35a8a326040903d15319e95be6710a979bba4f"
+  }
+}

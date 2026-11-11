@@ -27,6 +27,6 @@ func _test_layout() -> void:
 	controls.safe_area_override = Rect2(60, 24, 1160, 648)
 	controls.sync_state()
 	for action in [&"jump_only", &"rope_flip", &"mobility", &"weapon", &"skill"]:
-		var caption: Label = controls._labels[action]
-		_check(controls.safe_area_override.encloses(Rect2(caption.position, caption.size)), "Candidate captions must remain inside a tall bottom system inset")
+		var caption: Label = controls.action_views[action].caption
+		_check(controls.safe_area_override.encloses(caption.get_global_rect()), "Candidate captions must remain inside a tall bottom system inset")
 	viewport.free()

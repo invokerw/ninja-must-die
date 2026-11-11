@@ -101,7 +101,7 @@ func _test_setup_and_retry() -> void:
 	await _frames(15)
 	var main := current_scene
 	_check(main.run_loadout.weapon.weapon_id == &"star_lance" and main.player.run_loadout == main.run_loadout, "Launch must pass the selected weapon to the actual character")
-	_check(main.weapon_text.text.contains("贯星矛") and main.combat.weapon.data.skill.cooldown_seconds == 8.0, "Weapon HUD and runtime must read the equipped data")
+	_check(main.touch_controls.action_views[&"weapon"].caption.text.contains("贯星矛") and main.combat.weapon.data.skill.cooldown_seconds == 8.0, "Weapon HUD and runtime must read the equipped data")
 	_check(not PlayerProfile.current().try_equip(CHARACTER, &"crescent_wheel"), "The role module must reject live equipment changes")
 	var position: Vector2 = main.player.position
 	main._toggle_pause()

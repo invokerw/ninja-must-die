@@ -1,5 +1,9 @@
 # 美术设计与资源状态
 
+2026-11-06：[通用 UI 概念图册 · 月下墨金 v01](concepts/ui/common/v01/README.md) 的 10 张概念板已获用户审核通过，覆盖 61 类控件设计和 12 组界面模板。后续界面优先复用或扩展 [统一规范](../docs/UI_DESIGN_SYSTEM.md)。通用主题及按钮 / 开关 / 状态标识 / 确认弹层首批已接入商店与设置，采用原生几何，无新正式位图或 PSD；其余目录项未全部实现。概念 `approved`、运行时视觉与 Android 待验收，详见 [任务卡](validation/ui/common/v01/README.md)。
+
+第二批原生卡片 / 页签 / 详情已改版正式“行前准备”，继续复用现有正式头像与武器图，无新位图；[10 种实际状态截图](validation/ui/common/v01/runtime/preparation/README.md) 与 [准备页任务卡](validation/ui/character_setup/v01/README.md) 单独记录。正式多角色选择未在本切片接入。
+
 正式 UI 视觉和游戏图片使用内置图片生成工具制作，遵循 [游戏设计第 9.3 节](../docs/GAME_DESIGN.md)。美术方向、玩法尺寸约束、资源拆分和制作顺序见 [正式美术设计](../docs/ART_DIRECTION.md)。
 
 设计稿拆层与资源接入采用 [设计稿 → 分层 PSD → Godot 资源](../docs/ART_PIPELINE.md) 流程。UI v02 已于 **2026-10-26 18:36（上海时间）** 完成拆层：1672×941、40 层 PSD，其中 39 个非背景图层带透明区域。结构校验与实际 PSD 读回检查通过；视觉状态为 **needs_review，候选资源，待用户验收**。运行记录见 [pipeline_runs.json](pipeline_runs.json)。

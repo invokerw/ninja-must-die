@@ -1,0 +1,152 @@
+{
+  "date": "2026-11-06",
+  "timezone": "Asia/Shanghai",
+  "design_id": "ui_common",
+  "version": "v01",
+  "status": "approved",
+  "runtime_ready": false,
+  "baseline_capture": {
+    "engine": "Godot 4.7.stable.mono.official.5b4e0cb0f",
+    "renderer": "OpenGL Compatibility / Apple M1 Pro",
+    "resolution": [
+      1280,
+      720
+    ],
+    "touch_controls": true,
+    "count": 7,
+    "exit_code": 0,
+    "marker": "UI_COMMON_BASELINE_PASS",
+    "profile_scope": "TestProfileScope(\"ui-common-v01-baseline\")",
+    "official_profile_accessed": false,
+    "temporary_profile_cleanup_verified": true,
+    "temporary_script_removed": true,
+    "log": "baseline_capture.log"
+  },
+  "design_checks": {
+    "png_count": 10,
+    "baseline_png_count": 7,
+    "original_byte_identical": true,
+    "png_crc_and_decompressed_scanlines": true,
+    "component_types": 61,
+    "unique_component_ids": true,
+    "template_families": 12,
+    "markdown_and_gallery_local_links": true,
+    "gallery_cards": 10,
+    "gallery_javascript_syntax": "passed (node --check)",
+    "gallery_browser_interaction": "not_run: embedded-browser policy disallows local file:// protocol; no workaround attempted",
+    "windows_and_android_export_exclusion": "passed",
+    "runtime_references_to_concepts": 0,
+    "python_ci_export_tests": {
+      "count": 5,
+      "status": "passed"
+    },
+    "git_diff_check": "passed"
+  },
+  "acceptance": {
+    "assistant_concept_content_review": "completed_with_documented_deviations",
+    "user_concept_review": "approved (2026-11-06)",
+    "godot_component_library": "foundation slice implemented: tokens/theme/action button/toggle/status chip/confirm dialog; remaining directory types planned",
+    "new_runtime_assembly": "formal shop and shared settings; legacy base style compatibility",
+    "new_runtime_behavior_tests": "19 suites passed; cross-process isolated write/read passed; 5 export tests passed",
+    "new_runtime_screenshot_review": "9 captures passed graphical suite and assistant review",
+    "user_runtime_visual_review": "pending",
+    "android_device_review": "pending",
+    "remote_ci": "not_run"
+  },
+  "known_deviations": "docs/UI_DESIGN_SYSTEM.md#9-概念检查与验收",
+  "generated_image_source": "built-in image_gen.imagegen; model version not exposed; no CLI fallback; pixels unchanged",
+  "concept_review": {
+    "status": "approved",
+    "date": "2026-11-06",
+    "timezone": "Asia/Shanghai",
+    "reviewer": "user",
+    "feedback": "可以审核通过按照这个来吧",
+    "scope": "通用UI概念方向与后续复用/扩展；不包含运行时视觉或Android验收"
+  },
+  "implementation_status": "foundation_slice_visual_review_pending",
+  "foundation_slice": {
+    "status": "visual_review_pending",
+    "runtime_ready": false,
+    "regressions": "foundation_regressions.json",
+    "graphical_log": "runtime/logs/render.log",
+    "screenshots": [
+      {
+        "file": "runtime/foundation/components_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "b673c7a2f75a6e7bd211698f540db6e27a68921f35d2e269e90eba231585903f"
+      },
+      {
+        "file": "runtime/foundation/confirmation_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "449d5907dddffcba1bd13a39aadcc59ce1adfb5f596d7957e2fcdf6fbdd53273"
+      },
+      {
+        "file": "runtime/foundation/hud_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "ac98b1f6247e894330703e3650ec70ad396d14ca3d34f2f803e9de7e9b9ad4bb"
+      },
+      {
+        "file": "runtime/foundation/pause_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "a4af74812c6264f7a5839f91a90f81758feee23e02a24b5a85b3d1284ee39257"
+      },
+      {
+        "file": "runtime/foundation/safe_1600.png",
+        "width": 1600,
+        "height": 720,
+        "sha256": "5e491a1526e3ac7eddfe0810e0582afa53b27157074118fbe2901d2f31cf987a"
+      },
+      {
+        "file": "runtime/foundation/settings_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "03fdd0df8b50be7ebfd84cf557c1a5cfbf71268c5282b041859f65afa018f33f"
+      },
+      {
+        "file": "runtime/foundation/settings_error_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "7f0c0f8bb1a86eeabdd73a07375169f82e6a2dd6f2422a8bb32ac7cef3ae5d3b"
+      },
+      {
+        "file": "runtime/foundation/setup_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "b022b51b3150cbff6d263cfb2853cb0b2bf1f464e20e7696793846fd220e998f"
+      },
+      {
+        "file": "runtime/foundation/shop_1280.png",
+        "width": 1280,
+        "height": 720,
+        "sha256": "27ce3bda9f63cef3421eb4d9413afc9b35b4da767fb270d4d4fdb58c347e377d"
+      }
+    ],
+    "new_scenes": 0,
+    "new_runtime_raster_assets": 0,
+    "new_runtime_scripts": [
+      "scripts/ui/ui_tokens.gd",
+      "scripts/ui/components/ui_action_button.gd",
+      "scripts/ui/components/ui_toggle_row.gd",
+      "scripts/ui/components/ui_status_chip.gd",
+      "scripts/ui/components/ui_confirm_dialog.gd"
+    ],
+    "initial_import": "exit 0; no script errors; EditorSettings shutdown_adb_on_exit diagnostic recorded",
+    "final_import": "exit 0; no errors",
+    "test_profile_cleanup": "verified after completed suites",
+    "user_visual_review": "pending",
+    "android": "pending",
+    "remote_ci": "not_run"
+  },
+  "preparation_slice": {
+    "status": "visual_review_pending",
+    "runtime_ready": false,
+    "report": "preparation_validation.json",
+    "regressions": "preparation_regressions.json",
+    "task_card": "art/validation/ui/character_setup/v01/README.md",
+    "screenshots": "runtime/preparation/README.md"
+  }
+}

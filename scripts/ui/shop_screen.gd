@@ -33,10 +33,11 @@ var detail_balance: Label
 var primary_action: Button
 var secondary_action: Button
 var wallet: Label
+var save_badge: UIStatusChip
 var save_retry: Button
 var status: Label
 var supply_choice: Label
-var confirmation: Control
+var confirmation: UIConfirmDialog
 var confirm_button: Button
 var _quote: Dictionary = {}
 var _launching := false
@@ -66,6 +67,10 @@ func _build_shell() -> void:
 	_label(self, "行前添一分从容", Rect2(244, 78, 480, 28), 17, Color("b9c8d1"))
 	wallet = _label(self, "", Rect2(868, 38, 350, 38), 24, Color("f0d39b"))
 	wallet.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	save_badge = UIStatusChip.new()
+	save_badge.position = Vector2(1052, 80)
+	save_badge.size = Vector2(166, 32)
+	add_child(save_badge)
 	save_retry = _button(self, "重试保存", Rect2(692, 36, 152, 48), _retry_save)
 	var nav := _panel(self, Rect2(32, 168, 160, 432))
 	nav.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
@@ -74,8 +79,8 @@ func _build_shell() -> void:
 		var button := _button(nav, TAB_LABELS[index], Rect2(0, index * 80, 160, 60), _select_tab.bind(tab))
 		button.toggle_mode = true
 		button.add_theme_font_size_override("font_size", 22)
-		button.add_theme_stylebox_override("pressed", _style(Color("d3b170"), Color("f0d39b")))
-		button.add_theme_color_override("font_pressed_color", Color("192330"))
+		button.add_theme_stylebox_override("pressed", PaintedTheme.button_style(&"primary", &"normal"))
+		button.add_theme_color_override("font_pressed_color", UITokens.INK)
 		tab_buttons[tab] = button
 	content = _panel(self, Rect2(216, 104, 1016, 512))
 	content.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
@@ -106,8 +111,10 @@ func _select_tab(tab: StringName) -> void:
 	_refresh_profile()
 
 func _refresh_profile() -> void:
-	wallet.text = "铜钱  %d%s" % [profile.coins, " · 待保存" if profile.save_pending else ""]
-	save_retry.visible = profile.save_pending
+	wallet.text = "铜钱  %d" % profile.coins
+	save_badge.visible = profile.save_pending or profile.is_read_only()
+	save_badge.set_status(&"readonly" if profile.is_read_only() else &"pending")
+	save_retry.visible = profile.save_pending and not profile.is_read_only()
 	var blocked := profile.economy_block_reason()
 	if not blocked.is_empty():
 		status.text = blocked
@@ -185,9 +192,9 @@ func _render_cards() -> void:
 		var card := _panel(content, Rect2(0, 76 + index * 160, 600, 144), selected)
 		_cards.append(card)
 		var button := _button(card, "", Rect2(0, 0, 600, 144), _select_product.bind(id))
-		for state in ["normal", "hover", "pressed", "focus"]:
+		for state in ["normal", "hover", "pressed"]:
 			var style := StyleBoxFlat.new()
-			style.bg_color = Color(0.85, 0.71, 0.42, 0.06) if state != "normal" else Color.TRANSPARENT
+			style.bg_color = Color(UITokens.ACCENT, 0.06) if state != "normal" else Color.TRANSPARENT
 			button.add_theme_stylebox_override(state, style)
 		button.tooltip_text = "%s · %s" % [data.name, data.footer]
 		product_buttons[id] = button
@@ -239,27 +246,18 @@ func _primary_action() -> void:
 		_refresh_profile()
 		return
 	_quote = {"id": selected_id, "price": data.price, "balance": profile.coins, "level": data.get("level", -1), "inventory": data.get("inventory", -1)}
-	confirmation = Control.new()
+	confirmation = UIConfirmDialog.new()
 	confirmation.name = "PurchaseConfirmation"
-	confirmation.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	confirmation.z_index = 30
+	confirmation.configure(
+		"确认升级" if data.has("level") else "确认购买",
+		"%s\n花费  %d 铜钱\n余额  %d → %d 铜钱" % [data.name, data.price, profile.coins, profile.coins - int(data.price)],
+		"确认 · %d 铜钱" % data.price,
+		primary_action
+	)
+	confirmation.confirmed.connect(_confirm_purchase)
+	confirmation.cancelled.connect(_close_confirmation)
+	confirm_button = confirmation.confirm_button
 	add_child(confirmation)
-	var shade := ColorRect.new()
-	shade.color = Color(0.015, 0.025, 0.04, 0.88)
-	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	confirmation.add_child(shade)
-	var modal := _panel(confirmation, Rect2(380, 194, 520, 332), true)
-	_label(modal, "确认升级" if data.has("level") else "确认购买", Rect2(28, 24, 464, 42), 27, Color("f0d39b"))
-	_label(modal, "%s\n花费  %d 铜钱\n购买后余额  %d 铜钱" % [data.name, data.price, profile.coins - int(data.price)], Rect2(28, 88, 464, 130), 21)
-	var cancel := _button(modal, "取消", Rect2(28, 246, 216, 54), _close_confirmation)
-	confirm_button = _button(modal, "确认 · %d 铜钱" % data.price, Rect2(260, 246, 232, 54), _confirm_purchase, true)
-	for button: Button in [cancel, confirm_button]:
-		var other := confirm_button if button == cancel else cancel
-		button.focus_next = other.get_path()
-		button.focus_previous = other.get_path()
-		for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
-			button.set_focus_neighbor(side, other.get_path())
-	confirm_button.grab_focus()
 
 func _confirm_purchase() -> void:
 	if confirmation == null or _quote.is_empty():
@@ -344,21 +342,11 @@ func _panel(parent: Control, rect: Rect2, accent: bool = false) -> Panel:
 	panel.position = rect.position
 	panel.size = rect.size
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_theme_stylebox_override("panel", _style(Color("101c2a", 0.88), Color("a98a57") if accent else Color("415869")))
+	panel.add_theme_stylebox_override("panel", PaintedTheme.surface_style(accent))
 	parent.add_child(panel)
 	return panel
 
-func _style(fill: Color, border: Color) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = fill
-	style.border_color = border
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(10)
-	style.shadow_color = Color(0.01, 0.02, 0.04, 0.32)
-	style.shadow_size = 5
-	return style
-
-func _label(parent: Control, text: String, rect: Rect2, font_size: int, color: Color = Color("dde7e7")) -> Label:
+func _label(parent: Control, text: String, rect: Rect2, font_size: int, color: Color = UITokens.TEXT_PRIMARY) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.position = rect.position
@@ -370,30 +358,12 @@ func _label(parent: Control, text: String, rect: Rect2, font_size: int, color: C
 	return label
 
 func _button(parent: Control, text: String, rect: Rect2, callback: Callable, accent: bool = false) -> Button:
-	var button := Button.new()
+	var button := UIActionButton.new()
+	button.variant = "primary" if accent else "secondary"
 	button.text = text
 	button.position = rect.position
 	button.size = rect.size
 	button.add_theme_font_size_override("font_size", 18)
-	button.add_theme_color_override("font_color", Color("192330") if accent else Color("e8e1d0"))
-	button.add_theme_color_override("font_hover_color", Color("192330") if accent else Color("fff1c5"))
-	button.add_theme_color_override("font_pressed_color", Color("192330") if accent else Color("fff1c5"))
-	button.add_theme_color_override("font_focus_color", Color("192330") if accent else Color("fff1c5"))
-	button.add_theme_color_override("font_disabled_color", Color("82919b"))
-	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var fill := Color("233745") if accent else Color("152534")
-		var border := Color("a98a57") if accent else Color("516979")
-		if state in ["hover", "pressed", "focus"]:
-			fill = Color("344857")
-			border = Color("d8b56a")
-		elif state == "disabled":
-			fill = Color("121c27")
-			border = Color("2e414e")
-		var style := _style(fill, border)
-		if accent and state != "disabled":
-			style.bg_color = Color("d3b170") if state == "normal" else Color("edce93")
-			style.border_color = Color("f0d39b")
-		button.add_theme_stylebox_override(state, style)
 	button.pressed.connect(callback)
 	parent.add_child(button)
 	return button

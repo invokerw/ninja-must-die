@@ -14,8 +14,8 @@ func _run() -> void:
 	if not (main.touch_controls is PaintedTouchControls):
 		_fail("Exported UI script missing")
 		return
-	if not (main.touch_controls.skin.textures.size() == 10):
-		_fail("Exported button textures missing")
+	if not (main.battle_hud is UIBattleHUD and main.touch_controls.action_views.size() == 6 and main.touch_controls.action_views[&"weapon"] is UICombatAction):
+		_fail("Exported common battle HUD or action components missing")
 		return
 	if not (main.level.get_node("PaintedBackdrop").get_child(0) is PaintedBackdrop):
 		_fail("Exported background missing")

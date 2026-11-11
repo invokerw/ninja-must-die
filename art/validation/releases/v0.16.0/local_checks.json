@@ -1,0 +1,195 @@
+{
+  "version": "v0.16.0",
+  "date": "2026-11-11",
+  "suites": [
+    {
+      "suite": "rope_landing",
+      "exit_code": 0,
+      "pass_markers": [
+        "ROPE_LANDING_PASS (8 scenarios)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.13
+    },
+    {
+      "suite": "rope_pickups",
+      "exit_code": 0,
+      "pass_markers": [
+        "ROPE_PICKUPS_PASS (26 top, 24 bottom; correct and opposite sides)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 2.37
+    },
+    {
+      "suite": "level_route",
+      "exit_code": 0,
+      "pass_markers": [
+        "LEVEL_ROUTE_PASS (data validation, 4 practice runs, 3 characters / 4 boss clears, pause/reload, lower finish)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 30.45
+    },
+    {
+      "suite": "mobility",
+      "exit_code": 0,
+      "pass_markers": [
+        "MOBILITY_PASS (three validated resources, legacy migration, snapshots, third-jump edges, same-frame priority, bounded glide, burst cooldown/protection, queued flips, pause/focus/stop/retry, shared sandbox entries)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.23
+    },
+    {
+      "suite": "combat",
+      "exit_code": 0,
+      "pass_markers": [
+        "COMBAT_PASS (character data, cooldown, same-tick immunity, range/damage, 2/3 jumps, pause/stop, encounters, results)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 0.94
+    },
+    {
+      "suite": "projectiles",
+      "exit_code": 0,
+      "pass_markers": [
+        "PROJECTILES_PASS (screen anchor, fixed direction, parallel volleys/gaps, full flight, single contact, protection, swept hits, pause/reload/finish)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.31
+    },
+    {
+      "suite": "boss",
+      "exit_code": 0,
+      "pass_markers": [
+        "BOSS_PASS (entry, 3 readable attacks, half-health enrage, double volley, evasion, immunity, weak point, kill/results, pause/retry/death, 10 minute node stability)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 36.1
+    },
+    {
+      "suite": "feedback",
+      "exit_code": 0,
+      "pass_markers": [
+        "FEEDBACK_PASS (PCM assets, action cues, readable warnings, particles/voice bounds, render-only impact, independent toggles, pause/result/reload)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 3.15
+    },
+    {
+      "suite": "weapons",
+      "exit_code": 0,
+      "pass_markers": [
+        "WEAPONS_PASS (character equipment, save/reload, setup/retry, 2 weapons, real flight/impact, pickups, pause/cancel, 3 kill sources, loadout replays)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 22.11
+    },
+    {
+      "suite": "save",
+      "exit_code": 0,
+      "pass_markers": [
+        "SAVE_PASS (independent records/modes, legacy fields, validated settings, backup recovery, failed-save retry, real completion/death/exit, preparation UI)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.22
+    },
+    {
+      "suite": "stars_records",
+      "exit_code": 0,
+      "pass_markers": [
+        "STARS_RECORDS_PASS (integer thresholds, independent flawless, whole-run/config snapshots, character records, v1 migration, v2 persistence/retry/dedupe, real formal/practice/failure, map views)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.26
+    },
+    {
+      "suite": "reward_transactions",
+      "exit_code": 0,
+      "pass_markers": [
+        "REWARD_TRANSACTIONS_PASS (starter/clear/star/flawless/milestones, v1/v2 migration, atomic I/O boundaries, pending lock/retry, backup/future/corrupt, actual finish/practice/UI)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.04
+    },
+    {
+      "suite": "economy",
+      "exit_code": 0,
+      "pass_markers": [
+        "ECONOMY_PASS (prices/caps, duplicate IDs, JSON reload, malformed/future data, atomic failures, runtime supply/health, standalone shop/touch/keyboard/confirmation)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.03
+    },
+    {
+      "suite": "ui_components",
+      "exit_code": 0,
+      "pass_markers": [
+        "UI_COMPONENTS_PASS (common controls, preparation, pause/results, battle HUD health/phases/quota/items/keyboard, token contract, safe layouts)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.04
+    },
+    {
+      "suite": "touch_controls",
+      "exit_code": 0,
+      "pass_markers": [
+        "TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 4.31
+    },
+    {
+      "suite": "player_art",
+      "exit_code": 0,
+      "pass_markers": [
+        "PLAYER_ART_PASS (8 run frames, 8 actions, rope anchors, real boss core states, pause, stop, collision invariance)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 0.74
+    },
+    {
+      "suite": "ui_art_preview",
+      "exit_code": 0,
+      "pass_markers": [
+        "TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 3.63
+    },
+    {
+      "suite": "level_select",
+      "exit_code": 0,
+      "pass_markers": [
+        "LEVEL_SELECT_PASS (preparation entry, lock requirement, selected loadout, level data launch)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 1.03
+    },
+    {
+      "suite": "wind_bamboo",
+      "exit_code": 0,
+      "pass_markers": [
+        "WIND_BAMBOO_PASS (3 characters x 2 weapons x base/mobility routes, bamboo phases/pause, selected-level retry)"
+      ],
+      "errors": [],
+      "elapsed_seconds": 46.38
+    }
+  ],
+  "profile_write": {
+    "exit_code": 0,
+    "pass_markers": [
+      "PROFILE_WRITE_PASS"
+    ],
+    "errors": []
+  },
+  "profile_read": {
+    "exit_code": 0,
+    "pass_markers": [
+      "PROFILE_RELOAD_PASS"
+    ],
+    "errors": []
+  },
+  "export_tests": {
+    "exit_code": 0,
+    "output": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.007s\n\nOK\n"
+  }
+}

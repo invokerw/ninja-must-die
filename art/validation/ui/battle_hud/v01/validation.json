@@ -1,0 +1,193 @@
+{
+  "date": "2026-11-09",
+  "status": "visual_review_pending",
+  "concept_review": "approved_2026-11-06_common_v01",
+  "graphical_run": {
+    "exit_code": 0,
+    "marker": "UI_COMPONENTS_PASS",
+    "capture_count": 17,
+    "errors": [],
+    "log": "capture.log",
+    "renderer": "Godot 4.7 / OpenGL Compatibility / Apple M1 Pro"
+  },
+  "resource_import": {
+    "exit_code": 0,
+    "script_errors": [],
+    "log": "import.log",
+    "known_editor_shutdown_diagnostic": "EditorSettings not instantiated yet: export/android/shutdown_adb_on_exit"
+  },
+  "assistant_visual_review": {
+    "status": "passed",
+    "checks": [
+      "floating shared palette and native text",
+      "threat text width and portrait geometry after entering scene tree",
+      "keyboard hints inside circles; names outside; no solid status badge",
+      "actual route segment markers for both levels",
+      "mutually exclusive boss phase and independent enrage",
+      "actual mobility quota versus cooldown",
+      "actual consumed supplies waiting and triggered",
+      "1280 / 1600 and simulated safe area; captions inside safe frame",
+      "equipped weapon identity and aspect-preserving effective texture region"
+    ],
+    "limitations": [
+      "Deterministic runtime fixtures; not a full-route playthrough or human/device acceptance.",
+      "Greybox characters reuse the existing tinted portrait; no dedicated new character art."
+    ]
+  },
+  "user_runtime_visual_review": "pending",
+  "android": "not_run",
+  "remote_ci": "not_run",
+  "exported_package_run": "not_run",
+  "cleanup": {
+    "legacy_hud_scripts_removed": [
+      "scripts/ui/painted_hud.gd",
+      "scripts/ui/floating_hud_marks.gd"
+    ],
+    "new_scenes": [],
+    "new_production_bitmaps": [],
+    "isolated_ui_profiles_removed": true,
+    "cross_process_profile_removed": true,
+    "retained_candidate_preview": "scenes/art/ui_touch_preview.tscn"
+  },
+  "sources": [
+    {
+      "path": "scripts/ui/battle_hud_presenter.gd",
+      "sha256": "3fdcc31f4100898448c69c4dc6286532a77f71a6035b8050675ca48d8fe76a39",
+      "uid": "uid://b5iqyqxn8ic0x"
+    },
+    {
+      "path": "scripts/ui/components/ui_battle_hud.gd",
+      "sha256": "81092ee6112b4a044439cdf4c63e4194d1a8adb0d749ef2c1ff7c11643ba9562",
+      "uid": "uid://dgliidi8qoqt1"
+    },
+    {
+      "path": "scripts/ui/components/ui_boss_status.gd",
+      "sha256": "c40e63e82dff6f2fc598b38793ec3fb1fef549973f00c3f8f1dbfeb7d45cfba2",
+      "uid": "uid://dfqo66a2ekrxb"
+    },
+    {
+      "path": "scripts/ui/components/ui_combat_action.gd",
+      "sha256": "a704ac7825c234085e67ab3d39f4fda61ff58f15b74ce9da6904477e5a87d601",
+      "uid": "uid://bnt4k3n1sqkw0"
+    },
+    {
+      "path": "scripts/ui/components/ui_linear_meter.gd",
+      "sha256": "9c35159510495e2fe1433c79147f6d46324f2cc689848ced126b18ada6a95c45",
+      "uid": "uid://blsd87k3j3sk3"
+    },
+    {
+      "path": "scripts/ui/components/ui_radial_meter.gd",
+      "sha256": "cb5fc0bc63188b900cb466351a41eb1d73bd1c14927f0a4508e52281f11f2d31",
+      "uid": "uid://dl3wrcw3k2xqg"
+    },
+    {
+      "path": "scripts/ui/components/ui_threat_notice.gd",
+      "sha256": "ebbbdc25dd3f79ce8af3b90bdd7089dc3211ba8abaa479b5b087c320c10a51b5",
+      "uid": "uid://dwsxmvu3265sx"
+    }
+  ],
+  "images": [
+    {
+      "path": "runtime/hud_boss_attack.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "c78d04cffa4307a642340696e8c5da3fba7636938c528b4e2754549840bdfe10"
+    },
+    {
+      "path": "runtime/hud_boss_enraged.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "f9921893f3ff7e9b221869942e21565a7f9b889fd632c3806e6015acf17c40a8"
+    },
+    {
+      "path": "runtime/hud_boss_entrance.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "21e6698b6cb751009877d7776d4edaf7c2586c98c4588cbbc066a34f3024de84"
+    },
+    {
+      "path": "runtime/hud_boss_weak.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "7b7779fdc3833e7fc295323ade48518eab285276e3dde5881e2b10ebca8160b1"
+    },
+    {
+      "path": "runtime/hud_boss_windup.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "4082a209cf539f429da144790b7d6148e77a925f058db9d3416de4b1d87381d0"
+    },
+    {
+      "path": "runtime/hud_burst_cooldown.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "fdc564fe23137491570c269e371f3db7c952ee1e4d76b7e08e4d192bbeed84b0"
+    },
+    {
+      "path": "runtime/hud_cooldown.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "33bea8b583ad3a6d681c02fa30fbb79a87b010c09a5400ae625fc6add03a1f90"
+    },
+    {
+      "path": "runtime/hud_glide_quota.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "fb4fb2ec52319c0967d435e82022c71e9e85004893e86ed857d1547fa0c25c4a"
+    },
+    {
+      "path": "runtime/hud_guard_used.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "5ec93baf2979ad40a75ad2b9cc2a497fb80c486cb8a60314d4bc5596c84b86b9"
+    },
+    {
+      "path": "runtime/hud_guard_waiting.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "08e75cd6be978947e9cd93c7ccecd5865771f743905c160fe5355cc2dc8ed516"
+    },
+    {
+      "path": "runtime/hud_low_health.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "28009d09198e6058fe72f14c328d67162267f087bbced0d174ae80e1e6e795ea"
+    },
+    {
+      "path": "runtime/hud_potion_used.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "ba8e3188fad15c890b966ae512f6b4b570b2e0fa2eb44f8b7cf239fcc1ba2d8d"
+    },
+    {
+      "path": "runtime/hud_route_keyboard.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "d8d2c221d5673cdc5aa76eedd39f572b7fec38c61a89399e710ab2dace3b72dd"
+    },
+    {
+      "path": "runtime/hud_route_touch.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "556e7731ad0c5f7794a8f03b57978490025d5fdbfc931b90b10c42a7c6170ab8"
+    },
+    {
+      "path": "runtime/hud_safe.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "a102856b99620a0a2a0990f7f3a3091516b7e57a361aaf3ad9ea2c2316297563"
+    },
+    {
+      "path": "runtime/hud_second_level.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "ff8e0c1a21fb1ef2581ef9ec94421673d0349b84945d012473e28e8c2f565377"
+    },
+    {
+      "path": "runtime/hud_wide.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "8b97a13142f3a6d30a3bb7f7b65690e89c3d96a6edb0786d8277be710f91f50a"
+    }
+  ]
+}

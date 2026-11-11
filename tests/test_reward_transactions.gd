@@ -209,7 +209,7 @@ func _test_actual_ui() -> void:
 	_check(current_scene == main and not main._transitioning, "Pending rewards must prevent formal retry from starting another economic run")
 	var select: Control = load("res://scenes/ui/level_select.tscn").instantiate()
 	root.add_child(select)
-	_check(select.wallet.text.contains("待保存") and select.save_retry.visible, "Map must expose pending wallet and storage retry")
+	_check(select.wallet.text.contains(str(profile.coins)) and select.save_badge.visible and select.save_badge.status == &"pending" and select.save_retry.visible, "Map must expose the actual wallet, persistent pending badge and storage retry")
 	select.free()
 	var setup: Control = load("res://scenes/ui/character_setup.tscn").instantiate()
 	root.add_child(setup)

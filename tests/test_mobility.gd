@@ -292,7 +292,7 @@ func _test_sandbox_entries() -> void:
 			_check(scene.player.active and scene.run_loadout.character.character_id == character_id and scene.get_run_mode() == expected_mode, "Shared sandbox must resolve character and mode: %s/%s" % [character_id, mode])
 			scene._toggle_pause()
 			await _frames(2)
-			_check(scene.result_body.position.y + scene.result_body.size.y <= scene.save_status.position.y, "Each mobility description must fit above the pause footer")
+			_check(scene.result_overlay.body_scroll.get_global_rect().end.y <= scene.save_status.get_global_rect().position.y, "Each mobility description must scroll above the fixed pause footer")
 			scene._restart_run()
 			await _frames(3)
 			scene = current_scene

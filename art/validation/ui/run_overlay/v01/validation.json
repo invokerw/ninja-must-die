@@ -1,0 +1,116 @@
+{
+  "date": "2026-11-09",
+  "status": "visual_review_pending",
+  "concept_review": "approved_2026-11-06_common_v01",
+  "graphical_run": {
+    "exit_code": 0,
+    "expected_marker": "UI_COMPONENTS_PASS",
+    "marker_found": true,
+    "script_errors": [],
+    "log": "capture.log",
+    "renderer": "Godot 4.7 / OpenGL Compatibility / Apple M1 Pro"
+  },
+  "assistant_visual_review": {
+    "status": "passed",
+    "checks": [
+      "common buttons and readable native text",
+      "fixed actions outside scrolling descriptions/statistics",
+      "persistent save/read-only states",
+      "1280 / 1600 and simulated safe frame",
+      "formal stars independent from flawless; practice has no formal stars; reward summary stays visible"
+    ],
+    "limitations": [
+      "Screenshots use isolated deterministic fixtures; not a full route or human/device acceptance."
+    ]
+  },
+  "user_runtime_visual_review": "pending",
+  "android": "not_run",
+  "remote_ci": "not_run",
+  "images": [
+    {
+      "path": "runtime/run_boss_practice.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "be20253ae6244dda954deb76386f64773a7d9a52c37f349ac96e62aef833dcd5"
+    },
+    {
+      "path": "runtime/run_failed.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "4a7e630b834c3a74ef652d0c8515e8fd2132f95ba266f65fdfb989ec94f4f0ed"
+    },
+    {
+      "path": "runtime/run_formal.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "b362c4d07a1a5a717e9c0943a4d0e3ce296f03ba92278ebbe165e4541c875fe0"
+    },
+    {
+      "path": "runtime/run_pause.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "bf6a6e88a79b27fa0174b267281ffba72bfb6f0c7485b65e33819ec84bc8c353"
+    },
+    {
+      "path": "runtime/run_pause_safe.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "bcc9600942fb61de10cbc0554b63d60d567efd8c6b11f31a7bd5c268fec685c0"
+    },
+    {
+      "path": "runtime/run_pause_wide.png",
+      "width": 1600,
+      "height": 720,
+      "sha256": "529c22f62595ea61a656d0af43d83ca512f5421141c5330d9f3e52e79fa73722"
+    },
+    {
+      "path": "runtime/run_practice.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "9c86e46b4db1da57e3c32501509f8b283b0d673e4146e976bbd3a6bba266c47c"
+    },
+    {
+      "path": "runtime/run_readonly.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "0360a6098797f66021bab32556eee248b31c4e0e44b17836d21d9dbf9982728f"
+    },
+    {
+      "path": "runtime/run_rewards.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "22bec19ad0731662bbc2227a5f157662e770ffdfe7a7b8af63687c6f719598e9"
+    },
+    {
+      "path": "runtime/run_save_failure.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "1680b6bd80c88cb3a9f21ec0662bb67cf22144f4774f55ccef3ef296b0ebf5b8"
+    },
+    {
+      "path": "runtime/run_settings.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "7b69d980e5f9a3bbb0662fda073f15461945076fe96cc7dc95ac2b62bf70542d"
+    }
+  ],
+  "resource_import": {
+    "exit_code": 0,
+    "script_errors": [],
+    "known_editor_shutdown_diagnostic": "EditorSettings not instantiated yet: export/android/shutdown_adb_on_exit"
+  },
+  "automated_regressions": {
+    "status": "passed",
+    "report": "regressions.json",
+    "gdscript_suites": 19,
+    "cross_process_persistence": "passed",
+    "python_export_tests": 5
+  },
+  "implementation_sha256": {
+    "scripts/main.gd": "c6371dc9fbfeb159d96d60a89aad061fc9381abb360c9b2b0196047cde075fcb",
+    "scenes/main.tscn": "a0b112dbcb66f55d78410a40a2bd7b706942567dbef486bff5b8c4885de52f23",
+    "scripts/ui/components/ui_run_panel.gd": "e43b1f3085a51569f0bc89c5e50c14ea98bd600ac98655e5926ad5f73d1697d8",
+    "scripts/ui/components/ui_star_rating.gd": "e3b96bd0a0d3079949025787ad55563ba7cb5ddc50e2080bb75f00f0cd488b67",
+    "tests/test_ui_components.gd": "d092b2d25fe65b5066642b1c564b675055f57037ab16a691cf1159ffab1f4fa4"
+  }
+}

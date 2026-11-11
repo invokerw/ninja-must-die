@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-11",
+  "engine": "Godot 4.7",
+  "suites": [
+    {
+      "suite": "level_select",
+      "exit_code": 0,
+      "pass_marker": [
+        "LEVEL_SELECT_PASS (preparation entry, lock requirement, selected loadout, level data launch)"
+      ],
+      "errors": []
+    },
+    {
+      "suite": "ui_components",
+      "exit_code": 0,
+      "pass_marker": [
+        "UI_COMPONENTS_PASS (common controls, preparation, pause/results, battle HUD health/phases/quota/items/keyboard, token contract, safe layouts)"
+      ],
+      "errors": []
+    },
+    {
+      "suite": "stars_records",
+      "exit_code": 0,
+      "pass_marker": [
+        "STARS_RECORDS_PASS (integer thresholds, independent flawless, whole-run/config snapshots, character records, v1 migration, v2 persistence/retry/dedupe, real formal/practice/failure, map views)"
+      ],
+      "errors": []
+    },
+    {
+      "suite": "reward_transactions",
+      "exit_code": 0,
+      "pass_marker": [
+        "REWARD_TRANSACTIONS_PASS (starter/clear/star/flawless/milestones, v1/v2 migration, atomic I/O boundaries, pending lock/retry, backup/future/corrupt, actual finish/practice/UI)"
+      ],
+      "errors": []
+    },
+    {
+      "suite": "touch_controls",
+      "exit_code": 0,
+      "pass_marker": [
+        "TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ],
+      "errors": []
+    },
+    {
+      "suite": "ui_art_preview",
+      "exit_code": 0,
+      "pass_marker": [
+        "TOUCH_PASS (real touch events, right-side dedicated jump, jump below rope flips up, contextual flip/fast fall, multiple fingers, ownership, short taps/holds, cooldowns, J/K/flips, keyboard coexistence, pause/focus/death/retry, safe layouts, touch-only menus)"
+      ],
+      "errors": []
+    }
+  ],
+  "python_export_tests": {
+    "count": 5,
+    "passed": true
+  },
+  "remote_ci": "not_run",
+  "user_runtime_visual": "pending",
+  "android": "pending",
+  "graphics": {
+    "exit_code": 0,
+    "pass_marker": "LEVEL_SELECT_PASS",
+    "renderer": "OpenGL compatibility / Apple M1 Pro",
+    "errors": [],
+    "screenshots": [
+      "level_select_1280_character_empty.png",
+      "level_select_1280_first.png",
+      "level_select_1280_legacy.png",
+      "level_select_1280_locked.png",
+      "level_select_1280_readonly.png",
+      "level_select_1280_record.png",
+      "level_select_1280_save_error.png",
+      "level_select_1280_snapshot.png",
+      "level_select_1280_unlocked.png",
+      "level_select_1280_wallet_max.png",
+      "level_select_1600_record.png",
+      "level_select_1600_safe.png",
+      "level_select_1600_snapshot.png",
+      "level_select_1600_unlocked.png"
+    ],
+    "assistant_visual_check": "passed",
+    "resolutions": [
+      "1280x720",
+      "1600x720"
+    ],
+    "simulated_safe_rect": [
+      60,
+      24,
+      1480,
+      648
+    ]
+  }
+}
