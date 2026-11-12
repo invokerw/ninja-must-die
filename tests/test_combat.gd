@@ -24,9 +24,13 @@ func _run() -> void:
 	await _test_pickups_combo_and_finish()
 	await _test_pause_stop_and_death()
 	await _test_authored_encounters()
+	await _test_character_ninjutsu()
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--capture-skills-dir="):
+			await _capture_skills(argument.trim_prefix("--capture-skills-dir="))
 	_test_results()
 	if _failures == 0:
-		print("COMBAT_PASS (character data, cooldown, same-tick immunity, range/damage, 2/3 jumps, pause/stop, encounters, results)")
+		print("COMBAT_PASS (character data, cooldown, same-tick immunity, range/damage, feather flight and lightning pulses, per-hit armor, swept collision, 2/3 jumps, pause/stop, encounters, results)")
 	profile_scope.close()
 	quit(0 if _failures == 0 else 1)
 
@@ -49,6 +53,134 @@ func _test_character_data() -> void:
 	bad.active_skill.forward_range = -10.0
 	_check(not bad.get_validation_errors(2).is_empty(), "Invalid damage area must be rejected")
 	_check(not CHARACTER.get_validation_errors(3).is_empty(), "Passive must not silently become a global fourth jump")
+
+func _test_character_ninjutsu() -> void:
+	for id in [&"wind_scout", &"thunder_guard"]:
+		var data := CharacterRegistry.get_character(id)
+		_check(data.get_validation_errors(2).is_empty() and data.active_skill.skill_id != &"moon_slash", "Character ninjutsu definitions must be distinct and valid")
+		var bad := data.active_skill.duplicate(true) as ActiveSkillData
+		bad.strike_interval_seconds = NAN
+		_check(not bad.get_validation_errors().is_empty(), "Nonfinite ninjutsu intervals are invalid")
+		bad = data.active_skill.duplicate(true)
+		bad.strike_count = 0
+		_check(not bad.get_validation_errors().is_empty(), "Zero attack counts are invalid")
+		bad = data.active_skill.duplicate(true)
+		bad.projectile_speed = INF
+		_check(not bad.get_validation_errors().is_empty(), "Nonfinite projectile speeds are invalid")
+		bad = data.active_skill.duplicate(true)
+		bad.strike_interval_seconds = 5.0
+		_check(not bad.get_validation_errors().is_empty(), "Attack sequences cannot extend beyond their protection window")
+		var player := _make_player(id)
+		var combat: RunnerCombat = player.get_node("Combat")
+		var target := _enemy(Vector2(player.position.x + 450, player.rope_y), 20)
+		var behind := _enemy(Vector2(player.position.x - 100, player.rope_y), 20)
+		await _frames(2)
+		var skill := player.character.active_skill
+		_check(combat.try_skill() and not combat.try_skill(), "One cast starts cooldown and cannot queue a duplicate")
+		_check(player.skill_immunity_remaining == 2.0 and combat.skill_cooldown_remaining == 12.0, "Distinct ninjutsu retain immediate protection and cooldown")
+		await _frames(8)
+		_check(combat.skill_emissions == 1, "Only the first attack is emitted after windup")
+		if id == &"wind_scout":
+			_check(target.health == 20 and combat.friendly_root.get_child_count() > 0, "Feathers must fly before impact rather than apply instant area damage")
+		else:
+			_check(target.health == 18, "First lightning strike applies only its own ordinary damage")
+		var cooldown := combat.skill_cooldown_remaining
+		var count := combat.skill_emissions
+		paused = true
+		await _frames(20)
+		_check(combat.skill_emissions == count and combat.skill_cooldown_remaining == cooldown, "Pause freezes pending emissions and cooldown")
+		paused = false
+		await _frames(60)
+		_check(combat.skill_emissions == skill.strike_count and target.health == 20 - skill.damage * skill.strike_count and behind.health == 20, "Each attack applies once to a forward target, leaving targets behind untouched")
+		_check(combat.kills == 0 and combat.combo == 0, "Multi-hit damage cannot manufacture per-hit kill or combo rewards")
+		target.free()
+		behind.free()
+		player.free()
+		# Real boss collision: change armor after the first hit, preserving the remainder.
+		var main = await _skill_boss(id)
+		var boss: RopeBoss = main.level.boss
+		combat = main.combat
+		combat.try_skill()
+		for tick in range(60):
+			if boss.health < 180:
+				break
+			await _frames(1)
+		_check(boss.health == 180 - skill.boss_damage, "First hit uses actual weak-point damage")
+		boss.state = RopeBoss.State.WINDUP
+		await _frames(70)
+		var expected := skill.boss_damage + (skill.strike_count - 1) * int(skill.boss_damage / 2)
+		_check(boss.health == 180 - expected and combat.damage_by_source[&"skill"] == expected, "Every later hit reads armor at impact and retains skill damage attribution")
+		main.free()
+		# Cancellation after the first attack must remove future attacks and existing feathers.
+		main = await _skill_boss(id)
+		combat = main.combat
+		combat.try_skill()
+		await _frames(8)
+		main.player.stop()
+		await _frames(45)
+		_check(not combat._skill_pending and combat.skill_emissions == 1 and combat.friendly_root.get_child_count() == 0, "Stopping cancels the remaining sequence and in-flight feathers")
+		main.free()
+		main = await _skill_boss(id)
+		combat = main.combat
+		combat.try_skill()
+		await _frames(8)
+		main.player.skill_immunity_remaining = 0.0
+		main.player.immunity_remaining = 0.0
+		main.player.take_damage(100)
+		await _frames(30)
+		_check(not main.player.active and not combat._skill_pending and combat.skill_emissions == 1 and combat.friendly_root.get_child_count() == 0, "Fatal damage cancels both queued and flying ninjutsu attacks")
+		paused = false
+		main.free()
+		# A lethal first pulse cancels the rest synchronously and counts one kill.
+		main = await _skill_boss(id)
+		combat = main.combat
+		main.level.boss.health = skill.boss_damage
+		combat.try_skill()
+		await _frames(70)
+		_check(combat.kills == 1 and not combat._skill_pending and combat.friendly_root.get_child_count() == 0, "Boss defeat cannot leak queued attacks or duplicate a kill")
+		paused = false
+		main.free()
+	# Swept collision at extreme speed must not tunnel through a sentry.
+	var player := _make_player(&"wind_scout")
+	var target := _enemy(Vector2(player.position.x + 400, player.rope_y), 10)
+	player.character.active_skill.projectile_speed = 60000.0
+	await _frames(2)
+	player.get_node("Combat").try_skill()
+	await _frames(10)
+	_check(target.health == 9, "A feather crossing an enemy in one physics step still hits exactly once")
+	target.free()
+	player.free()
+	_check(CharacterRegistry.get_character(&"wind_scout").active_skill.projectile_speed == 1400.0, "Runtime tests cannot mutate shared static skill resources")
+
+func _skill_boss(id: StringName) -> Node2D:
+	var main: Node2D = load("res://scenes/boss_practice.tscn").instantiate()
+	main.run_loadout = RunLoadout.capture(CharacterRegistry.get_character(id), PlayerProfile.WEAPONS[&"crescent_wheel"])
+	root.add_child(main)
+	await _frames(12)
+	var boss: RopeBoss = main.level.boss
+	boss.state = RopeBoss.State.RECOVERY
+	boss.remaining = 30.0
+	boss.set_physics_process(false)
+	boss.global_position = Vector2(main.player.global_position.x + 450, main.player.rope_y)
+	boss.previous_physics_position = boss.global_position
+	return main
+
+func _capture_skills(output: String) -> void:
+	if DisplayServer.get_name() == "headless":
+		_check(false, "Skill capture requires a graphical renderer")
+		return
+	_check(DirAccess.make_dir_recursive_absolute(output) == OK, "Skill capture directory is writable")
+	for id in [&"wind_scout", &"thunder_guard"]:
+		for state in ["cast", "pause"]:
+			var main = await _skill_boss(id)
+			main.combat.try_skill()
+			await _frames(10)
+			if state == "pause":
+				main._toggle_pause()
+			await RenderingServer.frame_post_draw
+			_check(root.get_texture().get_image().save_png(output.path_join("%s_%s.png" % [id, state])) == OK, "Real skill screenshot saves")
+			paused = false
+			main.free()
 
 func _make_player(character_id: StringName = &"shadow_runner") -> PlayerController:
 	var scene := MAIN_SCENE.instantiate()

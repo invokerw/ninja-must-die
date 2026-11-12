@@ -1,0 +1,60 @@
+{
+  "design_id": "character_setup",
+  "version": "v02",
+  "date": "2026-11-12",
+  "timezone": "Asia/Shanghai",
+  "status": "approved",
+  "runtime_ready": true,
+  "workflow": "built-in image_gen.imagegen",
+  "model": "not_reported_by_tool",
+  "source_filename": "call_orpKNDabPJWrlrn97LpUPQNM.png",
+  "transparent_background": false,
+  "original_pixels_modified": false,
+  "source_sha256_matches": true,
+  "concept": {
+    "file": "art/concepts/ui/character_setup/v02.png",
+    "width": 1672,
+    "height": 941,
+    "bytes": 1948112,
+    "sha256": "2bed406ab4f07b3a2469654ea0b939b1d132d132b49edd013a4e4ad0464346bb"
+  },
+  "prompt_file": "art/prompts/ui/character_setup/v02.prompt.md",
+  "references": [
+    {
+      "file": "art/validation/ui/character_setup/v02/baseline/preparation_initial.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 569369,
+      "sha256": "20dc65ca3b3d826e2aa98e802edc1444dacb3d4225a444c6fc2ca6087d22665c"
+    },
+    {
+      "file": "art/concepts/ui/common/v01/03_preparation.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1882196,
+      "sha256": "59c4df4d7691810c14772b7f32a198d51de8e0c70a7e87e7f73be5f3507ced77"
+    }
+  ],
+  "task_card": "art/validation/ui/character_setup/v02/README.md",
+  "concept_review": {
+    "status": "approved",
+    "reviewer": "user",
+    "date": "2026-11-12",
+    "feedback": "可以实现",
+    "scope": "本版角色选择布局；运行时视觉与 Android 另行验收"
+  },
+  "validation": {
+    "existing_graphical_ui_components": "pass",
+    "log": "art/validation/ui/character_setup/v02/logs/baseline.log",
+    "new_character_selection_implemented": false,
+    "runtime_visual_review": "pending",
+    "android_review": "pending"
+  },
+  "runtime_acceptance": {
+    "status": "approved",
+    "reviewer": "user",
+    "date": "2026-11-12",
+    "feedback": "验收通过",
+    "scope": "角色选择与行前准备 v02 用户视觉 / 手感；Android 实机另行验收"
+  }
+}

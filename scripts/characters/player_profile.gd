@@ -2,11 +2,12 @@ class_name PlayerProfile
 extends RefCounted
 
 signal equipment_changed(character_id: StringName, weapon_id: StringName)
+signal character_changed(character_id: StringName)
 signal save_status_changed
 signal settings_changed
 
 const STARTER_WEAPONS: Array[StringName] = [&"crescent_wheel", &"star_lance"]
-const CHARACTERS := {&"shadow_runner": preload("res://data/characters/shadow_runner.tres")}
+const CHARACTERS := CharacterRegistry.CHARACTERS
 const WEAPONS := {
 	&"crescent_wheel": preload("res://data/weapons/crescent_wheel.tres"),
 	&"star_lance": preload("res://data/weapons/star_lance.tres"),
@@ -216,7 +217,7 @@ func load_profile() -> void:
 	if saved is Dictionary:
 		character_loadouts = saved.duplicate(true)
 	var selected: Variant = _document.get("selected_character_id", "shadow_runner")
-	if selected is String and CHARACTERS.has(StringName(selected)):
+	if selected is String and owns_character(StringName(selected)):
 		selected_character_id = StringName(selected)
 	for data: CharacterData in CHARACTERS.values():
 		var record: Variant = character_loadouts.get(String(data.character_id), {})
@@ -256,16 +257,41 @@ func list_weapons(character: CharacterData) -> Array[WeaponData]:
 			result.append(weapon)
 	return result
 
+func owns_character(character_id: StringName) -> bool:
+	var data := CharacterRegistry.get_character(character_id)
+	return data != null and (data.unlock_id == &"starter" or String(character_id) in _reward_state.get("unlocked_character_ids", []))
+
+func character_lock_reason(character_id: StringName) -> String:
+	var data := CharacterRegistry.get_character(character_id)
+	if data == null:
+		return "角色尚未开放"
+	return "" if owns_character(character_id) else data.unlock_description
+
+func try_select_character(character_id: StringName) -> bool:
+	last_error = economy_block_reason()
+	if not last_error.is_empty():
+		return false
+	var data := CharacterRegistry.get_character(character_id)
+	if not owns_character(character_id) or not data.get_validation_errors(2).is_empty():
+		last_error = character_lock_reason(character_id)
+		return false
+	if selected_character_id == character_id:
+		return true
+	selected_character_id = character_id
+	save_pending = true
+	character_changed.emit(character_id)
+	return true
+
 func try_equip(character: CharacterData, weapon_id: StringName) -> bool:
-	last_error = ""
-	var tree := Engine.get_main_loop() as SceneTree
-	if tree != null and not tree.get_nodes_in_group("run_sessions").is_empty():
-		last_error = "本局装备已固定，请返回准备页更换。"
+	last_error = economy_block_reason()
+	if not last_error.is_empty():
 		return false
 	var weapon := WEAPONS.get(weapon_id) as WeaponData
-	if character == null or not CHARACTERS.has(character.character_id) or weapon == null or not owned_weapon_ids.has(weapon_id) or not weapon.allows(character.character_id) or not weapon.get_validation_errors().is_empty():
+	if character == null or not owns_character(character.character_id) or weapon == null or not owned_weapon_ids.has(weapon_id) or not weapon.allows(character.character_id) or not weapon.get_validation_errors().is_empty():
 		last_error = "当前角色无法装备这把武器。"
 		return false
+	if get_equipped_weapon(character).weapon_id == weapon_id:
+		return true
 	var loadout := CharacterLoadout.new(character.character_id, weapon_id)
 	var record: Variant = character_loadouts.get(String(loadout.character_id), {})
 	if not record is Dictionary:
@@ -278,7 +304,7 @@ func try_equip(character: CharacterData, weapon_id: StringName) -> bool:
 
 func resolve(character: CharacterData = null) -> RunLoadout:
 	if character == null:
-		character = CHARACTERS[selected_character_id]
+		character = CharacterRegistry.get_character(selected_character_id if owns_character(selected_character_id) else &"shadow_runner")
 	var loadout := RunLoadout.capture(character, get_equipped_weapon(character))
 	if int(_economy_state.growth.get("weapon_training", 0)) > 0 or int(_economy_state.growth.get("body_training", 0)) > 0:
 		loadout.growth_snapshot = _economy_state.growth.duplicate(true)

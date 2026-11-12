@@ -2,6 +2,14 @@ extends Control
 
 var profile: PlayerProfile
 var character: CharacterData
+var character_buttons: Dictionary = {}
+var character_title: Label
+var character_badge: UIStatusChip
+var character_art: TextureRect
+var character_description: Label
+var ability_summary: UIDetailPanel
+var select_character_button: UIActionButton
+var character_hint: Label
 var selected_weapon: WeaponData
 var weapon_buttons: Dictionary = {}
 var equip_button: UIActionButton
@@ -23,6 +31,7 @@ var supply_summary: UIDetailPanel
 var loadout_summary: Label
 var _launching := false
 var _equipment_save_pending := false
+var _character_save_pending := false
 
 func _ready() -> void:
 	PaintedTheme.apply_font(self)
@@ -56,7 +65,7 @@ func _build_shell() -> void:
 	_label(self, "行前准备", Rect2(48, 28, 460, 50), 34, UITokens.ACCENT_LIGHT)
 	wallet = _label(self, "", Rect2(650, 38, 390, 34), 20, UITokens.ACCENT_LIGHT)
 	wallet.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	loadout_summary = _label(self, "", Rect2(48, 88, 560, 28), 18, UITokens.TEXT_SECONDARY)
+	loadout_summary = _label(self, "", Rect2(48, 88, 620, 28), 18, UITokens.TEXT_SECONDARY)
 	save_badge = UIStatusChip.new()
 	save_badge.position = Vector2(866, 82)
 	save_badge.size = Vector2(174, 32)
@@ -72,24 +81,103 @@ func _build_shell() -> void:
 	full_button = _button(self, "关卡选择", Rect2(944, 624, 288, 56), _open_level_select, "primary")
 
 func _build_character() -> void:
-	var panel := _detail(self, Rect2(48, 144, 336, 416), "当前角色", "")
-	var card := UISelectCard.new()
-	card.configure(character.character_id, character.display_name, "主武器槽 × 1", PaintedTheme.PORTRAIT)
-	card.set_state(false, &"equipped", "已出战")
-	card.focus_mode = Control.FOCUS_NONE
-	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.content.add_child(card)
-	var mobility := character.get_mobility_data()
-	_label_in_column(panel.content, "身法 · %s" % mobility.display_name, 20, UITokens.ACCENT_LIGHT)
-	_label_in_column(panel.content, mobility.description, 18)
-	var active := character.active_skill
-	_label_in_column(panel.content, "忍术 · %s" % active.display_name, 20, UITokens.ACCENT_LIGHT)
-	_label_in_column(panel.content, "冷却 %.0f 秒 · 保护 %.0f 秒" % [active.cooldown_seconds, active.invulnerability_seconds], 18)
+	var index := 0
+	for data: CharacterData in CharacterRegistry.CHARACTERS.values():
+		var card := UISelectCard.new()
+		card.configure(data.character_id, data.display_name, "", data.portrait_texture if data.portrait_texture != null else PaintedTheme.PORTRAIT)
+		card.position = Vector2(48, 132 + index * 148)
+		card.size = Vector2(240, 140)
+		card.pressed.connect(_preview_character.bind(data.character_id))
+		add_child(card)
+		character_buttons[data.character_id] = card
+		index += 1
+	var panel := Panel.new()
+	panel.position = Vector2(312, 132)
+	panel.size = Vector2(416, 436)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(panel)
+	character_art = TextureRect.new()
+	character_art.position = Vector2(336, 140)
+	character_art.size = Vector2(368, 224)
+	character_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	character_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	character_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(character_art)
+	character_title = _label(self, "", Rect2(336, 148, 170, 40), 30, UITokens.ACCENT_LIGHT)
+	character_badge = UIStatusChip.new()
+	character_badge.position = Vector2(432, 152)
+	add_child(character_badge)
+	character_description = _label(self, "", Rect2(336, 284, 368, 72), 18)
+	character_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ability_summary = _detail(self, Rect2(328, 360, 384, 144), "", "")
+	var ability_style := PaintedTheme.surface_style()
+	ability_style.set_content_margin_all(12)
+	ability_summary.add_theme_stylebox_override("panel", ability_style)
+	select_character_button = _button(self, "设为出战", Rect2(336, 508, 184, 48), _confirm_character)
+	character_hint = _label(self, "预览不改变当前出战", Rect2(532, 508, 172, 48), 16, UITokens.TEXT_SECONDARY)
+	character_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+func _preview_character(character_id: StringName) -> void:
+	if _launching or feedback_menu.visible:
+		return
+	var data := CharacterRegistry.get_character(character_id)
+	if data == null:
+		return
+	character = data
+	_select_weapon(profile.get_equipped_weapon(character))
+	_refresh_profile()
+
+func _confirm_character() -> void:
+	if _launching or feedback_menu.visible:
+		return
+	if _character_save_pending and character.character_id == profile.selected_character_id:
+		profile.save_profile()
+	elif character.character_id == profile.selected_character_id:
+		return
+	elif profile.try_select_character(character.character_id):
+		_character_save_pending = not profile.save_profile()
+	else:
+		status.text = profile.last_error
+		return
+	_refresh_profile()
+	if select_character_button.disabled:
+		character_buttons[character.character_id].grab_focus()
+
+func _refresh_characters() -> void:
+	for id: StringName in character_buttons:
+		var data := CharacterRegistry.get_character(id)
+		var card: UISelectCard = character_buttons[id]
+		var selected := id == character.character_id
+		var owned := profile.owns_character(id)
+		card.description_label.text = "身法 · %s" % data.get_mobility_data().display_name
+		card.set_state(selected, &"equipped" if id == profile.selected_character_id else (&"locked" if not owned else (&"preview" if selected else &"owned")), "已出战" if id == profile.selected_character_id else "")
+		card.tooltip_text = "%s\n%s" % [data.display_name, profile.character_lock_reason(id) if not owned else data.description]
+	character_title.text = character.display_name
+	var active := character.character_id == profile.selected_character_id
+	var owned := profile.owns_character(character.character_id)
+	character_badge.set_status(&"equipped" if active else (&"preview" if owned else &"locked"), "已出战" if active else "")
+	character_art.texture = character.preparation_texture if character.preparation_texture != null else character.portrait_texture
+	character_art.visible = character_art.texture != null
+	character_art.position = Vector2(336, 140) if character.preparation_texture != null else Vector2(448, 204)
+	character_art.size = Vector2(368, 224) if character.preparation_texture != null else Vector2(144, 144)
+	character_description.visible = not character_art.visible
+	character_description.text = character.description
+	var movement := character.get_mobility_data()
+	var skill := character.active_skill
+	ability_summary.set_description("", "身法 · %s\n%s\n忍术 · %s\n冷却 %.0f 秒 · 保护 %.0f 秒\n%s" % [movement.display_name, movement.description, skill.display_name, skill.cooldown_seconds, skill.invulnerability_seconds, skill.description()])
+	var reason := profile.character_lock_reason(character.character_id)
+	var blocked := profile.economy_block_reason()
+	select_character_button.disabled = not owned or not blocked.is_empty() or (active and not _character_save_pending)
+	select_character_button.text = "当前只读" if profile.is_read_only() else ("未解锁" if not owned else (("重试保存" if _character_save_pending else "已出战") if active else "设为出战"))
+	select_character_button.tooltip_text = reason if not owned else blocked
+	character_hint.text = ("当前存档只读" if profile.is_read_only() else ("请先重试保存" if not blocked.is_empty() else "预览不改变当前出战")) if owned else reason
+	character_hint.tooltip_text = character_hint.text
+	ability_summary.body_label.tooltip_text = skill.description()
 
 func _build_loadout() -> void:
 	tabs = UITabBar.new()
-	tabs.position = Vector2(408, 132)
-	tabs.size = Vector2(824, 52)
+	tabs.position = Vector2(752, 132)
+	tabs.size = Vector2(480, 52)
 	tabs.set_entries([
 		{"id": &"weapons", "title": "武器"}, {"id": &"scrolls", "title": "秘卷"},
 		{"id": &"supplies", "title": "补给"}, {"id": &"records", "title": "纪录"},
@@ -98,8 +186,8 @@ func _build_loadout() -> void:
 	add_child(tabs)
 	for id in [&"weapons", &"scrolls", &"supplies", &"records"]:
 		var page := Control.new()
-		page.position = Vector2(408, 200)
-		page.size = Vector2(824, 360)
+		page.position = Vector2(752, 200)
+		page.size = Vector2(480, 368)
 		page.visible = id == &"weapons"
 		add_child(page)
 		pages[id] = page
@@ -109,29 +197,32 @@ func _build_loadout() -> void:
 		var weapon := weapons[index]
 		var card := UISelectCard.new()
 		card.configure(weapon.weapon_id, weapon.display_name, "技能冷却 %.0f 秒" % weapon.skill.cooldown_seconds, WeaponArt.texture_for(weapon.weapon_id))
-		card.position = Vector2(index * 424, 0)
-		card.size = Vector2(400, 140)
+		card.position = Vector2(index * 248, 0)
+		card.size = Vector2(232, 140)
 		card.pressed.connect(_select_weapon.bind(weapon))
 		page.add_child(card)
 		weapon_buttons[weapon.weapon_id] = card
-	var detail := _detail(page, Rect2(0, 148, 560, 212), "", "")
+	var detail := _detail(page, Rect2(0, 152, 480, 216), "", "")
 	preview_title = detail.title_label
 	preview_body = detail.body_label
 	preview_stats = _label_in_column(detail.content, "", 18, UITokens.TEXT_SECONDARY)
+	detail.content.move_child(preview_stats, 0)
+	var detail_style := PaintedTheme.surface_style()
+	detail_style.set_content_margin_all(12)
+	detail.add_theme_stylebox_override("panel", detail_style)
 	preview = WeaponPreview.new()
-	preview.position = Vector2(584, 148)
-	preview.size = Vector2(240, 92)
+	preview.custom_minimum_size = Vector2(180, 52)
+	preview.size = Vector2(180, 52)
 	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	page.add_child(preview)
-	equip_button = _button(page, "装备", Rect2(584, 256, 240, 56), _equip_selected)
-	_label(page, "预览不改变出战装备", Rect2(584, 320, 240, 32), 16, UITokens.TEXT_SECONDARY)
-	scroll_summary = _detail(pages[&"scrolls"], Rect2(0, 0, 824, 360), "秘卷", "")
+	equip_button = _button(detail.footer, "装备", Rect2(0, 0, 216, 52), _equip_selected)
+	detail.footer.add_child(preview)
+	scroll_summary = _detail(pages[&"scrolls"], Rect2(0, 0, 480, 368), "秘卷", "")
 	_button(scroll_summary.footer, "前往行商调整", Rect2(0, 0, 216, 52), _open_shop)
-	supply_summary = _detail(pages[&"supplies"], Rect2(0, 0, 824, 360), "下次正式出战", "")
+	supply_summary = _detail(pages[&"supplies"], Rect2(0, 0, 480, 368), "下次正式出战", "")
 	_button(supply_summary.footer, "前往行商调整", Rect2(0, 0, 216, 52), _open_shop)
 
 func _build_history() -> void:
-	var detail := _detail(pages[&"records"], Rect2(0, 0, 824, 360), "雾岭断桥 · 模式纪录", "三个模式独立记录；正式关卡的完整纪录可在关卡选择查看。")
+	var detail := _detail(pages[&"records"], Rect2(0, 0, 480, 368), "雾岭断桥 · 模式纪录", "三个模式独立记录；正式关卡的完整纪录可在关卡选择查看。")
 	for entry in [[&"full", "正式挑战"], [&"boss_practice", "首领练习"], [&"parkour_practice", "跑酷练习"]]:
 		_label_in_column(detail.content, entry[1], 20, UITokens.ACCENT_LIGHT)
 		history_labels[entry[0]] = _label_in_column(detail.content, "", 18)
@@ -174,7 +265,7 @@ func _select_weapon(weapon: WeaponData) -> void:
 	preview_body.text = weapon.description
 	preview_body.show()
 	var skill := weapon.skill
-	preview_stats.text = "冷却 %.0f 秒 · %d 枚 × %d 伤害 = %d\n首领战基础伤害 · 无无敌 · %s" % [skill.cooldown_seconds, skill.projectile_count, skill.boss_damage, skill.projectile_count * skill.boss_damage, "即时连续发射" if skill.cast_delay_seconds == 0.0 else "蓄势 %.2f 秒后发射" % skill.cast_delay_seconds]
+	preview_stats.text = "冷却 %.0f 秒 · %s\n首领基础 %d 枚 × %d = %d · 无无敌" % [skill.cooldown_seconds, "即时连续发射" if skill.cast_delay_seconds == 0.0 else "蓄势 %.2f 秒" % skill.cast_delay_seconds, skill.projectile_count, skill.boss_damage, skill.projectile_count * skill.boss_damage]
 	_refresh_equipment()
 
 func _refresh_equipment() -> void:
@@ -184,9 +275,12 @@ func _refresh_equipment() -> void:
 		weapon_buttons[id].set_state(selected, &"equipped" if id == equipped.weapon_id else (&"preview" if selected else &"owned"))
 	var same := selected_weapon.weapon_id == equipped.weapon_id
 	var equipment_pending := profile.save_pending and _equipment_save_pending
-	equip_button.disabled = profile.is_read_only() or (same and not equipment_pending)
-	equip_button.text = "当前只读" if profile.is_read_only() else (("重试保存" if equipment_pending else "已装备") if same else "装备此武器")
-	status.text = "当前出战：%s · %s。装备在本局内固定，可返回此页更换。" % [character.display_name, equipped.display_name]
+	var owned := profile.owns_character(character.character_id)
+	equip_button.disabled = not owned or not profile.economy_block_reason().is_empty() or (same and not equipment_pending)
+	equip_button.text = "当前只读" if profile.is_read_only() else ("角色未解锁" if not owned else (("重试保存" if equipment_pending else "已装备") if same else "装备此武器"))
+	equip_button.tooltip_text = profile.character_lock_reason(character.character_id) if not owned else profile.economy_block_reason()
+	var current := profile.resolve()
+	status.text = "当前出战：%s · %s。装备在本局内固定，可返回此页更换。" % [current.character.display_name, current.weapon.display_name]
 	if profile.save_pending and not profile.last_error.is_empty():
 		status.text = profile.last_error
 	elif not profile.load_notice.is_empty():
@@ -198,6 +292,8 @@ func _refresh_profile() -> void:
 	save_badge.set_status(&"readonly" if profile.is_read_only() else &"pending")
 	if not profile.save_pending:
 		_equipment_save_pending = false
+		_character_save_pending = false
+	_refresh_characters()
 	_refresh_equipment()
 	_refresh_carry()
 	save_retry.visible = profile.save_pending and not profile.is_read_only()
@@ -231,7 +327,11 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		feedback_menu.set_setting(not FeedbackSettings.sound_enabled, "sound")
 
 func _equip_selected() -> void:
-	if profile.is_read_only() or feedback_menu.visible:
+	if profile.is_read_only() or feedback_menu.visible or _launching:
+		return
+	if _equipment_save_pending and selected_weapon.weapon_id == profile.get_equipped_weapon(character).weapon_id:
+		profile.save_profile()
+		_refresh_profile()
 		return
 	if not profile.try_equip(character, selected_weapon.weapon_id):
 		status.text = profile.last_error
@@ -246,7 +346,7 @@ func _launch(path: String) -> void:
 	if _launching or feedback_menu.visible:
 		return
 	_launching = true
-	if RunNavigation.launch(get_tree(), path, profile.resolve(character)) != OK:
+	if RunNavigation.launch(get_tree(), path, profile.resolve()) != OK:
 		_launching = false
 		status.text = "暂时无法进入关卡，请重试。"
 
@@ -254,7 +354,7 @@ func _open_level_select() -> void:
 	if _launching or feedback_menu.visible:
 		return
 	_launching = true
-	if RunNavigation.open_level_select(get_tree(), profile.resolve(character)) != OK:
+	if RunNavigation.open_level_select(get_tree(), profile.resolve()) != OK:
 		_launching = false
 		status.text = "暂时无法打开关卡选择，请重试。"
 

@@ -81,7 +81,8 @@ func _ready() -> void:
 func render(value: Dictionary) -> void:
 	health_label.text = value.health_text
 	character_label.text = value.character_name
-	portrait.modulate = value.character_tint
+	portrait.texture = value.get("character_portrait") if value.get("character_portrait") != null else PaintedTheme.PORTRAIT
+	portrait.modulate = Color.WHITE if value.get("character_portrait") != null else value.character_tint
 	protection_label.text = value.protection
 	health.set_value(value.health, value.max_health, UITokens.DANGER_TEXT if value.health <= 1 else UITokens.DANGER)
 	crystals.text = value.crystals

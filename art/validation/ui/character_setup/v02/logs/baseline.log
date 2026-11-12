@@ -1,0 +1,14 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+OpenGL API 4.1 Metal - 83.1 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_initial.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_preview.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_equipped.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_scrolls.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_supplies.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_records.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_readonly.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_save_failure.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_safe.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_select/v01/baseline/preparation_settings.png
+UI_COMPONENTS_PASS (common controls, preparation, pause/results, battle HUD health/phases/quota/items/keyboard, token contract, safe layouts)

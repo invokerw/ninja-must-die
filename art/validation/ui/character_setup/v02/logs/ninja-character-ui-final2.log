@@ -1,0 +1,23 @@
+Godot Engine v4.7.stable.mono.official.5b4e0cb0f - https://godotengine.org
+OpenGL API 4.1 Metal - 83.1 - Compatibility - Using Device: Apple - Apple M1 Pro
+
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_initial.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_preview.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_equipped.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_scrolls.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_supplies.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_records.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_readonly.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_save_failure.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_safe.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_settings.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_preview.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_selected.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_locked.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_save_failure.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_readonly.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_pending.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_settings.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_wide.png
+PREPARATION_CAPTURE /Users/admin/code/godot/ninja-must-die/art/validation/ui/character_setup/v02/runtime_final/preparation_character_safe.png
+UI_COMPONENTS_PASS (common controls, preparation, pause/results, battle HUD health/phases/quota/items/keyboard, token contract, safe layouts)

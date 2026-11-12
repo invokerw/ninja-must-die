@@ -4,9 +4,18 @@
 [ext_resource type="Script" uid="uid://bmdlaeno6abos" path="res://scripts/characters/active_skill_data.gd" id="2_skill"]
 [ext_resource type="Resource" path="res://data/characters/mobility/glide.tres" id="4_mobility"]
 
+[ext_resource type="Texture2D" path="res://art/generated/ui/character_setup/v02/wind_scout_portrait.png" id="5_portrait"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/character_setup/v02/wind_scout.png" id="6_preparation"]
+
 [sub_resource type="Resource" id="ActiveSkill_wind_guard"]
 script = ExtResource("2_skill")
-display_name = "月蚀斩（灰盒）"
+skill_id = &"wind_feather"
+display_name = "风羽阵"
+pattern = &"volley"
+strike_count = 6
+strike_interval_seconds = 0.12
+damage = 1
+boss_damage = 4
 
 [resource]
 script = ExtResource("1_character")
@@ -16,5 +25,8 @@ description = "以御风延长滞空，观察落点并穿过长路线。"
 active_skill = SubResource("ActiveSkill_wind_guard")
 mobility = ExtResource("4_mobility")
 unlock_id = &"chapter_01_01_clear"
+unlock_description = "通关 1-1 雾岭断桥解锁"
 story_name = "岚织"
 visual_tint = Color(0.55, 0.9, 0.85, 1)
+portrait_texture = ExtResource("5_portrait")
+preparation_texture = ExtResource("6_preparation")

@@ -1,0 +1,157 @@
+{
+  "date": "2026-11-12",
+  "concept": "art/concepts/ui/character_setup/v02.png",
+  "concept_approval": "可以实现",
+  "state": "runtime_ready",
+  "runtime_ready": true,
+  "source_run": "art/workbench/ui/character_setup/v02/extraction_aligned",
+  "structural_verification": "passed",
+  "psd": "art/layered/ui/character_setup/v02/source/layers.psd",
+  "psd_sha256": "aec105c98d2125632ba1f3a59e503f27cd8534c57c3b2d8cd4fddf2605d73beb",
+  "assets": [
+    {
+      "id": "shadow_runner_portrait",
+      "layer_id": "loop_02_roi_1_upper_portrait",
+      "source": "art/layered/ui/character_setup/v02/textures/shadow_runner_portrait.png",
+      "runtime": "art/generated/ui/character_setup/v02/shadow_runner_portrait.png",
+      "sha256": "91af2a51175b672c113ae9be89bcef5c3d35abfd20f13f7a35e2e0b4d1671a31",
+      "width": 147,
+      "height": 150,
+      "has_alpha": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "bbox": [
+        45,
+        162,
+        147,
+        150
+      ],
+      "model_rect": [
+        392,
+        776,
+        332,
+        339
+      ],
+      "original_crop": "art/layered/ui/character_setup/v02/inspection/shadow_runner_portrait_original.png",
+      "raw_model_crop": "art/layered/ui/character_setup/v02/inspection/shadow_runner_portrait_raw.png",
+      "model_atlas": "art/layered/ui/character_setup/v02/source/shadow_runner_portrait_atlas.png",
+      "pixel_transform": "Byte-identical copy of directly placed model RGBA; no enlargement, sharpening or alpha edits",
+      "user_runtime_visual_acceptance": "approved"
+    },
+    {
+      "id": "wind_scout_portrait",
+      "layer_id": "loop_02_roi_1_lower_portrait",
+      "source": "art/layered/ui/character_setup/v02/textures/wind_scout_portrait.png",
+      "runtime": "art/generated/ui/character_setup/v02/wind_scout_portrait.png",
+      "sha256": "a1ecd5a2f40855d20a9122f25e8ea0e58b9db7fe121f006446a22f21aaa191bd",
+      "width": 153,
+      "height": 162,
+      "has_alpha": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "bbox": [
+        44,
+        347,
+        153,
+        162
+      ],
+      "model_rect": [
+        386,
+        22,
+        345,
+        357
+      ],
+      "original_crop": "art/layered/ui/character_setup/v02/inspection/wind_scout_portrait_original.png",
+      "raw_model_crop": "art/layered/ui/character_setup/v02/inspection/wind_scout_portrait_raw.png",
+      "model_atlas": "art/layered/ui/character_setup/v02/source/wind_scout_portrait_atlas.png",
+      "pixel_transform": "Byte-identical copy of directly placed model RGBA; no enlargement, sharpening or alpha edits",
+      "user_runtime_visual_acceptance": "approved"
+    },
+    {
+      "id": "thunder_guard_portrait",
+      "layer_id": "loop_02_roi_4_locked_portrait",
+      "source": "art/layered/ui/character_setup/v02/textures/thunder_guard_portrait.png",
+      "runtime": "art/generated/ui/character_setup/v02/thunder_guard_portrait.png",
+      "sha256": "528a78f64ba8b06d007b18d7e3eff19ac4f9046818781b2e625a633ba772fcfa",
+      "width": 149,
+      "height": 153,
+      "has_alpha": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "bbox": [
+        41,
+        542,
+        149,
+        153
+      ],
+      "model_rect": [
+        392,
+        409,
+        333,
+        339
+      ],
+      "original_crop": "art/layered/ui/character_setup/v02/inspection/thunder_guard_portrait_original.png",
+      "raw_model_crop": "art/layered/ui/character_setup/v02/inspection/thunder_guard_portrait_raw.png",
+      "model_atlas": "art/layered/ui/character_setup/v02/source/thunder_guard_portrait_atlas.png",
+      "pixel_transform": "Byte-identical copy of directly placed model RGBA; no enlargement, sharpening or alpha edits",
+      "user_runtime_visual_acceptance": "approved"
+    },
+    {
+      "id": "wind_scout",
+      "layer_id": "loop_04_overview_featured_scout",
+      "source": "art/layered/ui/character_setup/v02/textures/wind_scout.png",
+      "runtime": "art/generated/ui/character_setup/v02/wind_scout.png",
+      "sha256": "9adebfac6358cdbc97fcf157b4e908350e096c02ea074518cd7965d5a926fc93",
+      "width": 551,
+      "height": 446,
+      "has_alpha": true,
+      "alpha_range": [
+        0,
+        255
+      ],
+      "bbox": [
+        391,
+        110,
+        551,
+        446
+      ],
+      "model_rect": [
+        23,
+        31,
+        1351,
+        1102
+      ],
+      "original_crop": "art/layered/ui/character_setup/v02/inspection/wind_scout_original.png",
+      "raw_model_crop": "art/layered/ui/character_setup/v02/inspection/wind_scout_raw.png",
+      "model_atlas": "art/layered/ui/character_setup/v02/source/wind_scout_atlas.png",
+      "pixel_transform": "Byte-identical copy of directly placed model RGBA; no enlargement, sharpening or alpha edits",
+      "user_runtime_visual_acceptance": "approved"
+    },
+    {
+      "id": "shadow_runner",
+      "source": "art/layered/ui/character_setup/v02/source/shadow_runner_native.png",
+      "source_sha256": "321641d1c048015808ceecc04a6277eba79cafd8817c193ee034ac5375388117",
+      "runtime": "art/generated/ui/character_setup/v02/shadow_runner.png",
+      "sha256": "3c265f9c267644081b41c14d99150e3f8d13a050770ad18a852f35cbbf894a56",
+      "width": 724,
+      "height": 543,
+      "has_alpha": true,
+      "pixel_transform": "Native imagegen RGBA downsampled to width 724 with sharp, no alpha repair or enlargement",
+      "user_runtime_visual_acceptance": "approved"
+    }
+  ],
+  "notes": [
+    "Only portraits and featured scout artwork enter the runtime; controls, text and states remain native Godot.",
+    "The model redraws details; structural validation does not establish original pixel fidelity.",
+    "Shadow Runner native image has faint alpha fringe at source scale. Actual menu-size inspection is recorded separately.",
+    "Thunder Guard remains a locked grayscale portrait because level 1-3 has not shipped."
+  ],
+  "user_visual_acceptance": "approved",
+  "android_acceptance": "pending"
+}

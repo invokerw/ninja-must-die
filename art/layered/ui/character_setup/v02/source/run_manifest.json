@@ -1,0 +1,235 @@
+{
+  "manifest_version": 3,
+  "started_at": "2026-11-12T07:47:54.335Z",
+  "source": "/Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_setup/v02/extraction_input.png",
+  "source_sha256": "e4e5a36987f056348926e68bdba22443b649e46da85413c3c8418a4428cefa2e",
+  "runtime": "node",
+  "model": "gpt-image-2.5-sunburst",
+  "quality": "max",
+  "controller": "gpt-6.1-sol",
+  "model_config": {
+    "routes": {
+      "controller": {
+        "model": "gpt-6.1-sol",
+        "base_url": "https://api.ergou.vip/v1",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 1800000,
+        "max_retries": 0
+      },
+      "image": {
+        "model": "gpt-image-2.5-sunburst",
+        "base_url": "https://api.ergou.vip/v1",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 1800000,
+        "max_retries": 0
+      },
+      "foreground": {
+        "model": "gpt-image-2.5-sunburst",
+        "base_url": "https://api.ergou.vip/v1",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 1800000,
+        "max_retries": 0
+      },
+      "background": {
+        "model": "gpt-image-2.5-sunburst",
+        "base_url": "https://api.ergou.vip/v1",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 1800000,
+        "max_retries": 0
+      },
+      "segmentation": {
+        "model": "gpt-image-2.5-sunburst",
+        "base_url": "https://api.ergou.vip/v1",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 240000,
+        "max_retries": 0
+      },
+      "semantic": {
+        "model": "gpt-6.1-sol",
+        "base_url": "https://api.ergou.vip/v1",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 1800000,
+        "max_retries": 0
+      },
+      "judge": {
+        "model": "gpt-6.1-sol",
+        "base_url": "https://api.ergou.vip/v1",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 1800000,
+        "max_retries": 0
+      },
+      "gemini_image": {
+        "model": "gemini-3.1-flash-image",
+        "base_url": "https://rolldek.com/v1beta",
+        "provider": "gemini",
+        "quality": "max",
+        "timeout_ms": 180000,
+        "max_retries": 0
+      },
+      "gemini_logic": {
+        "model": "gemini-omni-1.1-flash",
+        "base_url": "https://rolldek.com/v1beta",
+        "provider": "gemini",
+        "quality": "max",
+        "timeout_ms": 180000,
+        "max_retries": 0
+      },
+      "ark_image": {
+        "model": "doubao-seedream-5-0-pro-260628",
+        "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+        "provider": "volcengine",
+        "quality": "max",
+        "timeout_ms": 180000,
+        "max_retries": 0
+      }
+    },
+    "controller_models": [
+      "gpt-6.1-sol"
+    ]
+  },
+  "scheduling_mode": "bounded_visual_window",
+  "visual_window": 3,
+  "batch_size": 7,
+  "detection_mode": "regional_cache_v1",
+  "local_detection_inputs": true,
+  "combined_detection": true,
+  "surface_style": "original",
+  "max_rounds": 24,
+  "reuse_text": false,
+  "reuse_text_source": null,
+  "text_batch_size": 14,
+  "geometry_batch_size": 7,
+  "image_concurrency": 2,
+  "reuse_visual_layers": false,
+  "local_corrections": false,
+  "source_pixel_recovery": false,
+  "quality_retry_per_object": 0,
+  "regional_context_policy": "crop_intersection_v1",
+  "text_visual_overlap": true,
+  "model_output_policy": "model_rgba_downscale_only",
+  "native_wide_surface_strips": true,
+  "sources": [
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/psd.js",
+      "relative": "node/psd.js",
+      "sha256": "ed79ac80ba8e3c482a8ac0f64fffd8002e036b2f3ded53a3904e2c3e1f603db6"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/psd_compare.js",
+      "relative": "node/psd_compare.js",
+      "sha256": "b903bfc83cbb1f2820a2f91445203d6f3df55019ffd44021b1825765d1e7027e"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/psd_result.html",
+      "relative": "node/psd_result.html",
+      "sha256": "81e92923084a1ae16ea8c7966638afb865ba67967451354e6230a8f358e3c0d3"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/psd_server.js",
+      "relative": "node/psd_server.js",
+      "sha256": "f40b310a1dead8a3e96c97566012d813ce7b3e6451c0d691407c65d02f1a0dcb"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/model_config.js",
+      "relative": "node/model_config.js",
+      "sha256": "b07fe485a9c6964dccacac8897644fc6efdd38df7d1cf0a1a40bcc9b9852ab43"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/config.example.json",
+      "relative": "config.example.json",
+      "sha256": "1846f2290637575087fa585e4c9beabc26debb9fea241f363a372ddf67180256"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_recursive_test.js",
+      "relative": "node/bbox_recursive_test.js",
+      "sha256": "262a3165ddbd831143ebb82e71117e69774538b52b6a546c4ce635a740cecf27"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_recursive_core.js",
+      "relative": "node/bbox_recursive_core.js",
+      "sha256": "efe3f67a580b6b6f57ac3533a09e150370f13656c0f56513156b7f0ebb48608f"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_recursive_previews.js",
+      "relative": "node/bbox_recursive_previews.js",
+      "sha256": "de2b63504fcfb690be7f8b695251328341b62722f8827fefaabfa20710378f1f"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_image_requests.js",
+      "relative": "node/bbox_image_requests.js",
+      "sha256": "84e65a853fcd43cc0d3e391c42995257a29240ed3230b031f263b942452fd341"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_atlas_pixels.js",
+      "relative": "node/bbox_atlas_pixels.js",
+      "sha256": "75b1451403e100619b782bc35dd65add8dd2b83071cde369cba569e289285084"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_two_loop_test.js",
+      "relative": "node/bbox_two_loop_test.js",
+      "sha256": "8d2e1996732255a68c71dd59edb8eeea1b1de21c46ba75a343217e206c6f9432"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/rear_coupled_composites.js",
+      "relative": "node/rear_coupled_composites.js",
+      "sha256": "5126ee49384b6842d154769e661739b649b4e1446ed00e6b431208cced945f6f"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/layerforge.js",
+      "relative": "node/layerforge.js",
+      "sha256": "e159a3476e051bed6571c5c38efa25cf0245bde883aba13e3959f824f2f8a5d0"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/web/run-timing.js",
+      "relative": "web/run-timing.js",
+      "sha256": "b0693851675f8f3e3500b8363929050f8ef46113facd206a6675593d575e5368"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_surface_geometry.js",
+      "relative": "node/bbox_surface_geometry.js",
+      "sha256": "7ff06e0685ea9e19efce2c9ff2c4918c8400d024a57ab140814a28dc235c82e7"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_model_rgba.js",
+      "relative": "node/bbox_model_rgba.js",
+      "sha256": "cd2d52ad62fb579c9eba1de408e9f59942aec8ba71a3f99616c064d8da3e2351"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_wide_surface.js",
+      "relative": "node/bbox_wide_surface.js",
+      "sha256": "cd520f056323e332be2ee251c253dd90da4dbc2d7b92f15e2ba08afbb6ce4f58"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_text_atlas.js",
+      "relative": "node/bbox_text_atlas.js",
+      "sha256": "7d941e46440469cbf2ca568af06b840b912d8746ba847be4c76496da4d7285c3"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_visual_atlas.js",
+      "relative": "node/bbox_visual_atlas.js",
+      "sha256": "9c482e2bc8b1f96653cd3d6b5e60d3d712aa95c3c76c82268b1996762ccdab24"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_detection_cache.js",
+      "relative": "node/bbox_detection_cache.js",
+      "sha256": "aed842ff34ae6e99d58559c65b25464603af656c365f61c8034bccd636b8ddf1"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_visual_window.js",
+      "relative": "node/bbox_visual_window.js",
+      "sha256": "4ed11d37636ee6c90c412d8dec0d94be3b94853664ac9fa82de4ddd90270f72b"
+    },
+    {
+      "file": "/Users/admin/code/github/screenshot-to-psd/node/bbox_combined_detection.js",
+      "relative": "node/bbox_combined_detection.js",
+      "sha256": "b1d0a9e6824bc6dc198672e36c132604df270a49d45012bceecabda64f6b85b0"
+    }
+  ]
+}

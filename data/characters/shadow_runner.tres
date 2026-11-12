@@ -5,6 +5,9 @@
 [ext_resource type="Script" uid="uid://div31yfuhwap1" path="res://scripts/characters/passive_data.gd" id="3_passive"]
 [ext_resource type="Resource" path="res://data/characters/mobility/third_jump.tres" id="4_mobility"]
 
+[ext_resource type="Texture2D" path="res://art/generated/ui/character_setup/v02/shadow_runner_portrait.png" id="5_portrait"]
+[ext_resource type="Texture2D" path="res://art/generated/ui/character_setup/v02/shadow_runner.png" id="6_preparation"]
+
 [sub_resource type="Resource" id="ActiveSkill_moon_slash"]
 script = ExtResource("2_skill")
 
@@ -17,3 +20,5 @@ description = "月蚀破敌，踏影凌空。忍术提供短时保护，二段�
 active_skill = SubResource("ActiveSkill_moon_slash")
 passive = SubResource("Passive_triple_jump")
 mobility = ExtResource("4_mobility")
+portrait_texture = ExtResource("5_portrait")
+preparation_texture = ExtResource("6_preparation")

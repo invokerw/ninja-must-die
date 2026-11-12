@@ -1,0 +1,272 @@
+{
+  "date": "2026-11-12",
+  "concept_review": {
+    "status": "approved",
+    "feedback": "可以实现"
+  },
+  "status": "runtime_ready",
+  "runtime_ready": true,
+  "regressions": [
+    {
+      "suite": "rope_landing",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.09,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-rope_landing.log"
+    },
+    {
+      "suite": "rope_pickups",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 2.57,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-rope_pickups.log"
+    },
+    {
+      "suite": "level_route",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 33.25,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-level_route.log"
+    },
+    {
+      "suite": "mobility",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-mobility.log"
+    },
+    {
+      "suite": "combat",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-combat.log"
+    },
+    {
+      "suite": "projectiles",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.84,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-projectiles.log"
+    },
+    {
+      "suite": "boss",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 35.97,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-boss.log"
+    },
+    {
+      "suite": "feedback",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 2.84,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-feedback.log"
+    },
+    {
+      "suite": "weapons",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 20.41,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-weapons.log"
+    },
+    {
+      "suite": "save",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.13,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-save.log"
+    },
+    {
+      "suite": "stars_records",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.02,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-stars_records.log"
+    },
+    {
+      "suite": "reward_transactions",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-reward_transactions.log"
+    },
+    {
+      "suite": "economy",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-economy.log"
+    },
+    {
+      "suite": "ui_components",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.12,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-ui_components.log"
+    },
+    {
+      "suite": "touch_controls",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 3.71,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-touch_controls.log"
+    },
+    {
+      "suite": "player_art",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.73,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-player_art.log"
+    },
+    {
+      "suite": "ui_art_preview",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 3.71,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-ui_art_preview.log"
+    },
+    {
+      "suite": "level_select",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.02,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-level_select.log"
+    },
+    {
+      "suite": "wind_bamboo",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 47.37,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-wind_bamboo.log"
+    },
+    {
+      "suite": "profile_write",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.36,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-profile_write.log"
+    },
+    {
+      "suite": "profile_read",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.35,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-profile_read.log"
+    },
+    {
+      "suite": "ci_export",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.19,
+      "log": "art/validation/ui/character_setup/v02/logs/ninja-character-full-ci_export.log"
+    }
+  ],
+  "graphical_ui": {
+    "exit_code": 0,
+    "pass": "UI_COMPONENTS_PASS",
+    "error_scan": "none",
+    "log": "art/validation/ui/character_setup/v02/logs/ninja-character-ui-final2.log"
+  },
+  "assistant_visual_check": {
+    "screenshots_checked": 19,
+    "resolutions": [
+      "1280x720",
+      "1600x720"
+    ],
+    "simulated_safe_rect": [
+      60,
+      24,
+      1480,
+      648
+    ],
+    "result": "No obvious clipped interactive actions or portrait/status overlaps; long weapon/record text intentionally scrolls."
+  },
+  "screenshots": [
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_locked.png",
+      "sha256": "74a8f14a016ff236d19e11948216b2c669c883a9c8d5ed02fb3e234bfc0e8427"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_pending.png",
+      "sha256": "f55095f1b711f22cf8185f133d9564464d4e749d56e503db955af890f9180791"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_preview.png",
+      "sha256": "8d466e121e5683268d48bcf6ef7002145561ca5fd6d2150178a2ed9772e9a5fe"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_readonly.png",
+      "sha256": "7b5fbf00d90f3dc38be3877cc0b9bdc83c102971fd4ebccc605fc93020346632"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_safe.png",
+      "sha256": "e24456967b512cbac2730e3afa4e29cd8789214c14354fe45ec4751618aab511"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_save_failure.png",
+      "sha256": "249c79c04d4df3d302e2aa6f60b2c667767c60d3baff79bb1d4fdfe419b896f7"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_selected.png",
+      "sha256": "1f4ed86fbfbca318cd2e321482f98b11fd8d83b81ac9b0c67be82613e8674913"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_settings.png",
+      "sha256": "971f78883c9c46ecc6cae06d3172c23fca30868777117c67c85d417a5ff0355f"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_character_wide.png",
+      "sha256": "542e8e01f2f63648dabe8e37c3675a8ce3f0cd43cbb58796cdc6b54371ba2127"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_equipped.png",
+      "sha256": "c3f10b0e7a705368b5b1ec729e7a4028a42975cdd8da2594d7f531c4f6f90b97"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_initial.png",
+      "sha256": "9756c1ae62fe38207e952ab088558a4e02b00a77465e0baf09a3898634eb84a9"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_preview.png",
+      "sha256": "757f889b4437ecd2a8cb604512ee11ab202a195a7ffd3b04006f8aafe129ca91"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_readonly.png",
+      "sha256": "c61ef906fdf088c8a56f00d64b87a1632c8cab08110188db15b6e5102ed47f03"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_records.png",
+      "sha256": "e3502928df568949e01eded2cbfe849b75092b511fe8acbeab68f3c29960803a"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_safe.png",
+      "sha256": "087b0e9ba2ad2267cc5a41ad5c981d8b9b246d83a0c4e012ba093048deb9d321"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_save_failure.png",
+      "sha256": "16728429fc6ea2adfa7a74514f39f349643ed002fc9e6cf670f0dec201b651ed"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_scrolls.png",
+      "sha256": "6469ad059d62782dd4f28ec3f8d63675166384232c1a0b335547447f55b0c882"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_settings.png",
+      "sha256": "ba51bf4e83776a4144ad4365d001451bdefb540309375b40c680e304a1bfb597"
+    },
+    {
+      "file": "art/validation/ui/character_setup/v02/runtime/preparation_supplies.png",
+      "sha256": "2776f19140b5a0475b070cb9be00976cd9bf278e5d43798ece8a44164bc8b8e5"
+    }
+  ],
+  "user_runtime_visual_review": {
+    "status": "approved",
+    "reviewer": "user",
+    "date": "2026-11-12",
+    "feedback": "验收通过"
+  },
+  "android_review": "pending",
+  "remote_ci": "not_run",
+  "import_note": "Final editor import produced one EditorSettings shutdown error; runtime regressions and graphical tests pass without ERROR lines. Import is not claimed error-free."
+}

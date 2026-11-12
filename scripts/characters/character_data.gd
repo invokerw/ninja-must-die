@@ -8,6 +8,9 @@ extends Resource
 @export var passive: PassiveData
 @export var mobility: MobilityData
 @export var unlock_id: StringName = &"starter"
+@export var unlock_description: String = "默认拥有"
+@export var portrait_texture: Texture2D
+@export var preparation_texture: Texture2D
 @export var story_name: String = "影刃"
 @export var visual_tint: Color = Color.WHITE
 @export var default_weapon_id: StringName = &"crescent_wheel"

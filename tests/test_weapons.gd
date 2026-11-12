@@ -12,6 +12,7 @@ func _run() -> void:
 	var profile_scope := TestProfileScope.new("weapons")
 	PlayerProfile._shared = PlayerProfile.new(PROFILE_PATH)
 	_test_data_and_profile()
+	await _test_character_selection()
 	await _test_setup_and_retry()
 	await _test_weapon_damage()
 	await _test_impact_time()
@@ -77,8 +78,64 @@ func _test_data_and_profile() -> void:
 	file.close()
 	var future := PlayerProfile.new(future_path)
 	future.load_profile()
-	_check(future.try_equip(CHARACTER, &"star_lance") and not future.save_profile() and FileAccess.get_file_as_string(future_path) == future_text, "An unsupported newer save must remain intact while equipment still works in memory")
+	_check(not future.try_equip(CHARACTER, &"star_lance") and not future.try_select_character(&"wind_scout") and not future.save_profile() and FileAccess.get_file_as_string(future_path) == future_text, "Newer archives reject configuration mutations and preserve their original bytes")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(future_path))
+
+func _test_character_selection() -> void:
+	var scope := TestProfileScope.new("character-selection")
+	var profile := scope.profile
+	profile.save_profile()
+	var wind := CharacterRegistry.get_character(&"wind_scout")
+	_check(profile.owns_character(&"shadow_runner") and not profile.owns_character(&"wind_scout"), "A fresh archive owns only the starter character")
+	_check(not profile.try_select_character(&"wind_scout") and not profile.try_equip(wind, &"star_lance") and not profile.try_select_character(&"missing"), "Locked and unknown characters cannot be selected or equipped through the role service")
+	var formal := RunResult.calculate(98.0, 60.0, 0, 50, 50, 1, 12)
+	formal.capture_context(LevelCatalog.FOG_RIDGE_ID, &"full", "character-unlock", profile.resolve())
+	formal.apply_formal_rules()
+	formal.completed = true
+	_check(profile.record_completion(LevelCatalog.FOG_RIDGE_ID, &"full", formal) and profile.owns_character(&"wind_scout"), "A real first-clear transaction grants Wind Scout ownership")
+	_check(not profile.owns_character(&"thunder_guard") and profile.character_lock_reason(&"thunder_guard").contains("尚未开放"), "The unavailable third level must not unlock Thunder Guard")
+	_check(profile.try_select_character(&"wind_scout") and profile.try_equip(wind, &"star_lance") and profile.save_profile(), "An owned character and its own weapon choice can be saved together")
+	var captured := profile.resolve()
+	var restored := PlayerProfile.new(profile.save_path)
+	restored.load_profile()
+	_check(restored.selected_character_id == &"wind_scout" and restored.resolve().weapon.weapon_id == &"star_lance" and restored.get_equipped_weapon(CHARACTER).weapon_id == &"crescent_wheel", "Reload restores the character and independent weapon slots")
+	profile.try_select_character(&"shadow_runner")
+	_check(captured.character.character_id == &"wind_scout" and captured.weapon.weapon_id == &"star_lance", "Selection changes cannot mutate an already captured run")
+	profile.save_profile()
+	var original_path := profile.save_path
+	profile.save_path = "res://.godot/missing-character-profile/save.json"
+	_check(profile.try_select_character(&"wind_scout") and not profile.save_profile() and profile.selected_character_id == &"wind_scout", "Failed storage retains the selected character in memory")
+	profile.save_path = original_path
+	_check(profile.save_profile() and not profile.save_pending, "Retry writes the pending selection without recording another completion")
+	profile.save_path = "res://.godot/missing-character-profile/save.json"
+	formal.run_id = "character-pending-reward"
+	_check(not profile.record_completion(LevelCatalog.FOG_RIDGE_ID, &"full", formal), "Create an actual pending completion transaction")
+	var pending := profile.pending_transaction
+	_check(not profile.try_select_character(&"shadow_runner") and not profile.try_equip(wind, &"crescent_wheel") and profile.pending_transaction == pending, "Role and equipment changes must not overwrite an unsaved completion transaction")
+	profile.save_path = original_path
+	profile.save_profile()
+	profile.selected_character_id = &"thunder_guard"
+	profile.save_profile()
+	restored.load_profile()
+	_check(restored.selected_character_id == &"shadow_runner", "A known but unowned saved selection falls back to the starter")
+	profile.selected_character_id = &"wind_scout"
+	var main = load("res://scenes/practice.tscn").instantiate()
+	root.add_child(main)
+	current_scene = main
+	_check(main.run_loadout.character.character_id == &"wind_scout", "Direct F6 scene startup honors the saved selected character")
+	_check(not profile.try_select_character(&"shadow_runner") and not profile.try_equip(wind, &"crescent_wheel"), "Live and paused runs reject role and weapon changes at the service boundary")
+	main._toggle_pause()
+	_check(not profile.try_select_character(&"shadow_runner"), "Pause cannot change the selected role")
+	main.combat.try_skill()
+	await _frames(8)
+	main._restart_run()
+	await _frames(4)
+	main = current_scene
+	_check(main.run_loadout.character.character_id == &"wind_scout" and main.run_loadout.weapon.weapon_id == &"star_lance", "Retry preserves the same character and weapon snapshot")
+	_check(main.combat.skill_casts == 0 and main.combat.skill_emissions == 0 and main.combat.skill_cooldown_remaining == 0.0 and main.combat.friendly_root.get_child_count() == 0, "Retry recreates clean ninjutsu timers and removes old flying feathers")
+	main.free()
+	paused = false
+	scope.close()
 
 func _test_setup_and_retry() -> void:
 	var setup: Control = load("res://scenes/ui/character_setup.tscn").instantiate()

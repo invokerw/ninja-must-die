@@ -1,0 +1,8 @@
+{
+  "source": "art/concepts/ui/character_setup/v02.png",
+  "width": 1672,
+  "height": 941,
+  "status": "failed",
+  "message": "400 Invalid size '1672x941'. Width and height must both be divisible by 16.",
+  "next_attempt": "derived source crop 1664x928; original kept unchanged"
+}

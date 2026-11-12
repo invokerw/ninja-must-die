@@ -121,7 +121,10 @@ func _test_full_route(with_actions: bool, with_combat: bool = false, with_boss: 
 	_check(player.crystals == world.pickup_positions.size(), "A legal route must collect all crystals without releasing the rope")
 	_check(_sections == [0, 1, 2, 3], "Section notifications must occur in order exactly once")
 	_check(main.progress_label.text.contains("100%"), "Finish HUD must reach 100%")
-	_check(main._get_rank() == "S", "A clean 60 second run must qualify for S")
+	if with_boss:
+		_check(main.run_result.stars == 3 and main.run_result.flawless and main.run_result.score == 3000, "A clean full-collection formal run must earn three stars and its independent flawless seal")
+	else:
+		_check(main._get_rank() == "S", "A clean 60 second practice run must qualify for S")
 	if not with_actions and not with_combat:
 		if with_boss:
 			_check(main._elapsed_time >= 85.0 and main._elapsed_time <= 105.0, "The route plus three-channel boss fight must meet the new duration target")

@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-12",
+  "reviewer": "assistant",
+  "status": "selected_assets_checked",
+  "runtime_user_acceptance": "pending",
+  "android_acceptance": "pending",
+  "scope": "Three portrait cutouts and featured scout: original crop -> raw model crop -> placed layer -> real menu; Shadow Runner native -> 224px menu preview.",
+  "findings": [
+    "Scout facial profile, scarf folds and hair strands are redrawn by the model; no claim of source pixel identity.",
+    "Portrait rings and alpha extents fit the native cards. Thunder Guard retains intentional grayscale lock artwork.",
+    "Featured scout alpha cutout retains scarf and hair; no opaque host panel found in selected texture.",
+    "Shadow Runner source has sparse blue translucent fringe. At the actual 224px menu preview on ink background, no conspicuous blue block is visible; retain original alpha and final user review.",
+    "Only selected artwork enters runtime. Remaining extracted surfaces and text are retained in PSD for provenance and are not used by native controls."
+  ]
+}

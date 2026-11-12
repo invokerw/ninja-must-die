@@ -60,7 +60,7 @@ func _enter_tree() -> void:
 	if run_loadout == null:
 		run_loadout = RunNavigation.take_pending(scene_file_path)
 	if run_loadout == null:
-		run_loadout = PlayerProfile.current().resolve(greybox_character if greybox_character != null else ($Player as PlayerController).character)
+		run_loadout = PlayerProfile.current().resolve(greybox_character)
 	else:
 		run_loadout = run_loadout.copy()
 	$Player.run_loadout = run_loadout
@@ -169,7 +169,7 @@ func _ability_description_text() -> String:
 	var character := player.character
 	var active := character.active_skill
 	var lines := PackedStringArray()
-	lines.append("K  %s：前方 %d 点伤害" % [active.display_name, active.damage])
+	lines.append("K  %s：%s" % [active.display_name, active.description()])
 	lines.append("冷却 %.0f 秒 · 释放后保护 %.0f 秒" % [active.cooldown_seconds, active.invulnerability_seconds])
 	lines.append("身法  %s：%s" % [character.mobility.display_name, character.mobility.description])
 	if run_loadout != null and run_loadout.weapon != null and run_loadout.weapon.skill != null:

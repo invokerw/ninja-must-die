@@ -1,0 +1,1620 @@
+{
+  "status": "passed",
+  "background_only": {
+    "background_only": true,
+    "reason": "Only the night landscape background remains; no distinct UI elements, characters, or movable props survive.",
+    "remaining_elements": []
+  },
+  "canvas": [
+    1664,
+    928
+  ],
+  "visual_rounds": 6,
+  "text_layers": 38,
+  "layer_count": 98,
+  "psd_layer_rgba_exact": true,
+  "psd_composite_exact": true,
+  "loop_inputs_byte_identical": true,
+  "model_responses": [
+    {
+      "index": 2,
+      "next_input_exact_alpha_holes": true,
+      "surviving_text_free_rgba_exact": true
+    },
+    {
+      "index": 3,
+      "next_input_exact_alpha_holes": true,
+      "surviving_text_free_rgba_exact": true
+    },
+    {
+      "index": 4,
+      "next_input_exact_alpha_holes": true,
+      "surviving_text_free_rgba_exact": true
+    },
+    {
+      "index": 5,
+      "next_input_exact_alpha_holes": true,
+      "surviving_text_free_rgba_exact": true
+    },
+    {
+      "index": 6,
+      "next_input_exact_alpha_holes": true,
+      "surviving_text_free_rgba_exact": true
+    },
+    {
+      "index": 7,
+      "next_input_exact_alpha_holes": true,
+      "surviving_text_free_rgba_exact": true
+    }
+  ],
+  "mean_absolute_rgb_difference": 22.419197655904618,
+  "layers": [
+    {
+      "id": "background_final",
+      "bbox": [
+        0,
+        0,
+        1664,
+        928
+      ],
+      "width": 1664,
+      "height": 928,
+      "transparent_pixels": 0,
+      "partial_pixels": 0,
+      "minimum_alpha": 255,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_07_roi_5_footer_middle_rail",
+      "depth": 7,
+      "bbox": [
+        468,
+        786,
+        727,
+        32
+      ],
+      "width": 727,
+      "height": 32,
+      "transparent_pixels": 9620,
+      "partial_pixels": 12198,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_06_roi_5_footer_divider_right",
+      "depth": 6,
+      "bbox": [
+        1071,
+        805,
+        26,
+        85
+      ],
+      "width": 26,
+      "height": 85,
+      "transparent_pixels": 1188,
+      "partial_pixels": 882,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_06_roi_5_footer_divider_center",
+      "depth": 6,
+      "bbox": [
+        837,
+        805,
+        25,
+        85
+      ],
+      "width": 25,
+      "height": 85,
+      "transparent_pixels": 1176,
+      "partial_pixels": 805,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_06_roi_5_footer_divider_left",
+      "depth": 6,
+      "bbox": [
+        605,
+        805,
+        26,
+        85
+      ],
+      "width": 26,
+      "height": 85,
+      "transparent_pixels": 1191,
+      "partial_pixels": 871,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_06_roi_5_footer_top_rail",
+      "depth": 6,
+      "bbox": [
+        468,
+        749,
+        727,
+        33
+      ],
+      "width": 727,
+      "height": 33,
+      "transparent_pixels": 8976,
+      "partial_pixels": 13581,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_05_overview_equipment_panel",
+      "depth": 5,
+      "bbox": [
+        1060,
+        122,
+        594,
+        632
+      ],
+      "width": 594,
+      "height": 632,
+      "transparent_pixels": 15778,
+      "partial_pixels": 357718,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_05_overview_character_detail_panel",
+      "depth": 5,
+      "bbox": [
+        381,
+        122,
+        679,
+        633
+      ],
+      "width": 679,
+      "height": 633,
+      "transparent_pixels": 16416,
+      "partial_pixels": 412093,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_05_overview_roster_panel",
+      "depth": 5,
+      "bbox": [
+        15,
+        122,
+        359,
+        632
+      ],
+      "width": 359,
+      "height": 632,
+      "transparent_pixels": 15237,
+      "partial_pixels": 210490,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_04_overview_featured_scout",
+      "depth": 4,
+      "bbox": [
+        391,
+        110,
+        551,
+        446
+      ],
+      "width": 551,
+      "height": 446,
+      "transparent_pixels": 142271,
+      "partial_pixels": 101802,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_04_roi_4_locked_card",
+      "depth": 4,
+      "bbox": [
+        30,
+        530,
+        332,
+        176
+      ],
+      "width": 332,
+      "height": 176,
+      "transparent_pixels": 7142,
+      "partial_pixels": 50713,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_04_roi_3_spear_card",
+      "depth": 4,
+      "bbox": [
+        1365,
+        223,
+        262,
+        215
+      ],
+      "width": 262,
+      "height": 215,
+      "transparent_pixels": 6769,
+      "partial_pixels": 49129,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_04_roi_3_selected_card",
+      "depth": 4,
+      "bbox": [
+        1082,
+        217,
+        281,
+        229
+      ],
+      "width": 281,
+      "height": 229,
+      "transparent_pixels": 6224,
+      "partial_pixels": 58125,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_04_roi_1_lower_card",
+      "depth": 4,
+      "bbox": [
+        23,
+        331,
+        347,
+        199
+      ],
+      "width": 347,
+      "height": 199,
+      "transparent_pixels": 6591,
+      "partial_pixels": 62462,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_04_roi_1_upper_card",
+      "depth": 4,
+      "bbox": [
+        30,
+        145,
+        332,
+        181
+      ],
+      "width": 332,
+      "height": 181,
+      "transparent_pixels": 7133,
+      "partial_pixels": 52725,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_overview_moon_skill_bar",
+      "depth": 3,
+      "bbox": [
+        431,
+        607,
+        620,
+        67
+      ],
+      "width": 620,
+      "height": 67,
+      "transparent_pixels": 7223,
+      "partial_pixels": 34106,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_overview_movement_bar",
+      "depth": 3,
+      "bbox": [
+        431,
+        540,
+        620,
+        67
+      ],
+      "width": 620,
+      "height": 67,
+      "transparent_pixels": 7681,
+      "partial_pixels": 33362,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_4_unlock_backplate",
+      "depth": 3,
+      "bbox": [
+        177,
+        620,
+        179,
+        56
+      ],
+      "width": 179,
+      "height": 56,
+      "transparent_pixels": 3020,
+      "partial_pixels": 6655,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_3_owned_backplate",
+      "depth": 3,
+      "bbox": [
+        1426,
+        375,
+        147,
+        50
+      ],
+      "width": 147,
+      "height": 50,
+      "transparent_pixels": 2699,
+      "partial_pixels": 4391,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_3_equipped_backplate",
+      "depth": 3,
+      "bbox": [
+        1151,
+        375,
+        149,
+        50
+      ],
+      "width": 149,
+      "height": 50,
+      "transparent_pixels": 2717,
+      "partial_pixels": 4472,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_3_tab_divider",
+      "depth": 3,
+      "bbox": [
+        1078,
+        192,
+        556,
+        15
+      ],
+      "width": 556,
+      "height": 15,
+      "transparent_pixels": 6708,
+      "partial_pixels": 1231,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_3_settings_backplate",
+      "depth": 3,
+      "bbox": [
+        1520,
+        11,
+        138,
+        61
+      ],
+      "width": 138,
+      "height": 61,
+      "transparent_pixels": 2902,
+      "partial_pixels": 5277,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_3_coin_backplate",
+      "depth": 3,
+      "bbox": [
+        1289,
+        11,
+        198,
+        61
+      ],
+      "width": 198,
+      "height": 61,
+      "transparent_pixels": 3679,
+      "partial_pixels": 8029,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_2_preview_backplate",
+      "depth": 3,
+      "bbox": [
+        541,
+        146,
+        142,
+        53
+      ],
+      "width": 142,
+      "height": 53,
+      "transparent_pixels": 2772,
+      "partial_pixels": 4499,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_1_lower_preview_plate",
+      "depth": 3,
+      "bbox": [
+        196,
+        411,
+        148,
+        52
+      ],
+      "width": 148,
+      "height": 52,
+      "transparent_pixels": 2707,
+      "partial_pixels": 4723,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_03_roi_1_upper_status_plate",
+      "depth": 3,
+      "bbox": [
+        198,
+        240,
+        146,
+        53
+      ],
+      "width": 146,
+      "height": 53,
+      "transparent_pixels": 2711,
+      "partial_pixels": 4764,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_overview_footer_divider",
+      "depth": 2,
+      "bbox": [
+        15,
+        775,
+        1634,
+        17
+      ],
+      "width": 1634,
+      "height": 17,
+      "transparent_pixels": 22455,
+      "partial_pixels": 5323,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_overview_header_divider",
+      "depth": 2,
+      "bbox": [
+        17,
+        87,
+        1647,
+        10
+      ],
+      "width": 1647,
+      "height": 10,
+      "transparent_pixels": 9914,
+      "partial_pixels": 6226,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_overview_deploy_button",
+      "depth": 2,
+      "bbox": [
+        461,
+        674,
+        298,
+        67
+      ],
+      "width": 298,
+      "height": 67,
+      "transparent_pixels": 4184,
+      "partial_pixels": 15446,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_6_stage_button",
+      "depth": 2,
+      "bbox": [
+        1322,
+        801,
+        337,
+        91
+      ],
+      "width": 337,
+      "height": 91,
+      "transparent_pixels": 6386,
+      "partial_pixels": 23648,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_6_practice_button",
+      "depth": 2,
+      "bbox": [
+        1090,
+        811,
+        221,
+        72
+      ],
+      "width": 221,
+      "height": 72,
+      "transparent_pixels": 3963,
+      "partial_pixels": 11503,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_6_supply_bag_icon",
+      "depth": 2,
+      "bbox": [
+        1405,
+        654,
+        48,
+        55
+      ],
+      "width": 48,
+      "height": 55,
+      "transparent_pixels": 1485,
+      "partial_pixels": 1110,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_6_equipment_vertical_rule",
+      "depth": 2,
+      "bbox": [
+        1351,
+        654,
+        16,
+        53
+      ],
+      "width": 16,
+      "height": 53,
+      "transparent_pixels": 691,
+      "partial_pixels": 157,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_6_scroll_icon",
+      "depth": 2,
+      "bbox": [
+        1103,
+        654,
+        51,
+        53
+      ],
+      "width": 51,
+      "height": 53,
+      "transparent_pixels": 1722,
+      "partial_pixels": 930,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_6_equipment_separator",
+      "depth": 2,
+      "bbox": [
+        1089,
+        631,
+        539,
+        16
+      ],
+      "width": 539,
+      "height": 16,
+      "transparent_pixels": 6585,
+      "partial_pixels": 2039,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_5_ninjutsu_divider",
+      "depth": 2,
+      "bbox": [
+        701,
+        618,
+        18,
+        40
+      ],
+      "width": 18,
+      "height": 40,
+      "transparent_pixels": 614,
+      "partial_pixels": 102,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_5_movement_divider",
+      "depth": 2,
+      "bbox": [
+        691,
+        555,
+        18,
+        39
+      ],
+      "width": 18,
+      "height": 39,
+      "transparent_pixels": 602,
+      "partial_pixels": 97,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_5_parkour_button",
+      "depth": 2,
+      "bbox": [
+        857,
+        811,
+        220,
+        71
+      ],
+      "width": 220,
+      "height": 71,
+      "transparent_pixels": 3952,
+      "partial_pixels": 11230,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_5_history_button",
+      "depth": 2,
+      "bbox": [
+        625,
+        811,
+        219,
+        71
+      ],
+      "width": 219,
+      "height": 71,
+      "transparent_pixels": 4112,
+      "partial_pixels": 10996,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_4_merchant_button",
+      "depth": 2,
+      "bbox": [
+        392,
+        811,
+        219,
+        71
+      ],
+      "width": 219,
+      "height": 71,
+      "transparent_pixels": 4100,
+      "partial_pixels": 11011,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_4_crescent_badge",
+      "depth": 2,
+      "bbox": [
+        404,
+        606,
+        79,
+        68
+      ],
+      "width": 79,
+      "height": 68,
+      "transparent_pixels": 2893,
+      "partial_pixels": 2439,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_4_movement_badge",
+      "depth": 2,
+      "bbox": [
+        404,
+        539,
+        79,
+        67
+      ],
+      "width": 79,
+      "height": 67,
+      "transparent_pixels": 3046,
+      "partial_pixels": 2208,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_4_lock_icon",
+      "depth": 2,
+      "bbox": [
+        191,
+        628,
+        32,
+        39
+      ],
+      "width": 32,
+      "height": 39,
+      "transparent_pixels": 783,
+      "partial_pixels": 391,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_4_locked_portrait",
+      "depth": 2,
+      "bbox": [
+        41,
+        542,
+        149,
+        153
+      ],
+      "width": 149,
+      "height": 153,
+      "transparent_pixels": 7706,
+      "partial_pixels": 14845,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_4_unlocked_check",
+      "depth": 2,
+      "bbox": [
+        205,
+        466,
+        34,
+        30
+      ],
+      "width": 34,
+      "height": 30,
+      "transparent_pixels": 826,
+      "partial_pixels": 181,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_details_divider",
+      "depth": 2,
+      "bbox": [
+        1089,
+        447,
+        539,
+        18
+      ],
+      "width": 539,
+      "height": 18,
+      "transparent_pixels": 7259,
+      "partial_pixels": 2443,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_owned_check",
+      "depth": 2,
+      "bbox": [
+        1449,
+        385,
+        34,
+        30
+      ],
+      "width": 34,
+      "height": 30,
+      "transparent_pixels": 831,
+      "partial_pixels": 172,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_equipped_check",
+      "depth": 2,
+      "bbox": [
+        1174,
+        385,
+        35,
+        30
+      ],
+      "width": 35,
+      "height": 30,
+      "transparent_pixels": 831,
+      "partial_pixels": 190,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_spear_weapon",
+      "depth": 2,
+      "bbox": [
+        1444,
+        234,
+        124,
+        115
+      ],
+      "width": 124,
+      "height": 115,
+      "transparent_pixels": 11737,
+      "partial_pixels": 2371,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_crescent_weapon",
+      "depth": 2,
+      "bbox": [
+        1167,
+        242,
+        117,
+        109
+      ],
+      "width": 117,
+      "height": 109,
+      "transparent_pixels": 8524,
+      "partial_pixels": 3934,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_selected_tab",
+      "depth": 2,
+      "bbox": [
+        1082,
+        144,
+        192,
+        65
+      ],
+      "width": 192,
+      "height": 65,
+      "transparent_pixels": 5329,
+      "partial_pixels": 6822,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_header_vertical_divider",
+      "depth": 2,
+      "bbox": [
+        1496,
+        20,
+        16,
+        43
+      ],
+      "width": 16,
+      "height": 43,
+      "transparent_pixels": 572,
+      "partial_pixels": 116,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_gear_icon",
+      "depth": 2,
+      "bbox": [
+        1541,
+        21,
+        40,
+        41
+      ],
+      "width": 40,
+      "height": 41,
+      "transparent_pixels": 1070,
+      "partial_pixels": 498,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_3_coin_icon",
+      "depth": 2,
+      "bbox": [
+        1311,
+        22,
+        40,
+        41
+      ],
+      "width": 40,
+      "height": 41,
+      "transparent_pixels": 993,
+      "partial_pixels": 570,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_2_preview_eye",
+      "depth": 2,
+      "bbox": [
+        558,
+        157,
+        41,
+        31
+      ],
+      "width": 41,
+      "height": 31,
+      "transparent_pixels": 854,
+      "partial_pixels": 382,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_1_lower_preview_eye",
+      "depth": 2,
+      "bbox": [
+        212,
+        421,
+        44,
+        33
+      ],
+      "width": 44,
+      "height": 33,
+      "transparent_pixels": 953,
+      "partial_pixels": 458,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_1_lower_portrait",
+      "depth": 2,
+      "bbox": [
+        44,
+        347,
+        153,
+        162
+      ],
+      "width": 153,
+      "height": 162,
+      "transparent_pixels": 8461,
+      "partial_pixels": 16068,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_1_upper_check",
+      "depth": 2,
+      "bbox": [
+        217,
+        250,
+        37,
+        33
+      ],
+      "width": 37,
+      "height": 33,
+      "transparent_pixels": 956,
+      "partial_pixels": 233,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_1_upper_portrait",
+      "depth": 2,
+      "bbox": [
+        45,
+        162,
+        147,
+        150
+      ],
+      "width": 147,
+      "height": 150,
+      "transparent_pixels": 7112,
+      "partial_pixels": 14688,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_02_roi_1_gold_flourish",
+      "depth": 2,
+      "bbox": [
+        0,
+        54,
+        204,
+        33
+      ],
+      "width": 204,
+      "height": 33,
+      "transparent_pixels": 4405,
+      "partial_pixels": 2320,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_stage_select",
+      "depth": 1,
+      "bbox": [
+        1422,
+        823,
+        154,
+        42
+      ],
+      "width": 154,
+      "height": 42,
+      "transparent_pixels": 1617,
+      "partial_pixels": 4571,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_boss_practice",
+      "depth": 1,
+      "bbox": [
+        1145,
+        830,
+        145,
+        32
+      ],
+      "width": 145,
+      "height": 32,
+      "transparent_pixels": 1445,
+      "partial_pixels": 3002,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_supply_status",
+      "depth": 1,
+      "bbox": [
+        1467,
+        666,
+        141,
+        29
+      ],
+      "width": 141,
+      "height": 29,
+      "transparent_pixels": 1245,
+      "partial_pixels": 2672,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_scroll_status",
+      "depth": 1,
+      "bbox": [
+        1166,
+        666,
+        141,
+        29
+      ],
+      "width": 141,
+      "height": 29,
+      "transparent_pixels": 1093,
+      "partial_pixels": 2808,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_preview_equipment",
+      "depth": 1,
+      "bbox": [
+        1105,
+        595,
+        182,
+        25
+      ],
+      "width": 182,
+      "height": 25,
+      "transparent_pixels": 1112,
+      "partial_pixels": 3210,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_boss_damage",
+      "depth": 1,
+      "bbox": [
+        1105,
+        552,
+        196,
+        26
+      ],
+      "width": 196,
+      "height": 26,
+      "transparent_pixels": 797,
+      "partial_pixels": 3994,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_weapon_cooldown",
+      "depth": 1,
+      "bbox": [
+        1105,
+        518,
+        217,
+        25
+      ],
+      "width": 217,
+      "height": 25,
+      "transparent_pixels": 1557,
+      "partial_pixels": 3583,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_6_weapon_name",
+      "depth": 1,
+      "bbox": [
+        1103,
+        472,
+        139,
+        37
+      ],
+      "width": 139,
+      "height": 37,
+      "transparent_pixels": 1969,
+      "partial_pixels": 2974,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_5_parkour_caption",
+      "depth": 1,
+      "bbox": [
+        911,
+        830,
+        115,
+        33
+      ],
+      "width": 115,
+      "height": 33,
+      "transparent_pixels": 521,
+      "partial_pixels": 3059,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_5_history_caption",
+      "depth": 1,
+      "bbox": [
+        679,
+        830,
+        113,
+        33
+      ],
+      "width": 113,
+      "height": 33,
+      "transparent_pixels": 747,
+      "partial_pixels": 2762,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_5_preview_notice",
+      "depth": 1,
+      "bbox": [
+        790,
+        695,
+        191,
+        26
+      ],
+      "width": 191,
+      "height": 26,
+      "transparent_pixels": 1098,
+      "partial_pixels": 3545,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_5_deploy_caption",
+      "depth": 1,
+      "bbox": [
+        554,
+        691,
+        119,
+        33
+      ],
+      "width": 119,
+      "height": 33,
+      "transparent_pixels": 788,
+      "partial_pixels": 2880,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_5_ninjutsu_values",
+      "depth": 1,
+      "bbox": [
+        749,
+        625,
+        231,
+        26
+      ],
+      "width": 231,
+      "height": 26,
+      "transparent_pixels": 2382,
+      "partial_pixels": 3344,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_5_ninjutsu_label",
+      "depth": 1,
+      "bbox": [
+        491,
+        625,
+        195,
+        26
+      ],
+      "width": 195,
+      "height": 26,
+      "transparent_pixels": 1714,
+      "partial_pixels": 3088,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_5_movement_description",
+      "depth": 1,
+      "bbox": [
+        722,
+        562,
+        302,
+        25
+      ],
+      "width": 302,
+      "height": 25,
+      "transparent_pixels": 2359,
+      "partial_pixels": 4805,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_4_merchant_label",
+      "depth": 1,
+      "bbox": [
+        447,
+        831,
+        145,
+        32
+      ],
+      "width": 145,
+      "height": 32,
+      "transparent_pixels": 1269,
+      "partial_pixels": 3108,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_4_current_loadout",
+      "depth": 1,
+      "bbox": [
+        50,
+        831,
+        300,
+        32
+      ],
+      "width": 300,
+      "height": 32,
+      "transparent_pixels": 3091,
+      "partial_pixels": 6004,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_4_movement_skill",
+      "depth": 1,
+      "bbox": [
+        493,
+        561,
+        115,
+        26
+      ],
+      "width": 115,
+      "height": 26,
+      "transparent_pixels": 862,
+      "partial_pixels": 1967,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_4_unlock_requirement",
+      "depth": 1,
+      "bbox": [
+        223,
+        635,
+        117,
+        25
+      ],
+      "width": 117,
+      "height": 25,
+      "transparent_pixels": 908,
+      "partial_pixels": 1848,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_4_locked_character_name",
+      "depth": 1,
+      "bbox": [
+        199,
+        566,
+        73,
+        39
+      ],
+      "width": 73,
+      "height": 39,
+      "transparent_pixels": 656,
+      "partial_pixels": 2035,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_owned_label",
+      "depth": 1,
+      "bbox": [
+        1486,
+        393,
+        76,
+        24
+      ],
+      "width": 76,
+      "height": 24,
+      "transparent_pixels": 583,
+      "partial_pixels": 1128,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_piercing_spear_card",
+      "depth": 1,
+      "bbox": [
+        1463,
+        349,
+        76,
+        26
+      ],
+      "width": 76,
+      "height": 26,
+      "transparent_pixels": 372,
+      "partial_pixels": 1456,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_equipped_label",
+      "depth": 1,
+      "bbox": [
+        1213,
+        393,
+        77,
+        24
+      ],
+      "width": 77,
+      "height": 24,
+      "transparent_pixels": 570,
+      "partial_pixels": 1179,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_crescent_blade_card",
+      "depth": 1,
+      "bbox": [
+        1190,
+        349,
+        74,
+        26
+      ],
+      "width": 74,
+      "height": 26,
+      "transparent_pixels": 306,
+      "partial_pixels": 1485,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_records_tab",
+      "depth": 1,
+      "bbox": [
+        1550,
+        156,
+        52,
+        26
+      ],
+      "width": 52,
+      "height": 26,
+      "transparent_pixels": 221,
+      "partial_pixels": 1078,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_supplies_tab",
+      "depth": 1,
+      "bbox": [
+        1416,
+        156,
+        52,
+        26
+      ],
+      "width": 52,
+      "height": 26,
+      "transparent_pixels": 256,
+      "partial_pixels": 1049,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_secrets_tab",
+      "depth": 1,
+      "bbox": [
+        1280,
+        156,
+        52,
+        26
+      ],
+      "width": 52,
+      "height": 26,
+      "transparent_pixels": 251,
+      "partial_pixels": 1058,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_weapons_tab",
+      "depth": 1,
+      "bbox": [
+        1129,
+        156,
+        56,
+        26
+      ],
+      "width": 56,
+      "height": 26,
+      "transparent_pixels": 259,
+      "partial_pixels": 1168,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_settings_label",
+      "depth": 1,
+      "bbox": [
+        1575,
+        15,
+        54,
+        36
+      ],
+      "width": 54,
+      "height": 36,
+      "transparent_pixels": 620,
+      "partial_pixels": 1301,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_3_coin_count",
+      "depth": 1,
+      "bbox": [
+        1359,
+        15,
+        109,
+        36
+      ],
+      "width": 109,
+      "height": 36,
+      "transparent_pixels": 1199,
+      "partial_pixels": 2670,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_2_preview_label",
+      "depth": 1,
+      "bbox": [
+        602,
+        161,
+        58,
+        23
+      ],
+      "width": 58,
+      "height": 23,
+      "transparent_pixels": 180,
+      "partial_pixels": 1108,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_1_scout_subtitle",
+      "depth": 1,
+      "bbox": [
+        434,
+        230,
+        129,
+        30
+      ],
+      "width": 129,
+      "height": 30,
+      "transparent_pixels": 531,
+      "partial_pixels": 3303,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_1_lan_zhi_title",
+      "depth": 1,
+      "bbox": [
+        418,
+        157,
+        103,
+        54
+      ],
+      "width": 103,
+      "height": 54,
+      "transparent_pixels": 1788,
+      "partial_pixels": 3622,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_1_preview_status_text_group",
+      "depth": 1,
+      "bbox": [
+        242,
+        455,
+        75,
+        38
+      ],
+      "width": 75,
+      "height": 38,
+      "transparent_pixels": 961,
+      "partial_pixels": 1868,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_1_lan_zhi_name",
+      "depth": 1,
+      "bbox": [
+        212,
+        392,
+        65,
+        34
+      ],
+      "width": 65,
+      "height": 34,
+      "transparent_pixels": 597,
+      "partial_pixels": 1594,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_1_deployed_status",
+      "depth": 1,
+      "bbox": [
+        257,
+        275,
+        52,
+        19
+      ],
+      "width": 52,
+      "height": 19,
+      "transparent_pixels": 167,
+      "partial_pixels": 785,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_1_shadow_blade_name",
+      "depth": 1,
+      "bbox": [
+        209,
+        199,
+        67,
+        38
+      ],
+      "width": 67,
+      "height": 38,
+      "transparent_pixels": 830,
+      "partial_pixels": 1664,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    },
+    {
+      "id": "loop_01_roi_1_prep_title",
+      "depth": 1,
+      "bbox": [
+        54,
+        14,
+        212,
+        48
+      ],
+      "width": 212,
+      "height": 48,
+      "transparent_pixels": 3370,
+      "partial_pixels": 6533,
+      "minimum_alpha": 0,
+      "psd_rgba_exact": true
+    }
+  ]
+}

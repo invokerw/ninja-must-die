@@ -1,0 +1,206 @@
+{
+  "date": "2026-11-12",
+  "slice": "character_ninjutsu_v01",
+  "status": "runtime_ready",
+  "user_visual_review": "approved",
+  "android_review": "pending",
+  "remote_ci": "not_run",
+  "regressions": [
+    {
+      "suite": "rope_landing",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.74,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-rope_landing.log"
+    },
+    {
+      "suite": "rope_pickups",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 2.74,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-rope_pickups.log"
+    },
+    {
+      "suite": "level_route",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 31.04,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-level_route.log"
+    },
+    {
+      "suite": "mobility",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-mobility.log"
+    },
+    {
+      "suite": "combat",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.51,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-combat.log"
+    },
+    {
+      "suite": "projectiles",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.83,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-projectiles.log"
+    },
+    {
+      "suite": "boss",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 32.91,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-boss.log"
+    },
+    {
+      "suite": "feedback",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 2.68,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-feedback.log"
+    },
+    {
+      "suite": "weapons",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 19.28,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-weapons.log"
+    },
+    {
+      "suite": "save",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.13,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-save.log"
+    },
+    {
+      "suite": "stars_records",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.94,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-stars_records.log"
+    },
+    {
+      "suite": "reward_transactions",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.94,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-reward_transactions.log"
+    },
+    {
+      "suite": "economy",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-economy.log"
+    },
+    {
+      "suite": "ui_components",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-ui_components.log"
+    },
+    {
+      "suite": "touch_controls",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 3.45,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-touch_controls.log"
+    },
+    {
+      "suite": "player_art",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.74,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-player_art.log"
+    },
+    {
+      "suite": "ui_art_preview",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 3.73,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-ui_art_preview.log"
+    },
+    {
+      "suite": "level_select",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.03,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-level_select.log"
+    },
+    {
+      "suite": "wind_bamboo",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 45.39,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-wind_bamboo.log"
+    },
+    {
+      "suite": "profile_write",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.35,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-profile_write.log"
+    },
+    {
+      "suite": "profile_read",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.35,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-profile_read.log"
+    },
+    {
+      "suite": "ci_export",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.13,
+      "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-full-ci_export.log"
+    }
+  ],
+  "graphical_combat": {
+    "exit_code": 0,
+    "pass": "COMBAT_PASS",
+    "log": "art/validation/combat/ninjutsu_v01/logs/ninja-ninjutsu-graphical.log",
+    "screenshots_checked": 4,
+    "fixture_note": "Real boss practice scene with injected front-of-player boss position and 30-second weak-point duration for skill inspection; no production boss timing change."
+  },
+  "screenshots": [
+    {
+      "file": "art/validation/combat/ninjutsu_v01/runtime/thunder_guard_cast.png",
+      "sha256": "cafcd50749d102e24f13da131d17ef9b35b3a1db3217c90b9bc92af1de6a7b8a"
+    },
+    {
+      "file": "art/validation/combat/ninjutsu_v01/runtime/thunder_guard_pause.png",
+      "sha256": "d52c0d1bcba9c4e0722efbd5f015d6410e002dade6aaf94c5360e4402e13ba3b"
+    },
+    {
+      "file": "art/validation/combat/ninjutsu_v01/runtime/wind_scout_cast.png",
+      "sha256": "41f495de9d92cf0c1358275fd3f60eb0d78794044b902ecbe486446cae191206"
+    },
+    {
+      "file": "art/validation/combat/ninjutsu_v01/runtime/wind_scout_pause.png",
+      "sha256": "919c1563310c893ce4b5bec6df93cc94c3ddca4d8c5b56e5938ee566ad7e9938"
+    }
+  ],
+  "import_note": "Import completed with an existing EditorSettings shutdown error. Runtime regression/graphical logs have no ERROR lines; import is not claimed error-free.",
+  "runtime_ready": true,
+  "user_acceptance": {
+    "status": "approved",
+    "date": "2026-11-12",
+    "reviewer": "user",
+    "feedback": "验收完成",
+    "scope": "风羽阵 / 雷裂斩首版功能、视觉与手感；Android 实机及其他平台检查不在本次确认范围"
+  },
+  "pre_tag_verification": {
+    "version": "0.17.0",
+    "tag": "v0.17.0",
+    "date": "2026-11-12",
+    "result": "passed",
+    "scope": "19 serial GDScript suites, isolated cross-process profile write/read, 5 Python export checks",
+    "remote_ci": "not_run"
+  }
+}

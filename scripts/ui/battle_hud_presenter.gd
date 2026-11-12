@@ -36,6 +36,7 @@ static func snapshot(player: PlayerController, combat: RunnerCombat, level: Rope
 	var protection := maxf(player.immunity_remaining, maxf(player.skill_immunity_remaining, player.mobility.invulnerability_remaining))
 	return {
 		"character_name": player.character.display_name, "character_tint": player.character.visual_tint,
+		"character_portrait": player.character.portrait_texture,
 		"protection": "保护 %.1fs" % protection if protection > 0.00001 else "",
 		"health": player.health, "max_health": player.get_max_health(),
 		"health_text": "%d / %d" % [player.health, player.get_max_health()],

@@ -14,6 +14,7 @@ func _run() -> void:
 	await _test_read_only_settings()
 	await _test_tabs_and_cards()
 	await _test_preparation()
+	await _test_character_preparation()
 	await _test_run_panels()
 	await _test_battle_hud()
 	_test_design_contract()
@@ -201,18 +202,76 @@ func _test_preparation() -> void:
 	await _frames()
 	scope.close()
 
+func _test_character_preparation() -> void:
+	var scope := TestProfileScope.new("ui-character-selection")
+	var profile := scope.profile
+	profile.save_profile()
+	var setup = load(RunNavigation.SETUP_SCENE).instantiate()
+	root.add_child(setup)
+	current_scene = setup
+	await _frames()
+	await _tap(setup.character_buttons[&"wind_scout"])
+	_check(setup.character.character_id == &"wind_scout" and profile.selected_character_id == &"shadow_runner" and setup.select_character_button.disabled and setup.character_hint.text.contains("1-1"), "Locked cards remain inspectable while confirmation and equipment are blocked")
+	setup._confirm_character()
+	setup._select_weapon(PlayerProfile.WEAPONS[&"star_lance"])
+	setup._equip_selected()
+	_check(profile.selected_character_id == &"shadow_runner" and setup.equip_button.disabled and profile.get_equipped_weapon(CharacterRegistry.get_character(&"wind_scout")).weapon_id == &"crescent_wheel", "Direct UI actions cannot bypass locked role checks")
+	_check(_seed_formal_record(profile), "Unlock the scout through a real first clear")
+	setup._refresh_profile()
+	_check(not setup.select_character_button.disabled and setup.character_buttons[&"shadow_runner"].state_chip.text == "已出战" and setup.character_buttons[&"wind_scout"].state_chip.status == &"preview", "Unlocked preview remains distinct from the existing active role")
+	await _tap(setup.equip_button)
+	_check(profile.get_equipped_weapon(CharacterRegistry.get_character(&"wind_scout")).weapon_id == &"star_lance" and profile.resolve().weapon.weapon_id == &"crescent_wheel", "Equipment edits apply to the preview role without switching the active role")
+	setup.select_character_button.grab_focus()
+	await _key(KEY_ENTER)
+	_check(profile.selected_character_id == &"wind_scout" and setup.select_character_button.disabled and setup.status.text.contains("岚织") and setup.status.text.contains("贯星矛"), "Keyboard confirmation activates and saves the preview role")
+	await _tap(setup.character_buttons[&"shadow_runner"])
+	_check(setup.selected_weapon.weapon_id == &"crescent_wheel" and setup.status.text.contains("岚织"), "Returning to another preview restores its own equipment and keeps active summary unchanged")
+	var bytes := FileAccess.get_file_as_string(profile.save_path)
+	ProfileStore.write_guard = func(stage: String) -> bool: return stage != "replace"
+	await _tap(setup.select_character_button)
+	ProfileStore.write_guard = Callable()
+	_check(profile.selected_character_id == &"shadow_runner" and profile.save_pending and setup.select_character_button.text == "重试保存" and FileAccess.get_file_as_string(profile.save_path) == bytes, "Failed confirmation keeps memory and disk generations separate with a usable retry action")
+	await _tap(setup.select_character_button)
+	_check(not profile.save_pending and setup.select_character_button.disabled, "Retry saves the same selected role without a second change")
+	setup._preview_character(&"wind_scout")
+	setup._toggle_settings()
+	setup._preview_character(&"thunder_guard")
+	setup._confirm_character()
+	_check(setup.character.character_id == &"wind_scout" and profile.selected_character_id == &"shadow_runner", "Settings block background previews and confirmation")
+	await _key(KEY_ESCAPE)
+	profile._document.version = ProfileStore.VERSION + 1
+	setup._refresh_profile()
+	setup._confirm_character()
+	_check(setup.select_character_button.disabled and setup.equip_button.disabled and profile.selected_character_id == &"shadow_runner", "Future archives allow viewing while role and equipment remain read-only")
+	profile._document.version = ProfileStore.VERSION
+	setup._refresh_profile()
+	setup._confirm_character()
+	setup._preview_character(&"thunder_guard")
+	setup._launch("res://scenes/practice.tscn")
+	await _frames(6)
+	var main = current_scene
+	_check(main.run_loadout.character.character_id == &"wind_scout" and main.run_loadout.weapon.weapon_id == &"star_lance", "Launching from a locked preview uses the confirmed role and its weapon")
+	_check(main.battle_hud.portrait.texture == main.player.character.portrait_texture, "Battle portrait follows the captured character resource")
+	_check(main.touch_controls.action_views[&"skill"].caption.text.contains("风羽阵") and main._ability_description_text().contains("6 枚羽刃"), "HUD and pause expose the captured character ninjutsu rather than a shared placeholder")
+	main._return_to_setup()
+	await _frames(4)
+	setup = current_scene
+	_check(setup.character.character_id == &"wind_scout" and setup.selected_weapon.weapon_id == &"star_lance", "Returning to preparation opens the actual active role rather than an unconfirmed preview")
+	setup.free()
+	scope.close()
+
 func _capture_preparation(output: String) -> void:
 	if DisplayServer.get_name() == "headless":
 		_check(false, "Preparation capture needs a graphical renderer")
 		return
 	_check(DirAccess.make_dir_recursive_absolute(output) == OK, "Preparation screenshot directory must be writable")
-	for state in ["initial", "preview", "equipped", "scrolls", "supplies", "records", "readonly", "save_failure", "safe", "settings"]:
+	for state in ["initial", "preview", "equipped", "scrolls", "supplies", "records", "readonly", "save_failure", "safe", "settings", "character_preview", "character_selected", "character_locked", "character_save_failure", "character_readonly", "character_pending", "character_settings", "character_wide", "character_safe"]:
 		var scope := TestProfileScope.new("ui-preparation-capture")
 		scope.profile.save_profile()
 		FeedbackSettings.sound_enabled = false
 		FeedbackSettings.particles_enabled = false
 		var viewport := SubViewport.new()
-		viewport.size = Vector2i(1600 if state == "safe" else 1280, 720)
+		viewport.size = Vector2i(1600 if state in ["safe", "character_wide", "character_safe"] else 1280, 720)
 		viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 		root.add_child(viewport)
 		var setup = load(RunNavigation.SETUP_SCENE).instantiate()
@@ -241,9 +300,31 @@ func _capture_preparation(output: String) -> void:
 			ProfileStore.write_guard = func(stage: String) -> bool: return stage != "replace"
 			setup._equip_selected()
 			ProfileStore.write_guard = Callable()
-		if state == "settings":
+		if state.begins_with("character_"):
+			_check(_seed_formal_record(scope.profile), "Character capture uses real first-clear ownership")
+			setup._preview_character(&"wind_scout")
+			if state in ["character_selected", "character_locked"]:
+				setup._confirm_character()
+			if state == "character_locked":
+				setup._preview_character(&"thunder_guard")
+			if state == "character_save_failure":
+				ProfileStore.write_guard = func(stage: String) -> bool: return stage != "replace"
+				setup._confirm_character()
+				ProfileStore.write_guard = Callable()
+			if state == "character_readonly":
+				scope.profile._document.version = ProfileStore.VERSION + 1
+			if state == "character_pending":
+				var pending_result := RunResult.calculate(98.4, 60, 1, 40, 50, 5, 18)
+				pending_result.capture_context(LevelCatalog.FOG_RIDGE_ID, &"full", "ui-character-pending", scope.profile.resolve())
+				pending_result.apply_formal_rules()
+				pending_result.completed = true
+				ProfileStore.write_guard = func(stage: String) -> bool: return stage != "replace"
+				_check(not scope.profile.record_completion(LevelCatalog.FOG_RIDGE_ID, &"full", pending_result), "Pending capture uses a real failed completion transaction")
+				ProfileStore.write_guard = Callable()
+			setup._refresh_profile()
+		if state in ["settings", "character_settings"]:
 			setup.feedback_menu.show()
-		var safe := Rect2(60, 24, 1480, 648) if state == "safe" else Rect2(Vector2.ZERO, viewport.size)
+		var safe := Rect2(60, 24, 1480, 648) if state in ["safe", "character_safe"] else Rect2(Vector2.ZERO, viewport.size)
 		ScreenLayout.fit_control(setup, safe)
 		await _frames(5)
 		await RenderingServer.frame_post_draw
@@ -265,7 +346,8 @@ func _seed_formal_record(profile: PlayerProfile) -> bool:
 	var result := RunResult.calculate(98.4, 60, 1, 40, 50, 5, 18)
 	result.capture_context(LevelCatalog.FOG_RIDGE_ID, &"full", "ui-preparation-record", profile.resolve())
 	result.apply_formal_rules()
-	return profile.history.record_completion(LevelCatalog.FOG_RIDGE_ID, &"full", result)
+	result.completed = true
+	return profile.record_completion(LevelCatalog.FOG_RIDGE_ID, &"full", result)
 
 func _test_run_panels() -> void:
 	var scope := TestProfileScope.new("ui-run-panels")

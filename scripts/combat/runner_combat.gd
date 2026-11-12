@@ -14,6 +14,8 @@ var skill_flash_remaining := 0.0
 var feedback := ""
 var _skill_windup := 0.0
 var _skill_pending := false
+var _skill_remaining := 0
+var skill_emissions := 0
 var _combo_remaining := 0.0
 var _feedback_remaining := 0.0
 var _hit_ids: Dictionary = {}
@@ -71,10 +73,15 @@ func _physics_tick(delta: float) -> void:
 		feedback = ""
 	if _skill_pending:
 		_skill_windup = maxf(_skill_windup - delta, 0.0)
-		if _skill_windup <= 0.00001:
-			_skill_pending = false
-			skill_flash_remaining = 0.30
+		while _skill_remaining > 0 and _skill_windup <= 0.00001:
+			_skill_remaining -= 1
+			_skill_windup += player.character.active_skill.strike_interval_seconds
+			_hit_ids.clear()
+			skill_emissions += 1
+			if player.character.active_skill.pattern != &"volley":
+				skill_flash_remaining = 0.30
 			_strike()
+		_skill_pending = _skill_remaining > 0
 	if player.run_input.is_action_just_pressed("skill"):
 		try_skill()
 	if InputMap.has_action("weapon") and player.run_input.is_action_just_pressed("weapon"):
@@ -93,6 +100,7 @@ func try_skill() -> bool:
 	player.skill_immunity_remaining = skill.invulnerability_seconds
 	_skill_windup = skill.cast_delay_seconds
 	_skill_pending = true
+	_skill_remaining = skill.strike_count
 	_hit_ids.clear()
 	_set_feedback(skill.display_name)
 	player.emit_feedback(&"skill")
@@ -105,6 +113,9 @@ func _strike() -> void:
 	var skill := player.character.active_skill
 	_strike_origin = Vector2(player.global_position.x, player.rope_y if player.on_rope else player.global_position.y)
 	player.emit_feedback(&"strike", _strike_origin)
+	if skill.pattern == &"volley":
+		_fire_feather()
+		return
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(skill.forward_range, skill.half_height * 2.0)
 	var query := PhysicsShapeQueryParameters2D.new()
@@ -124,10 +135,51 @@ func _strike() -> void:
 		elif target.take_hit(_scaled_damage(&"skill", skill.damage, scale)):
 			kills += 1
 			_add_combo()
-			_set_feedback("月蚀斩 · 击破哨兵")
+			_set_feedback("%s · 击破哨兵" % skill.display_name)
+
+func _fire_feather() -> void:
+	if friendly_root.get_child_count() >= MAX_FRIENDLY_PROJECTILES:
+		return
+	var skill := player.character.active_skill
+	var target: Area2D
+	var nearest := INF
+	var candidates: Array[Node] = get_tree().get_nodes_in_group("enemies")
+	if is_instance_valid(boss) and boss.is_in_combat():
+		candidates.append(boss)
+	for candidate in candidates:
+		if not (candidate is RopeSentry or candidate is RopeBoss) or not candidate.alive:
+			continue
+		var offset: Vector2 = candidate.global_position - _strike_origin
+		if offset.x < 0.0 or offset.x > skill.forward_range or absf(offset.y) > skill.half_height:
+			continue
+		if offset.length_squared() < nearest:
+			nearest = offset.length_squared()
+			target = candidate
+	var shot := SkillProjectile.new()
+	shot.player = player
+	shot.target = target
+	var amount := skill.boss_damage if target is RopeBoss else skill.damage
+	shot.attack = _new_attack(&"skill", skill.skill_id, _scaled_damage(&"skill", amount, _damage_scale()))
+	shot.speed = skill.projectile_speed
+	shot.turn_speed = skill.projectile_turn_speed
+	shot.lifetime_remaining = skill.projectile_lifetime
+	shot.position = player.global_position + Vector2(22, 0)
+	shot.hit.connect(_resolve_feather_hit)
+	friendly_root.add_child(shot)
+
+func _resolve_feather_hit(target: Area2D, attack_info: CombatAttack) -> void:
+	if not player.active:
+		return
+	if target is RopeBoss:
+		resolve_boss_attack(target, attack_info)
+	elif target is RopeSentry and target.take_hit(attack_info.damage):
+		kills += 1
+		_add_combo()
+		_set_feedback("%s · 击破哨兵" % player.character.active_skill.display_name)
 
 func _cancel_skill() -> void:
 	_skill_pending = false
+	_skill_remaining = 0
 	_skill_windup = 0.0
 	skill_flash_remaining = 0.0
 	_hit_ids.clear()
@@ -208,7 +260,7 @@ func resolve_boss_attack(target: RopeBoss, attack_info: CombatAttack) -> void:
 		_add_combo()
 		_set_feedback("首领击破 · %s" % weapon.data.display_name if attack_info.source_kind == &"weapon" else "首领击破")
 	elif attack_info.source_kind == &"skill":
-		_set_feedback("月蚀斩 · 命中弱点" if was_weak else "月蚀斩 · 护甲减伤")
+		_set_feedback("%s · %s" % [player.character.active_skill.display_name, "命中弱点" if was_weak else "护甲减伤"])
 	changed.emit()
 
 func _spawn_ball() -> void:
@@ -262,6 +314,11 @@ func _draw() -> void:
 		draw_line(origin, origin + Vector2(reach, 0.0), Color(0.87, 0.91, 0.91, alpha), 2.0, true)
 		var crescent := PackedVector2Array()
 		var center := origin + Vector2(reach * 0.55, 0)
+		var pattern: StringName = player.character.active_skill.pattern
+		if pattern == &"double":
+			var lightning := PackedVector2Array([origin, origin + Vector2(reach * 0.32, -26), origin + Vector2(reach * 0.44, 14), origin + Vector2(reach * 0.7, -10), origin + Vector2(reach, 0)])
+			draw_polyline(lightning, Color(1.0, 0.75, 0.35, alpha), 3.0, true)
+			return
 		for index in range(25):
 			var angle := -1.25 + float(index) / 24.0 * 2.5
 			crescent.append(center + Vector2(cos(angle) * 80.0, sin(angle) * 58.0))

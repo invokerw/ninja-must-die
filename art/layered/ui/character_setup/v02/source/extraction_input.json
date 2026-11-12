@@ -1,0 +1,11 @@
+{
+  "source": "art/concepts/ui/character_setup/v02.png",
+  "crop": {
+    "left": 4,
+    "top": 6,
+    "width": 1664,
+    "height": 928
+  },
+  "resized": false,
+  "reason": "Model gateway requires width and height divisible by 16; original concept unchanged."
+}

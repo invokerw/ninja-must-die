@@ -1,0 +1,41 @@
+{
+  "status": "completed",
+  "source": "/Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_setup/v02/extraction_input.png",
+  "output": "/Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_setup/v02/extraction_aligned",
+  "psd": "/Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_setup/v02/extraction_aligned/layers.psd",
+  "elapsed_seconds": 1086.574,
+  "visual_rounds": 6,
+  "layer_count": 98,
+  "structural_verification": "passed",
+  "structural_evidence": {
+    "checkpoint": "passed",
+    "independent_file": "passed",
+    "disagreement": false
+  },
+  "fidelity_status": "not_applicable",
+  "checked_opaque_pixels": 0,
+  "pending_objects": [],
+  "visual_review": {
+    "status": "not_reviewed"
+  },
+  "model_output_policy": "model_rgba_downscale_only",
+  "batch_size": 7,
+  "text_batch_size": 14,
+  "scheduling": {
+    "mode": "bounded_visual_window",
+    "visual_window": 3,
+    "image_concurrency": 2,
+    "text_completion_parallel": true,
+    "text_visual_overlap": true
+  },
+  "detection_mode": "regional_cache_v1",
+  "detection_pass": "combined_original_geometry_and_hint_presence_v1",
+  "regional_detection_reuse": {
+    "reused_regions": 6,
+    "visual_rounds_checked": 7
+  },
+  "surface_style": "original",
+  "comparison_report": "/Users/admin/code/godot/ninja-must-die/art/workbench/ui/character_setup/v02/extraction_aligned/result.html",
+  "scope": "Returned model RGB/alpha are placed directly with downsampling only; no source-pixel fidelity claim.",
+  "web": "http://127.0.0.1:8933/extraction_aligned/result.html"
+}

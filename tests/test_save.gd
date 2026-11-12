@@ -12,6 +12,7 @@ func _run() -> void:
 	var scope := TestProfileScope.new("save")
 	_test_history()
 	_test_legacy_and_validation()
+	_test_character_migration()
 	_test_recovery()
 	_test_failed_save()
 	await _test_settings_ui()
@@ -61,6 +62,27 @@ func _test_legacy_and_validation() -> void:
 	var original := FileAccess.get_file_as_string(STORE_PATH)
 	var backup := FileAccess.get_file_as_string(STORE_PATH + ".bak")
 	_check(not profile.record_completion(LEVEL, &"full", _result()) and profile.save_pending and FileAccess.get_file_as_string(STORE_PATH) == original and FileAccess.get_file_as_string(STORE_PATH + ".bak") == backup, "Newer versions must keep both original and backup untouched while this session retains progress")
+
+func _test_character_migration() -> void:
+	_cleanup_store()
+	var history := RunHistory.new()
+	history.record_completion(LEVEL, &"full", _result())
+	_write(STORE_PATH, JSON.stringify({"version": 2, "run_records": history.to_dictionary(), "selected_character_id": "wind_scout", "custom": {"keep": 9}, "character_loadouts": {"wind_scout": {"weapon_id": "star_lance", "future_slot": "keep"}, "future_character": {"weapon_id": "future_weapon"}}}))
+	var profile := PlayerProfile.new(STORE_PATH)
+	profile.load_profile()
+	_check(profile.owns_character(&"wind_scout") and profile.selected_character_id == &"wind_scout" and profile.resolve().weapon.weapon_id == &"star_lance", "Legacy first-clear entitlement is available before restoring the selected character")
+	_check(profile.save_profile(), "Migrated character selection can be committed")
+	var document: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(STORE_PATH))
+	_check(document.character_loadouts.wind_scout.future_slot == "keep" and document.character_loadouts.future_character.weapon_id == "future_weapon" and document.custom.keep == 9, "Adding registered characters preserves unknown role slots and extension fields")
+	document.selected_character_id = "future_character"
+	_write(STORE_PATH, JSON.stringify(document))
+	profile.load_profile()
+	_check(profile.selected_character_id == &"shadow_runner" and profile.character_loadouts.has("future_character"), "Unknown selections fall back without erasing future role data")
+	document.selected_character_id = "thunder_guard"
+	_write(STORE_PATH, JSON.stringify(document))
+	profile.load_profile()
+	_check(profile.selected_character_id == &"shadow_runner" and not profile.owns_character(&"thunder_guard"), "A registered but unowned selection cannot bypass unlock requirements")
+	_cleanup_store()
 
 func _test_recovery() -> void:
 	_cleanup_store()
