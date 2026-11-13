@@ -1,0 +1,5 @@
+/engine/node_modules/
+/engine/tmp/
+/config.local.json
+/.env.local
+*.log

@@ -1,0 +1,86 @@
+// Exercise the real round/batch extraction with deterministic image responses.
+const assert=require('node:assert/strict');
+const fs=require('node:fs/promises');
+const path=require('node:path');
+const sharp=require('sharp');
+let calls=[];
+require.cache[require.resolve('./bbox_image_requests.js')]={id:require.resolve('./bbox_image_requests.js'),filename:require.resolve('./bbox_image_requests.js'),loaded:true,exports:{imageRequest:async(_input,output)=>{
+  const request=JSON.parse(await fs.readFile(path.join(path.dirname(output),'request.json'),'utf8'));
+  const retry=output.includes('fidelity_retry');calls.push({retry,ids:request.targets.map(t=>t.id),request});
+  const figures=request.targets.map(t=>{let [x,y,w,h]=t.target_rect;if(request.layout.packing==='native_wide_rows'){x+=8;y+=80;h-=20;}return retry
+    ?`<circle cx="${x+w/2}" cy="${y+h/2}" r="${Math.min(w,h)*.36}" fill="#ff3030"/>`
+    :`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#ff3030" opacity=".4"/>`;}).join('');
+  await sharp(Buffer.from(`<svg width="${request.layout.width}" height="${request.layout.height}">${figures}</svg>`)).png().toFile(output);
+}}};
+const {createCore,BATCH,TEXT_BATCH,GEOMETRY_BATCH}=require('./bbox_recursive_core.js');
+async function main(){
+  const out=path.resolve(__dirname,'../tmp/extraction-check');await fs.mkdir(out,{recursive:true});
+  const count=BATCH+1;
+  assert.equal(TEXT_BATCH,14);assert.equal(GEOMETRY_BATCH,7);
+  const source=path.join(out,'input.png'),width=count*72,height=72;
+  await sharp(Buffer.from(`<svg width="${width}" height="${height}"><rect width="100%" height="100%" fill="#3c4664"/>${Array.from({length:count},(_,i)=>`<circle cx="${36+i*72}" cy="36" r="20" fill="#20f0ff"/><circle cx="${31+i*72}" cy="29" r="4" fill="#ffffff"/>`).join('')}</svg>`)).png().toFile(source);
+  const boxes=Array.from({length:count},(_,i)=>({id:`target_${i}`,category:'icon',description:'Glossy cyan round token',bbox:[9+i*72,9,54,54],source_bbox:[15+i*72,15,42,42]}));
+  const core=createCore({state:{canvas:[width,height],source},step:async(_id,_title,work)=>work()});
+  const textBoxes=Array.from({length:29},(_,i)=>({id:`text_${i}`,category:'text',description:'Text label',bbox:[10+(i%8)*72,10,30,28],source_bbox:[10+(i%8)*72,10,30,28]}));
+  const textLayers=await core.extract(source,textBoxes,path.join(out,'text_'+Date.now()),'text',false,{referenceSource:source,removed:[]});
+  assert.equal(textLayers.length,29);
+  assert.deepEqual(calls.map(call=>call.ids.length).sort((a,b)=>b-a),[14,14,1],'Text extraction alone uses fourteen targets per request');
+  assert(calls.every(call=>!call.retry),'Text throughput does not add quality retries');
+  console.log(`PASS: 29 text targets use 14+14+1; visual atlas cap ${BATCH}; geometry cap 7`);
+  calls=[];
+  const regenerated=path.join(out,'regenerated.png');
+  await sharp({create:{width,height,channels:4,background:'#ff00ff'}}).png().toFile(regenerated);
+  const direct=await core.extract(regenerated,boxes,path.join(out,'direct_'+Date.now()),'direct',true,{referenceSource:source,removed:[]});
+  assert.equal(calls.length,2,'Default direct-model mode does not trigger source-recovery retries');
+  assert.deepEqual(calls.map(c=>c.ids.length).sort((a,b)=>b-a),[BATCH,1]);
+  assert.deepEqual(direct.map(layer=>layer.id),boxes.map(box=>box.id),'Every target survives splitting in original order');
+  assert(direct.every(layer=>!layer.fidelity?.applied&&!layer.pixel_fidelity_version));
+  assert(direct.every(layer=>layer.model_placement.scale.every(scale=>scale<=1)));
+  assert(calls.every(call=>call.request.appearance_source_policy==='original_visible_pixels_only_v1'));
+  assert(calls.every(call=>call.request.image_paths.length===1&&path.basename(call.request.image_paths[0])==='before_input.png'),
+    'Intact original objects use one appearance reference instead of a competing regenerated rendering');
+  const request=calls[0].request,[cx,cy,cw,ch]=request.targets[0].target_rect;
+  const center={left:cx+Math.floor(cw/2),top:cy+Math.floor(ch/2),width:1,height:1};
+  const appearance=await sharp(request.image_paths[0]).extract(center).removeAlpha().raw().toBuffer();
+  assert.deepEqual([...appearance],[32,240,255],'Appearance image must retain original cyan material');
+  calls=[];
+  const removed=[{id:'old_text',description:'previously removed foreground label',bbox:[10,10,8,8]}];
+  await core.extract(regenerated,boxes.slice(0,2),path.join(out,'owned_'+Date.now()),'owned',true,{referenceSource:source,removed});
+  assert.equal(calls.length,1);
+  assert.equal(calls[0].request.appearance_source_policy,'original_pixels_primary_current_ownership_v1');
+  assert.equal(calls[0].request.image_paths.length,2,'One crop overlapping old text keeps current ownership for the entire batch');
+  assert.equal(path.basename(calls[0].request.image_paths[0]),'before_input.png');
+  assert.equal(path.basename(calls[0].request.image_paths[1]),'input.png');
+  const ownershipRequest=calls[0].request,[ox,oy,ow,oh]=ownershipRequest.targets[0].target_rect;
+  const ownership=await sharp(ownershipRequest.image_paths[1]).extract({left:ox+Math.floor(ow/2),top:oy+Math.floor(oh/2),width:1,height:1}).removeAlpha().raw().toBuffer();
+  assert.deepEqual([...ownership],[255,0,255],'Regenerated magenta residual is supplied separately');
+  calls=[];
+  await core.extract(regenerated,[{...boxes[0],members:['effect','artwork'],internal_front_to_back:['effect','artwork']}],path.join(out,'composite_'+Date.now()),'composite',true,{referenceSource:source,removed:[]});
+  assert.equal(calls[0].request.image_paths.length,2,'A composite remains on the ownership-aware path even without nearby removal boxes');
+  console.log('PASS: model RGBA stays direct without quality retry, no upscaling');
+  calls=[];
+  const borderlessCore=createCore({state:{canvas:[width,height],source,surface_style:'borderless'},step:async(_id,_title,work)=>work()});
+  await borderlessCore.extract(source,[{id:'add_control',category:'button',description:'Green button with central plus sign',bbox:[5,5,50,50],source_bbox:[11,11,38,38]}],path.join(out,'borderless_'+Date.now()),'surface',true,{referenceSource:source,removed:[]});
+  assert.equal(calls.length,1);
+  assert.equal(calls[0].request.surface_style,'borderless');
+  assert(calls[0].request.prompt.includes('REMOVE all hard perimeter strokes'));
+  assert(calls[0].request.prompt.includes('plus signs and progress dividers'));
+  assert(!calls[0].request.prompt.includes('extract the named surface and its own frame.'));
+  calls=[];
+  const wideSource=path.join(out,'wide_source.png');
+  await sharp({create:{width:2560,height:90,channels:4,background:'#203040'}}).png().toFile(wideSource);
+  const wideCore=createCore({state:{canvas:[2560,90],source:wideSource,surface_style:'borderless'},step:async(_id,_title,work)=>work()});
+  const wide=await wideCore.extract(wideSource,[{id:'footer',category:'panel',description:'Continuous full-width navigation strip',bbox:[0,4,2560,72],source_bbox:[0,10,2560,60]}],path.join(out,'wide_'+Date.now()),'wide',true,{referenceSource:wideSource,removed:[]});
+  assert.equal(wide.length,1);assert.equal(calls.length,1);assert.equal(calls[0].ids.length,2);
+  assert.equal(calls[0].request.layout.packing,'native_wide_rows');
+  assert(calls[0].request.layout.cells.every(c=>c.crop_width>=c.native_width&&c.crop_height>=c.native_height));
+  assert(wide[0].native_surface_pieces.every(p=>p.model_placement.raster_scale.every(s=>s<=1)));
+  assert.equal(wide[0].model_placement.resolution_shortfall,false);
+  assert(wide[0].native_surface_pieces.every((p,i)=>p.model_rect.top>=calls[0].request.layout.cells[i].y+70),'Locate shifted rows outside the original cell boundaries');
+  assert.deepEqual(wide[0].bbox,[0,4,2560,72]);
+  const widePixels=await sharp(wide[0].source).ensureAlpha().raw().toBuffer();
+  assert(widePixels[(36*2560)*4+3]>0&&widePixels[(36*2560+2559)*4+3]>0,'Wide surface reaches both native canvas edges');
+  assert.equal(widePixels[(36*2560+1279)*4+3],widePixels[(36*2560+1280)*4+3],'Returned RGBA strips meet without a gap');
+  console.log('PASS: explicit borderless surfaces preserve functional marks; wide strips keep native coverage and join without upsampling');
+}
+main().catch(error=>{console.error(error.stack);process.exitCode=1});

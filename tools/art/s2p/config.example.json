@@ -1,0 +1,25 @@
+{
+  "_comment": "控制器及默认图像网关复用 Codex 配置和运行时 API 凭据；图像模型独立，密钥不复制到项目。",
+  "llm": {
+    "routes": {
+      "controller": {
+        "source": "codex",
+        "timeout_ms": 1800000,
+        "max_retries": 0
+      },
+      "image": {
+        "model": "gpt-image-2.5-sunburst",
+        "provider": "openai",
+        "quality": "max",
+        "timeout_ms": 1800000,
+        "max_retries": 0,
+        "api_key": "${LAYERFORGE_BACKGROUND_API_KEY}",
+        "gateway_source": "codex",
+        "credential_source": "codex"
+      },
+      "background": {
+        "inherits": "image"
+      }
+    }
+  }
+}

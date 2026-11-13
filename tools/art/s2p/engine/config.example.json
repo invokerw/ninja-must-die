@@ -1,0 +1,181 @@
+{
+  "_comment": "Node screenshot-to-PSD model policy. Copy to private config.json. Never commit real API keys.",
+  "config_version": "1.0.0",
+  "llm": {
+    "quality": "max",
+    "timeout_ms": 180000,
+    "max_retries": 0,
+    "controller_models": [
+      "gemini-3.8-flash",
+      "gpt-5.6-sol",
+      "gpt-6-astra"
+    ],
+    "routes": {
+      "controller": {
+        "provider": "openai",
+        "base_url": "https://litellm.funplus.com.cn/v1",
+        "api_key": "${LAYERFORGE_CONTROLLER_API_KEY}",
+        "model": "gemini-3.8-flash",
+        "env": {
+          "base_url": [
+            "LAYERFORGE_CONTROLLER_BASE_URL",
+            "LAYERFORGE_BASE_URL"
+          ],
+          "api_key": [
+            "LAYERFORGE_CONTROLLER_API_KEY",
+            "LAYERFORGE_API_KEY"
+          ],
+          "model": [
+            "LAYERFORGE_CONTROLLER_MODEL"
+          ],
+          "timeout_ms": [
+            "LAYERFORGE_CONTROLLER_TIMEOUT_MS"
+          ]
+        }
+      },
+      "image": {
+        "provider": "openai",
+        "base_url": "https://gpt-translation-east2.openai.azure.com/openai/v1",
+        "api_key": "${LAYERFORGE_BACKGROUND_API_KEY}",
+        "model": "gpt-image-2.5-sunburst",
+        "env": {
+          "base_url": [
+            "LAYERFORGE_BACKGROUND_BASE_URL",
+            "LAYERFORGE_BASE_URL"
+          ],
+          "api_key": [
+            "LAYERFORGE_BACKGROUND_API_KEY",
+            "LAYERFORGE_API_KEY"
+          ],
+          "model": [
+            "LAYERFORGE_IMAGE_MODEL"
+          ],
+          "quality": [
+            "LAYERFORGE_IMAGE_QUALITY"
+          ],
+          "timeout_ms": [
+            "LAYERFORGE_IMAGE_TIMEOUT_MS"
+          ]
+        },
+        "timeout_ms": 400000
+      },
+      "foreground": {
+        "inherits": "image",
+        "env": {
+          "base_url": [
+            "LAYERFORGE_FOREGROUND_BASE_URL",
+            "LAYERFORGE_BASE_URL"
+          ],
+          "api_key": [
+            "LAYERFORGE_FOREGROUND_API_KEY",
+            "LAYERFORGE_API_KEY"
+          ],
+          "model": [
+            "LAYERFORGE_FOREGROUND_MODEL"
+          ]
+        }
+      },
+      "background": {
+        "inherits": "image",
+        "env": {
+          "base_url": [
+            "LAYERFORGE_BACKGROUND_BASE_URL",
+            "LAYERFORGE_BASE_URL"
+          ],
+          "api_key": [
+            "LAYERFORGE_BACKGROUND_API_KEY",
+            "LAYERFORGE_API_KEY"
+          ],
+          "model": [
+            "LAYERFORGE_BACKGROUND_MODEL"
+          ]
+        }
+      },
+      "segmentation": {
+        "inherits": "image",
+        "env": {
+          "model": [
+            "LAYERFORGE_SEGMENTATION_MODEL"
+          ],
+          "base_url": [
+            "LAYERFORGE_SEGMENTATION_BASE_URL"
+          ],
+          "api_key": [
+            "LAYERFORGE_SEGMENTATION_API_KEY"
+          ],
+          "quality": [
+            "LAYERFORGE_SEGMENTATION_QUALITY"
+          ]
+        },
+        "timeout_ms": 240000
+      },
+      "semantic": {
+        "inherits": "controller",
+        "env": {
+          "model": [
+            "LAYERFORGE_BACKGROUND_SEMANTIC_MODEL"
+          ]
+        }
+      },
+      "judge": {
+        "inherits": "controller",
+        "model": "gpt-5.6-sol",
+        "env": {
+          "model": [
+            "LAYERFORGE_JUDGE_MODEL"
+          ]
+        }
+      },
+      "gemini_image": {
+        "provider": "gemini",
+        "base_url": "https://rolldek.com/v1beta",
+        "api_key": "${LAYERFORGE_GEMINI_API_KEY}",
+        "model": "gemini-3.1-flash-image",
+        "env": {
+          "base_url": [
+            "LAYERFORGE_GEMINI_BASE_URL"
+          ],
+          "api_key": [
+            "LAYERFORGE_GEMINI_API_KEY"
+          ],
+          "model": [
+            "LAYERFORGE_GEMINI_IMAGE_MODEL"
+          ]
+        }
+      },
+      "gemini_logic": {
+        "inherits": "gemini_image",
+        "model": "gemini-omni-1.1-flash",
+        "env": {
+          "model": [
+            "LAYERFORGE_GEMINI_LOGIC_MODEL"
+          ]
+        }
+      },
+      "ark_image": {
+        "provider": "volcengine",
+        "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+        "api_key": "${LAYERFORGE_IMAGE_API_KEY}",
+        "model": "doubao-seedream-5-0-pro-260628",
+        "env": {
+          "base_url": [
+            "LAYERFORGE_IMAGE_BASE_URL"
+          ],
+          "api_key": [
+            "LAYERFORGE_IMAGE_API_KEY",
+            "LAYERFORGE_API_KEY"
+          ],
+          "model": [
+            "LAYERFORGE_ARK_MODEL"
+          ],
+          "provider": [
+            "LAYERFORGE_IMAGE_PROVIDER"
+          ],
+          "timeout_ms": [
+            "LAYERFORGE_IMAGE_TIMEOUT_MS"
+          ]
+        }
+      }
+    }
+  }
+}

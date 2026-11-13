@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict');
+const {repeatedSurfaceGuard,visibleBoxFraction}=require('./bbox_surface_geometry.js');
+const original=[892,498,137,137],measured=[873,482,176,168];
+const peers=Array.from({length:4},(_,i)=>({category:'panel',bbox:[292+i*150,498,137,137]}));
+assert.deepEqual(repeatedSurfaceGuard(original,measured,'panel',peers,1).bbox,original);
+assert.equal(repeatedSurfaceGuard(original,measured,'panel',peers,.8),null,'A damaged residual cannot override original-image measurement');
+assert.equal(repeatedSurfaceGuard(original,measured,'panel',peers.slice(0,2),1),null,'No repeated-layout evidence');
+assert.equal(repeatedSurfaceGuard(original,[891,497,139,139],'panel',peers,1),null,'Allow consistent fine measurement');
+assert.equal(repeatedSurfaceGuard(original,measured,'icon',peers,1),null,'Foreground retains its own geometry rules');
+assert.equal(repeatedSurfaceGuard([250,100,810,880],[258,100,812,858],'panel',peers,1),null,'Do not normalize an unrelated main panel to slot sizes');
+const pixels=Buffer.alloc(8*8*4,255);pixels[(3*8+3)*4+3]=0;
+assert.equal(visibleBoxFraction(pixels,{width:8,channels:4},[2,2,2,2]),.75);
+console.log('PASS: repeated visible-surface measurement, alpha-hole exception, unrelated panel sizes and native visibility');

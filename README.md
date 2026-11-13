@@ -165,5 +165,6 @@ foreach ($suite in @('rope_landing', 'rope_pickups', 'level_route', 'mobility', 
 ## 文档
 
 - [通用 UI 设计系统](docs/UI_DESIGN_SYSTEM.md)：月下墨金统一风格、61 类控件设计、12 组模板及复用 / 扩展约定；[10 张概念图册](art/concepts/ui/common/v01/README.md) 已于 2026-11-06 获用户概念审核通过。商店、设置、准备、关卡选择完整布局、暂停 / 结算及完整战斗 HUD 已迁移；当前入口和截图见[战斗 HUD 任务卡](art/validation/ui/battle_hud/v01/README.md)，用户视觉和 Android 另行验收。
+- [项目内 s2p 拆层工具](tools/art/s2p/README.md)：引擎、锁定依赖和离线检查随仓库维护；控制器可读取 Codex 默认配置，支持 Responses / Chat Completions 与接口诊断，图像模型独立配置。
 - [UI 界面设计与开发工作流](docs/UI_DESIGN_WORKFLOW.md)：每个界面从当前 UI 基线、概念图审核到资源分层、Godot 拼装、功能接入和分层验收的固定流程。
 - 当前 UI 任务卡：[关卡选择页 v03](art/validation/ui/level_select/v03/README.md)；历史分层与构图记录见 [关卡选择页 v01](art/validation/ui/level_select/v01/README.md)。

@@ -9,7 +9,7 @@
 ## 制作流程
 
 1. **生成设计稿。** 使用内置图片生成工具，参照 [美术方向](ART_DIRECTION.md) 和角色 / 环境参考。保留原始 PNG、提示词、版本和资源清单。先确定布局与视觉方向，再制作资源。
-2. **拆成 PSD。** 将选定设计稿交给 `extract-layered-psd`。它通过用户本地配置的模型服务提取透明对象、补全被遮挡的底图，导出 PSD、图层 PNG 和检查报告。每次新转换使用独立空目录。
+2. **拆成 PSD。** 将选定设计稿交给项目内 `s2p`。它通过用户本地配置的模型服务提取透明对象、补全被遮挡的底图，导出 PSD、图层 PNG 和检查报告。每次新转换使用独立空目录。
 3. **检查并修整。** 在统一 `result.html` 中叠加原图和合成图，逐层查看按钮、图标、面板、角色和背景。检查漏件、边缘杂色、比例、透明度和遮挡顺序。结构校验通过只说明 PSD 与导出图层一致，不证明与原图一致。
 4. **导出候选资源。** 将选中的透明 PNG、PSD 和导出清单放在版本目录，记录原图、拆层任务、图层名、尺寸、透明边界和实际检查结果。未经评审的图层保持 `runtime_ready: false`，不直接覆盖运行时贴图。
 5. **接入游戏。** 按 1280×720 设计坐标、安全区和现有判定配置定位贴图，制作按钮状态与面板拉伸。生命、影晶数、进度、文字和冷却交给 Godot 节点绘制。完成实际画面和相关玩法验证后才更新资源状态。
@@ -18,41 +18,39 @@ PSD 中的模型文字也是栅格图层，不能按可编辑字体交付。遮�
 
 完整战斗构图用于方向评审和本次流程验证。后续可复用 UI 单独出组件稿，清楚展示五个操作按钮、图标、通用底板和 HUD 面板，减少与场景、角色的遮挡；角色动作和场景图层分别制作。组件稿不把动态数值或冷却效果画入常态贴图。
 
-## 本机调用
+## 项目内调用
 
-Skill 安装在 `~/.codex/skills/extract-layered-psd`。可以在后续对话中说：
+2026-11-13 起，拆层使用仓库内的 [s2p 工具](../tools/art/s2p/README.md)。引擎、命令入口、锁文件和离线检查随项目保存，不再要求项目外的 `screenshot-to-psd` 源码目录或全局 skill。来源提交、本地修改和文件哈希见 `tools/art/s2p/vendor-manifest.json`。下方 2026-10-26 的记录保留当时的工具和验收事实。
 
-> 使用 $extract-layered-psd 将指定的界面设计稿拆成分层 PSD，检查图层和原图差异，再导出通过检查的 UI 候选 PNG。
-
-本机采用源码模式，保留工具仓库及其私有配置。系统默认 Node 为 12，执行时指定已通过预检的 Node 24；如果工作区运行时路径改变，重新定位 Node 20+。以下命令在本项目根目录运行：
+从仓库根目录执行，需要 Node.js 20.9+ 和 npm：
 
 ```sh
-PSD_NODE="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
-PSD_SKILL="$HOME/.codex/skills/extract-layered-psd"
-PSD_ENGINE="$HOME/code/github/screenshot-to-psd"
-PSD_SOURCE="$PWD/art/concepts/ui_touch_combat_design_v02.png"
-PSD_OUT="$PWD/art/workbench/ui_touch_combat_v02_$(date +%Y%m%d_%H%M%S)"
+npm ci --prefix tools/art/s2p/engine
+node tools/art/s2p/cli.cjs init
+node tools/art/s2p/cli.cjs check
+```
 
-"$PSD_NODE" "$PSD_SKILL/scripts/run.cjs" preflight \
-  --project "$PSD_ENGINE" --config "$PSD_ENGINE/config.json"
+控制器默认读取 Codex 模型配置，默认图像路线共用网关；两条路线在运行时复用该自定义网关的 API 凭据，图像模型名称保持独立；可通过 `doctor` 查看实际模型、协议、来源与缺失密钥。配置 / 覆盖 / 显式联网探测见 [s2p 工具说明](../tools/art/s2p/README.md)。本机已有可复用的网关 API 凭据时无需重复填写密钥；可直接进行本地预检与新任务：
 
-"$PSD_NODE" "$PSD_SKILL/scripts/run.cjs" run \
-  --project "$PSD_ENGINE" --config "$PSD_ENGINE/config.json" \
-  --source "$PSD_SOURCE" --output "$PSD_OUT" \
+```sh
+node tools/art/s2p/cli.cjs doctor
+node tools/art/s2p/cli.cjs preflight
+node tools/art/s2p/cli.cjs run \
+  --source art/concepts/ui_touch_combat_design_v02.png \
+  --output art/workbench/s2p_example_01 \
   --visual-window 3 --local-detection-inputs --combined-detection \
   --serve --port 8925
 ```
 
-`run` 会把设计稿及中间图发送到现有配置的模型服务，并产生模型调用。本次 UI v02 验证已获用户明确授权并执行，结果见下方实测记录。不得将私有 `config.json`、`.env.local` 或密钥复制到本项目。
+不填 `--output` 时自动创建独立的 `art/workbench/s2p_*` 目录。AI 拆层仍会向配置的模型服务发送图片；私有配置不随代码提交。`check` 使用离线夹具与本地回环服务，`preflight` 只查本地依赖及配置，两者均不调用真实模型。
 
-已有结果可通过 `report` 重开检查页，不调用模型：
+已有结果可直接重开，不调用模型，也不要求真实密钥：
 
 ```sh
-"$PSD_NODE" "$PSD_SKILL/scripts/run.cjs" report \
-  --project "$PSD_ENGINE" --output "$PSD_OUT" --serve --port 8925
+node tools/art/s2p/cli.cjs report --output art/workbench/s2p_example_01 --serve --port 8925
 ```
 
-任务中断时只在源图、引擎和参数保持一致的情况下，用原命令追加 `--resume`；不要修改 manifest 绕过身份检查。工具源码有本地修改，本安装使用当前源码与依赖，不是固定版本的便携发布包。
+新任务固定实际使用的 Codex 控制器公开配置，续跑读取原快照；项目路线、源图、代码和参数仍做身份校验。旧任务若与本快照身份不同，保留原始结果并使用新目录，不改写历史 manifest。
 
 ## 目录与交付
 

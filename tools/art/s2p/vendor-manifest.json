@@ -1,0 +1,286 @@
+{
+  "name": "screenshot-to-psd",
+  "imported_at": "2026-11-13",
+  "source_commit": "888f9acfac92a91fe44cecb0cee07b31de7a0cd2",
+  "source_tree_dirty": true,
+  "imported_local_changes": [
+    "node/bbox_recursive_core.js",
+    "node/layerforge.js",
+    "web/run-timing.js",
+    "node/job_retry.js",
+    "node/job_retry_test.js"
+  ],
+  "declared_license": "ISC",
+  "credentials_included": false,
+  "dependencies_included": false,
+  "files": [
+    {
+      "path": "config.example.json",
+      "sha256": "1846f2290637575087fa585e4c9beabc26debb9fea241f363a372ddf67180256"
+    },
+    {
+      "path": "node/bbox_atlas_pixels.js",
+      "sha256": "75b1451403e100619b782bc35dd65add8dd2b83071cde369cba569e289285084"
+    },
+    {
+      "path": "node/bbox_combined_detection.js",
+      "sha256": "b1d0a9e6824bc6dc198672e36c132604df270a49d45012bceecabda64f6b85b0"
+    },
+    {
+      "path": "node/bbox_combined_detection_checks.js",
+      "sha256": "1361add1c2e684f870888c821705f4875179f213bfbce8a4490ce1859b3c3556"
+    },
+    {
+      "path": "node/bbox_detection_cache.js",
+      "sha256": "aed842ff34ae6e99d58559c65b25464603af656c365f61c8034bccd636b8ddf1"
+    },
+    {
+      "path": "node/bbox_detection_cache_checks.js",
+      "sha256": "06f3990a224854b968f34129f341e546bee1065fc8610551b36ee2b6d310d7b9",
+      "source_sha256": "789d8c7f9b0e68f9a1ed50c32ae23dc0b284f5d9a6aa6f994491f1b567b93b8b"
+    },
+    {
+      "path": "node/bbox_extraction_checks.js",
+      "sha256": "80462641b665919ec518de3d3b79e6ace7634f507ab801037213637b8e107f08"
+    },
+    {
+      "path": "node/bbox_focused_repair.js",
+      "sha256": "866339ce9766279ccb299e2fa6f002fb0b5a664446592b557997846d7b5a91b9"
+    },
+    {
+      "path": "node/bbox_image_requests.js",
+      "sha256": "84e65a853fcd43cc0d3e391c42995257a29240ed3230b031f263b942452fd341"
+    },
+    {
+      "path": "node/bbox_model_geometry_replay.js",
+      "sha256": "b6a4a2a27f7c19420cd6aaa409bb979bbdebf614aa7940814c23bed1657674e6"
+    },
+    {
+      "path": "node/bbox_model_replay.js",
+      "sha256": "0a4c2c5654ad601c236408ed7ea8022b72fc102cfeb3f37740553acf76d924b0"
+    },
+    {
+      "path": "node/bbox_model_rgba.js",
+      "sha256": "cd2d52ad62fb579c9eba1de408e9f59942aec8ba71a3f99616c064d8da3e2351"
+    },
+    {
+      "path": "node/bbox_model_rgba_checks.js",
+      "sha256": "dbc71f0657dfaf5a925b4d3f80c1703979effaccb775d946eebcbc94c5df4a5d"
+    },
+    {
+      "path": "node/bbox_pipeline_checks.js",
+      "sha256": "6281069ef23456b9f70efbae893b9535ecb93118984868ac9b485eddaf89e94a"
+    },
+    {
+      "path": "node/bbox_recursive_checks.js",
+      "sha256": "e6e4335efd0d747d48a0f3fa4664e1e85cd3af61dd6c46a7cdd42563ef65e775"
+    },
+    {
+      "path": "node/bbox_recursive_core.js",
+      "sha256": "7004ff3ba6b88155f7b390310ee7be3b157a86b251a5901b0511d41a127e4484",
+      "source_sha256": "efe3f67a580b6b6f57ac3533a09e150370f13656c0f56513156b7f0ebb48608f"
+    },
+    {
+      "path": "node/bbox_recursive_previews.js",
+      "sha256": "de2b63504fcfb690be7f8b695251328341b62722f8827fefaabfa20710378f1f"
+    },
+    {
+      "path": "node/bbox_recursive_test.js",
+      "sha256": "262a3165ddbd831143ebb82e71117e69774538b52b6a546c4ce635a740cecf27"
+    },
+    {
+      "path": "node/bbox_repair_order.js",
+      "sha256": "e441f43d6d745243e61571109b0f230e169ff1727fd327a78280b2604ce1f822"
+    },
+    {
+      "path": "node/bbox_surface_geometry.js",
+      "sha256": "7ff06e0685ea9e19efce2c9ff2c4918c8400d024a57ab140814a28dc235c82e7"
+    },
+    {
+      "path": "node/bbox_surface_geometry_checks.js",
+      "sha256": "9534411a6e320cd98bcd61f10d57788a14d47ce1a148acfd36df6fd11d7c4f9a"
+    },
+    {
+      "path": "node/bbox_surface_recover.js",
+      "sha256": "337faaf0144f20a4ad15e05428ce9adfbc2e0c1e259adcda25a4df0f3a2bf82b"
+    },
+    {
+      "path": "node/bbox_text_atlas.js",
+      "sha256": "7d941e46440469cbf2ca568af06b840b912d8746ba847be4c76496da4d7285c3"
+    },
+    {
+      "path": "node/bbox_text_atlas_checks.js",
+      "sha256": "3d64d7c79f7a6ec8f01992a8c244821a3fb7145cf4dca4d667c1c33c246d7c63"
+    },
+    {
+      "path": "node/bbox_text_atlas_replay.js",
+      "sha256": "629b7aa8a350c7f82f31658ad5ef8f4dada0f3ef4c8e3985c4963d7a47274396"
+    },
+    {
+      "path": "node/bbox_two_loop_harmonize.js",
+      "sha256": "b038be9aa5be04044cda4ee21106d61b64f202743754f7004c83dd9a57f56d95"
+    },
+    {
+      "path": "node/bbox_two_loop_test.js",
+      "sha256": "8d2e1996732255a68c71dd59edb8eeea1b1de21c46ba75a343217e206c6f9432"
+    },
+    {
+      "path": "node/bbox_visual_atlas.js",
+      "sha256": "9c482e2bc8b1f96653cd3d6b5e60d3d712aa95c3c76c82268b1996762ccdab24"
+    },
+    {
+      "path": "node/bbox_visual_atlas_checks.js",
+      "sha256": "1dc63d871c3de2423397ba5df1a3166f49d45304879ab21a969b263520e78239"
+    },
+    {
+      "path": "node/bbox_visual_window.js",
+      "sha256": "4ed11d37636ee6c90c412d8dec0d94be3b94853664ac9fa82de4ddd90270f72b"
+    },
+    {
+      "path": "node/bbox_wide_surface.js",
+      "sha256": "cd520f056323e332be2ee251c253dd90da4dbc2d7b92f15e2ba08afbb6ce4f58"
+    },
+    {
+      "path": "node/bbox_wide_surface_replay.js",
+      "sha256": "a8f0c16127c3f7b56f781da2752c72ca0be8bec63a9284d13ef57de9b9a5100b"
+    },
+    {
+      "path": "node/codex_config.js",
+      "sha256": "e740a403e7a1fdd0a03cf80ba359f66b23f3ec3fbd1a866ede5d40e8d927784b",
+      "origin": "project"
+    },
+    {
+      "path": "node/controller_client.js",
+      "sha256": "679c61386889d04731382399186258be63f2f4e71653502073ad0202562623fb",
+      "origin": "project"
+    },
+    {
+      "path": "node/job_retry.js",
+      "sha256": "d6a8a89e3f4085a833b5d06bac79d16c5ecc16f423ffc7629429b9b5b12f196a"
+    },
+    {
+      "path": "node/job_retry_test.js",
+      "sha256": "19ee6eabe20b282d2c874723ea91c036726af64c5363264a9f314c3963f72460"
+    },
+    {
+      "path": "node/layerforge.js",
+      "sha256": "d5868e7593ffc56be0d3cef7af45f9774782047b21adcad3e10c90adf312c2d6",
+      "source_sha256": "e159a3476e051bed6571c5c38efa25cf0245bde883aba13e3959f824f2f8a5d0"
+    },
+    {
+      "path": "node/model_config.js",
+      "sha256": "57dff8c8dca528ffcf459b8a58ecc5b1884d232903e4d3ac8aabdac776c20c0f",
+      "source_sha256": "b07fe485a9c6964dccacac8897644fc6efdd38df7d1cf0a1a40bcc9b9852ab43"
+    },
+    {
+      "path": "node/model_config_checks.js",
+      "sha256": "f26935628e405839807dfa488cf6ed5d5ea653173ac3c9b019ab804b30edc1d8"
+    },
+    {
+      "path": "node/model_doctor.js",
+      "sha256": "787b68cee95355c2868885ce4311fc14c668555bebdf0ae4d33d2ee04a966cc9",
+      "origin": "project"
+    },
+    {
+      "path": "node/psd.js",
+      "sha256": "1f9e1371946ec5e3758c6cc197b1a24a5f157a264d74e0fabea0a034a57e7bf3",
+      "source_sha256": "ed79ac80ba8e3c482a8ac0f64fffd8002e036b2f3ded53a3904e2c3e1f603db6"
+    },
+    {
+      "path": "node/psd_archive.js",
+      "sha256": "9522fb730739f13977df5a5347e738c505e235b006acd479b17fc129f417aa27"
+    },
+    {
+      "path": "node/psd_checks.js",
+      "sha256": "c40beefe9d8a657cfeac0c1c57b77f4d7808202eb476a7f1135276a1e42a56b3"
+    },
+    {
+      "path": "node/psd_compare.js",
+      "sha256": "b903bfc83cbb1f2820a2f91445203d6f3df55019ffd44021b1825765d1e7027e"
+    },
+    {
+      "path": "node/psd_result.html",
+      "sha256": "81e92923084a1ae16ea8c7966638afb865ba67967451354e6230a8f358e3c0d3"
+    },
+    {
+      "path": "node/psd_server.js",
+      "sha256": "f40b310a1dead8a3e96c97566012d813ce7b3e6451c0d691407c65d02f1a0dcb"
+    },
+    {
+      "path": "node/rear_coupled_composites.js",
+      "sha256": "5126ee49384b6842d154769e661739b649b4e1446ed00e6b431208cced945f6f"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "e0a90021eeaa29db298d279e3a2560e649268ac1d6e7aa6a0d1a09d0499e3c01",
+      "source_sha256": "01dcd6f9acd91cba89fb82bde6812f6ea5cda211d90c1bfac99985f34faa97c4"
+    },
+    {
+      "path": "package.json",
+      "sha256": "fe1a001ff900e928f9b18e98aa5b69a588e7b257cb001519292edb9d8d763bdb",
+      "source_sha256": "f8bde06f2aafbec85177f15ccac0edc46cbd07ec97ce928ee1bfae5c2e6aab96"
+    },
+    {
+      "path": "web/run-timing.js",
+      "sha256": "b0693851675f8f3e3500b8363929050f8ef46113facd206a6675593d575e5368"
+    }
+  ],
+  "local_patches": [
+    {
+      "file": "node/psd.js",
+      "reason": "Canonicalize the report root before comparing it with the realpath returned by psd_server.js; macOS /var and /private/var aliases otherwise prevent readiness detection."
+    },
+    {
+      "file": "node/psd.js",
+      "reason": "Include the imported runtime dependency closure in code identity and snapshots so resume rejects changes to retry or harmonization behavior."
+    },
+    {
+      "file": "node/bbox_detection_cache_checks.js",
+      "reason": "Update the detector fixture to read multimodal user content after the imported core added a system message; keep all detection assertions unchanged."
+    },
+    {
+      "file": "node/model_config.js",
+      "reason": "Import public Codex defaults with explicit project/environment overrides; expose protocol and credential presence without importing Codex authentication tokens."
+    },
+    {
+      "file": "node/controller_client.js",
+      "reason": "Adapt multimodal Chat-shaped controller requests and Responses results while preserving reasoning, structured output, refusal and truncation semantics."
+    },
+    {
+      "file": "node/layerforge.js",
+      "reason": "Use the protocol adapter when constructing model clients; leave images.edit routing independent."
+    },
+    {
+      "file": "node/bbox_recursive_core.js",
+      "reason": "An unsupported reasoning override is explicitly disabled so the adapter cannot reintroduce the configured reasoning setting."
+    },
+    {
+      "file": "node/psd.js",
+      "reason": "Snapshot public Codex controller defaults across child processes and resumes; include protocol modules and dependency locks in run identity."
+    },
+    {
+      "file": "package.json",
+      "reason": "Pin smol-toml for standards-compliant Codex configuration parsing."
+    },
+    {
+      "file": "package-lock.json",
+      "reason": "Lock the added TOML parser."
+    },
+    {
+      "file": "node/model_doctor.js",
+      "reason": "Provide local diagnostics, explicit online capability probes, model listing and redacted failure reporting."
+    },
+    {
+      "file": "node/codex_config.js",
+      "reason": "Resolve the selected custom gateway API bearer or environment credential at runtime, bind it to the original endpoint and provider, and keep secrets out of serializable defaults."
+    },
+    {
+      "file": "node/model_config.js",
+      "reason": "Reuse bound gateway credentials after explicit key overrides; allow independent image models to follow the same Codex gateway without copying secrets."
+    },
+    {
+      "file": "node/model_doctor.js",
+      "reason": "Report credential origin and reuse blocks without exposing secrets; distinguish API bearer reuse from Codex login sessions."
+    }
+  ]
+}
